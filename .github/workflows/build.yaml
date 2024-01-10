@@ -1,7 +1,7 @@
 name: Build sing-box rule-sets
 on:
   schedule:
-    - cron: "0 22 * * *"
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
@@ -49,12 +49,15 @@ jobs:
       - name: Check if rules have been changed
         run: |
           git -C dat rev-parse HEAD | tee output
-          if diff output commit.txt; then exit 1; else mv output commit.txt; fi
+          if diff output commit.txt; then echo "Upstream rules are not changed"; exit 1; else mv output commit.txt; fi
 
       - name: Build geo{ip,site}.dat
         run: |
-          geo convert ip -i v2ray -o sing -f rules/geoip.db dat/geoip.dat
-          geo convert site -i v2ray -o sing -f rules/geosite.db dat/geosite.dat
+          cd rules
+          geo convert ip -i v2ray -o sing -f geoip.db ../dat/geoip.dat
+          geo convert site -i v2ray -o sing -f geosite.db ../dat/geosite.dat
+          ../rule-sets.py
+          ls -1 *.json | xargs -n1 sing-box rule-set compile
 
       - name: Commit and Push
         run: |
