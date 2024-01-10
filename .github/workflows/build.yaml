@@ -1,0 +1,66 @@
+name: Build sing-box rule-sets
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/README.md"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout geo
+        uses: actions/checkout@v4
+        with:
+          repository: MetaCubeX/geo
+          path: geo
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: geo/go.mod
+          cache-dependency-path: geo/go.sum
+
+      - name: Install geo
+        run: |
+          cd geo && go install -v ./cmd/geo
+
+      - name: Install sing-box
+        run: |
+          bash <(curl -fsSL https://sing-box.app/deb-install.sh)
+          sing-box
+
+      - name: Checkout Rules
+        uses: actions/checkout@v4
+        with:
+          repository: Loyalsoldier/v2ray-rules-dat
+          path: dat
+          ref: release
+
+      - name: Check if rules have been changed
+        run: |
+          git -C dat rev-parse HEAD | tee output
+          if diff output commit.txt; then exit 1; else mv output commit.txt; fi
+
+      - name: Build geo{ip,site}.dat
+        run: |
+          geo convert ip -i v2ray -o sing -f rules/geoip.db dat/geoip.dat
+          geo convert site -i v2ray -o sing -f rules/geosite.db dat/geosite.dat
+
+      - name: Commit and Push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "Update rules"
+          git tag "$(date +%Y%m%dT%H%M)"
+          git push --follow-tags
