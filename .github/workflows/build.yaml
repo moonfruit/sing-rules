@@ -53,11 +53,11 @@ jobs:
       - name: Check if rules have been changed
         run: |
           git -C dat rev-parse HEAD | tee output
-          if diff output commit.txt; then
+          if diff output v2ray-rules-dat.commit; then
             echo "Upstream rules are not changed"
             exit 1
           else
-            mv output commit.txt
+            mv output v2ray-rules-dat.commit
           fi
 
       - name: Build geo{ip,site}.dat
