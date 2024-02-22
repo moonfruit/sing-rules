@@ -41,7 +41,7 @@ jobs:
       - name: Install sing-box
         run: |
           bash <(curl -fsSL https://sing-box.app/deb-install.sh)
-          sing-box
+          sing-box version
 
       - name: Checkout Rules
         uses: actions/checkout@v4
