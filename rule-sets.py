@@ -39,7 +39,7 @@ def main():
     with open("direct.json", "w") as f:
         combine(f, ["cn"], ["cn", "apple-cn", "google-cn", "tld-cn", "category-games@cn"])
     with open("ai.json", "w") as f:
-        combine(f, [], ["bing", "jetbrains-ai", "openai"])
+        combine(f, [], ["bing", "jetbrains-ai", "openai", "perplexity"])
 
 
 if __name__ == "__main__":
