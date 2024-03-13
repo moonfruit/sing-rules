@@ -60,12 +60,16 @@ jobs:
             mv output v2ray-rules-dat.commit
           fi
 
-      - name: Build geo{ip,site}.dat
+      - name: Build geo{ip,site}.db and rule sets
         run: |
           cd rules
           geo convert ip -i v2ray -o sing -f geoip.db ../dat/geoip.dat
           geo convert site -i v2ray -o sing -f geosite.db ../dat/geosite.dat
-          ../rule-sets.py
+          ../geo2sing.py
+
+      - name: Compile rule sets
+        run: |
+          cd rules
           ls -1 *.json | xargs -n1 sing-box rule-set compile
 
       - name: Commit and Push
