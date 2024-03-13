@@ -1,6 +1,9 @@
 .*
 !.git*
 
+*.pyc
+__pycache__
+
 /dat
 /geo
 /venv
