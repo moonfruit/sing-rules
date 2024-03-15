@@ -5,6 +5,7 @@
 *.pyc
 __pycache__
 
+/clash
 /dat
 /geo
 /venv

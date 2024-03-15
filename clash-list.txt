@@ -1,0 +1,5 @@
+ai          https://raw.githubusercontent.com/juewuy/ShellClash/master/rules/ai.list
+disney-plus https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/DisneyPlus.list
+netflix     https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Netflix.list
+netflix     https://raw.githubusercontent.com/LM-Firefly/Rules/master/Global-Services/Netflix.list
+youtube     https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTube.list

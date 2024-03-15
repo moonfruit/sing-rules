@@ -60,16 +60,30 @@ jobs:
             mv output v2ray-rules-dat.commit
           fi
 
-      - name: Build geo{ip,site}.db and rule sets
+      - name: Build geo{ip,site}.db and export rule sets
         run: |
           cd rules
           geo convert ip -i v2ray -o sing -f geoip.db ../dat/geoip.dat
           geo convert site -i v2ray -o sing -f geosite.db ../dat/geosite.dat
+          rm -f *.json
           ../geo2sing.py
+
+      - name: Download clash rules
+        run: |
+          mkdir -p clash
+          cd clash
+          ../clash-download.sh ../clash-list.txt
+
+      - name: Merge clash rules
+        run: |
+          cd rules
+          ../clash-merge.sh ../base
+          ../clash-merge.sh ../clash 
 
       - name: Compile rule sets
         run: |
           cd rules
+          rm -f *.srs
           ls -1 *.json | xargs -n1 sing-box rule-set compile
 
       - name: Commit and Push

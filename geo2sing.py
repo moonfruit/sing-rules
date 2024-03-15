@@ -31,23 +31,26 @@ def combine(output, geoip_names, geosite_names):
     json.dump({"version": 1, "rules": merge(rules)}, output, indent=2)
 
 
+def combinef(filename, geoip_names, geosite_names):
+    print(f"Combining {filename} with {geoip_names} and {geosite_names}")
+    with open(filename, "w") as f:
+        combine(f, geoip_names, geosite_names)
+
+
 def main():
-    with open("private.json", "w") as f:
-        combine(f, ["private"], ["private"])
-    with open("block.json", "w") as f:
-        combine(f, [], ["category-ads-all"])
-    with open("disney.json", "w") as f:
-        combine(f, [], ["disney"])
-    with open("netflix.json", "w") as f:
-        combine(f, ["netflix"], ["netflix"])
-    with open("youtube.json", "w") as f:
-        combine(f, [], ["youtube"])
-    with open("proxy.json", "w") as f:
-        combine(f, ["telegram"], ["bytedance@!cn", "gfw", "telegram"])
-    with open("direct.json", "w") as f:
-        combine(f, ["cn"], ["cn", "apple-cn", "google-cn", "tld-cn", "category-games@cn"])
-    with open("ai.json", "w") as f:
-        combine(f, [], ["anthropic", "bing", "jetbrains-ai", "openai", "perplexity"])
+    combinef("ai.json", [], ["anthropic", "bing", "jetbrains-ai", "openai", "perplexity"])
+    combinef("disney.json", [], ["disney"])
+    combinef("netflix.json", ["netflix"], ["netflix"])
+    combinef("youtube.json", [], ["youtube"])
+
+    combinef("private.json", ["private"], ["private"])
+    combinef("block.json", [], ["category-ads-all"])
+    combinef("proxy.json", ["telegram"], ["category-dev", "bytedance@!cn", "gfw", "steam", "telegram", "x"])
+    combinef(
+        "direct.json",
+        ["cn"],
+        ["cn", "apple-cn", "google-cn", "tld-cn", "category-dev@cn", "category-games@cn"],
+    )
 
 
 if __name__ == "__main__":

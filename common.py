@@ -1,51 +1,45 @@
 import ipaddress
-from typing import Any
+from collections.abc import Callable
 
-__IP_RULE_KEYS = frozenset(["ip_cidr"])
-
-__SITE_RULE_KEYS = frozenset(["domain", "domain_suffix", "domain_keyword", "domain_regex"])
+__SITE_RULE_KEYS = frozenset(["domain", "domain_suffix", "domain_keyword", "domain_regex", "ip_cidr"])
 
 
-def merge(rules: list[dict[str, str | list[str]]]) -> list[dict[str, list[str]]]:
-    ip_cidr = set()
-    domain = set()
-    domain_suffix = set()
-    domain_keyword = set()
-    domain_regex = set()
-    extra = []
+def get_list[V](d: dict[str, list[V]], key: str) -> list[V]:
+    return compute_if_absent(d, key, lambda: [])
+
+
+def get_set[V](d: dict[str, set[V]], key: str) -> set[V]:
+    return compute_if_absent(d, key, lambda: set())
+
+
+def compute_if_absent[K, V](d: dict[K, V], key: K, func: Callable[[], V]) -> V:
+    if key in d:
+        return d[key]
+    value = d[key] = func()
+    return value
+
+
+def as_rule(rule: dict[str, set[str]]) -> dict[str, str | list[str]]:
+    return {key: as_sorted_list(key, values) for key, values in rule.items()}
+
+
+def merge(rules: list[dict[str, str | list[str]]]) -> list[dict[str, str | list[str]]]:
+    results = []
+    merged = {}
 
     for rule in rules:
         if not rule:
             continue
-        if rule.keys() == __IP_RULE_KEYS:
-            ip_cidr |= as_set(rule["ip_cidr"])
-        elif rule.keys() <= __SITE_RULE_KEYS:
-            domain |= as_set(rule.get("domain", None))
-            domain_suffix |= as_set(rule.get("domain_suffix", None))
-            domain_keyword |= as_set(rule.get("domain_keyword", None))
-            domain_regex |= as_set(rule.get("domain_regex", None))
+        if rule.keys() <= __SITE_RULE_KEYS:
+            for key, values in rule.items():
+                get_set(merged, key).update(as_set(values))
         else:
-            extra.append(rule)
+            results.append(rule)
 
-    results = []
-    if ip_cidr:
-        results.append({
-            "ip_cidr": as_list(ip_cidr, key=network_key)
-        })
+    if merged:
+        results.insert(0, as_rule(merged))
 
-    domain_rule = {}
-    if domain:
-        domain_rule["domain"] = as_list(domain, key=domain_key)
-    if domain_suffix:
-        domain_rule["domain_suffix"] = as_list(domain_suffix, key=domain_key)
-    if domain_keyword:
-        domain_rule["domain_keyword"] = as_list(domain_keyword)
-    if domain_regex:
-        domain_rule["domain_regex"] = as_list(domain_regex)
-    if domain_rule:
-        results.append(domain_rule)
-
-    return results + extra
+    return results
 
 
 def as_set(items: str | list[str] | None) -> set[str]:
@@ -64,8 +58,8 @@ def as_list(items: set[str], *, key=None) -> str | list[str]:
         return sorted(items, key=key)
 
 
-def network_key(ip: str) -> (int, Any):
-    network = ipaddress.ip_network(ip)
+def network_key(ip: str) -> (int, str | ipaddress.IPv4Network | ipaddress.IPv6Network):
+    network = ipaddress.ip_network(ip, strict=False)
     if isinstance(network, ipaddress.IPv4Network):
         return 4, network
     elif isinstance(network, ipaddress.IPv6Network):
@@ -76,3 +70,14 @@ def network_key(ip: str) -> (int, Any):
 
 def domain_key(domain: str) -> list[str]:
     return domain.split(".")
+
+
+__KEY_FUNCTIONS = {
+    "ip_cidr": network_key,
+    "domain": domain_key,
+    "domain_suffix": domain_key,
+}
+
+
+def as_sorted_list(key, items: set[str]) -> str | list[str]:
+    return as_list(items, key=__KEY_FUNCTIONS.get(key, None))
