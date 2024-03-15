@@ -6,6 +6,7 @@
         "ggpht.cn",
         "ggpht.com",
         "googlevideo.com",
+        "gvt2.com",
         "wide-youtube.l.google.com",
         "withyoutube.com",
         "youtu.be",
@@ -177,12 +178,14 @@
         "youtubekids.com",
         "youtubemobilesupport.com",
         "yt.be",
+        "yt3.ggpht.com",
         "ytimg.com"
       ],
       "domain_suffix": [
         ".ggpht.cn",
         ".ggpht.com",
         ".googlevideo.com",
+        ".gvt2.com",
         ".wide-youtube.l.google.com",
         ".withyoutube.com",
         ".youtu.be",
@@ -356,7 +359,8 @@
         ".youtubemobilesupport.com",
         ".yt.be",
         ".ytimg.com"
-      ]
+      ],
+      "domain_keyword": "youtube"
     }
   ]
 }

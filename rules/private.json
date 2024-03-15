@@ -20,9 +20,7 @@
         "fc00::/7",
         "fe80::/10",
         "ff00::/8"
-      ]
-    },
-    {
+      ],
       "domain": [
         "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa",
         "0.in-addr.arpa",
@@ -144,6 +142,7 @@
         "router.asus.com",
         "router.ctc",
         "routerlogin.com",
+        "server.gingkoo",
         "setmeup.arubanetworks.com",
         "tendawifi.com",
         "test.steampowered.com",
@@ -275,6 +274,7 @@
         ".phicomm.me",
         ".plex.direct",
         ".router.ctc",
+        ".server.gingkoo",
         ".tendawifi.com",
         ".test",
         ".test.steampowered.com",
