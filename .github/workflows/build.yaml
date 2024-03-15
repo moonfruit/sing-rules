@@ -60,6 +60,10 @@ jobs:
             mv output v2ray-rules-dat.commit
           fi
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Build geo{ip,site}.db and export rule sets
         run: |
           cd rules
