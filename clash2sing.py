@@ -2,10 +2,10 @@
 import json
 from typing import TextIO
 
-from common import get_set, as_rule, get_list, merge
+from common import get_set, as_rule, get_list, merge, Rule
 
 
-def load_rules(rule_set_file: str) -> list[dict[str, str | list[str]]]:
+def load_rules(rule_set_file: str) -> list[Rule]:
     try:
         with open(rule_set_file, "r") as f2:
             return get_list(json.load(f2), "rules")
@@ -13,7 +13,7 @@ def load_rules(rule_set_file: str) -> list[dict[str, str | list[str]]]:
         return []
 
 
-def to_rules(f: TextIO) -> list[dict[str, list[str]]]:
+def to_rules(f: TextIO) -> list[Rule]:
     rule = {}
     for line in f:
         line = line.split("#", 1)[0].strip()

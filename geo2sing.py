@@ -2,54 +2,73 @@
 import json
 import subprocess
 import tempfile
+from typing import TextIO
 
-from common import merge
+from common import merge, as_set, RelaxedStrings
 
 
-def geoip(name):
+def export_geoip(name: str):
     return export("geoip", name)
 
 
-def geosite(name):
+def export_geosite(name: str):
     return export("geosite", name)
 
 
-def export(geo, name):
+def export(geo: str, name: str):
     with tempfile.NamedTemporaryFile() as temp:
         subprocess.run(("sing-box", geo, "export", name, "-o", temp.name), check=True)
         return json.load(temp)
 
 
-def combine(output, geoip_names, geosite_names):
+def combine(output: TextIO, geosite: set[str], geoip: set[str]):
     rules = []
-    for name in geoip_names:
-        item = geoip(name)
+    for name in geoip:
+        item = export_geoip(name)
         rules += item["rules"]
-    for name in geosite_names:
-        item = geosite(name)
+    for name in geosite:
+        item = export_geosite(name)
         rules += item["rules"]
     json.dump({"version": 1, "rules": merge(rules)}, output, indent=2)
 
 
-def combinef(filename, geoip_names, geosite_names):
-    print(f"Combining {filename} with {geoip_names} and {geosite_names}")
+def simply(geosite: RelaxedStrings | None = None, geoip: RelaxedStrings | None = None):
+    geosite_set = as_set(geosite)
+    geoip_set = as_set(geoip)
+
+    texts = []
+    if geosite_set:
+        texts.append(f"{geosite=}")
+    if geoip_set:
+        texts.append(f"{geoip=}")
+    text = ", ".join(texts)
+
+    return geosite_set, geoip_set, text
+
+
+def generate(filename: str, *, geosite: RelaxedStrings | None = None, geoip: RelaxedStrings | None = None):
+    geosite_set, geoip_set, text = simply(geosite, geoip)
+    print(f"Generating {filename}: {text}")
+
     with open(filename, "w") as f:
-        combine(f, geoip_names, geosite_names)
+        combine(f, geosite_set, geoip_set)
 
 
 def main():
-    combinef("ai.json", [], ["anthropic", "bing", "jetbrains-ai", "openai", "perplexity"])
-    combinef("disney.json", [], ["disney"])
-    combinef("netflix.json", ["netflix"], ["netflix"])
-    combinef("youtube.json", [], ["youtube"])
-
-    combinef("private.json", ["private"], ["private"])
-    combinef("block.json", [], ["category-ads-all"])
-    combinef("proxy.json", ["telegram"], ["category-dev", "bytedance@!cn", "gfw", "steam", "telegram", "x"])
-    combinef(
+    generate("ai.json", geosite=["anthropic", "bing", "jetbrains-ai", "openai", "perplexity"])
+    generate("netflix.json", geosite="netflix", geoip="netflix")
+    generate("youtube.json", geosite="youtube")
+    generate("private.json", geosite="private", geoip="private")
+    generate("block.json", geosite="category-ads-all")
+    generate(
+        "proxy.json",
+        geosite=["bytedance@!cn", "category-dev", "epicgames", "gfw", "origin", "steam", "telegram", "x"],
+        geoip="telegram",
+    )
+    generate(
         "direct.json",
-        ["cn"],
-        ["cn", "apple-cn", "google-cn", "tld-cn", "category-dev@cn", "category-games@cn"],
+        geosite=["cn", "apple-cn", "google-cn", "tld-cn", "category-dev@cn", "category-games@cn"],
+        geoip="cn",
     )
 
 
