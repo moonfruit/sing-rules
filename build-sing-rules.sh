@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-BIN=$(dirname "${BASH_SOURCE[0]}")
+BIN=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 echo --- Cleaning working directory ---
-rm -f ./*.db ./*.json ./*.srs
+rm -fv ./*.db ./*.json ./*.srs
 
 echo --- Converting geo from v2ray to sing ---
 geo convert ip -i v2ray -o sing -f geoip.db "$BIN/dat/geoip.dat"
