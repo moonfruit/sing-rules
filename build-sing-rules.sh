@@ -13,16 +13,13 @@ title() {
 title "Cleaning working directory"
 rm -fv ./*.db ./*.json ./*.srs
 
-echo
 title "Converting geo from v2ray to sing"
 geo convert ip -i v2ray -o sing -f geoip.db "$BIN/dat/geoip.dat"
 geo convert site -i v2ray -o sing -f geosite.db "$BIN/dat/geosite.dat"
 
-echo
 title "Exporting geo as sing rule sets"
 "$BIN/geo-to-sing-rules.py"
 
-echo
 title "Downloading clash rules"
 CLASH=$(mktemp -d)
 mkdir -p "$CLASH"
