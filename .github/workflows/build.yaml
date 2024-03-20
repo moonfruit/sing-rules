@@ -15,12 +15,22 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Set Variable
+      - name: Set Variables
         run: |
           echo "TAG_NAME=$(date +%Y%m%d%H%M)" >>$GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Checkout Rules
+        uses: actions/checkout@v4
+        with:
+          repository: Loyalsoldier/v2ray-rules-dat
+          path: dat
+          ref: release
+
+      - name: Preflight
+        run: ./preflight.sh
 
       - name: Checkout geo
         uses: actions/checkout@v4
@@ -37,58 +47,24 @@ jobs:
       - name: Install geo
         run: |
           cd geo && go install -v ./cmd/geo
+          geo | head -1
 
       - name: Install sing-box
         run: |
           bash <(curl -fsSL https://sing-box.app/deb-install.sh)
           sing-box version
 
-      - name: Checkout Rules
-        uses: actions/checkout@v4
-        with:
-          repository: Loyalsoldier/v2ray-rules-dat
-          path: dat
-          ref: release
-
-      - name: Check if rules have been changed
-        run: |
-          git -C dat rev-parse HEAD | tee output
-          if diff output v2ray-rules-dat.commit; then
-            echo "Upstream rules are not changed"
-            exit 1
-          else
-            mv output v2ray-rules-dat.commit
-          fi
-
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
-      - name: Build geo{ip,site}.db and export rule sets
-        run: |
-          cd rules
-          geo convert ip -i v2ray -o sing -f geoip.db ../dat/geoip.dat
-          geo convert site -i v2ray -o sing -f geosite.db ../dat/geosite.dat
-          rm -f *.json
-          ../geo2sing.py
+      - name: Install python requirements
+        run: pip install -r requirements.txt
 
-      - name: Download clash rules
-        run: |
-          mkdir -p clash
-          cd clash
-          ../clash-download.sh ../clash-list.txt
-
-      - name: Merge clash rules
-        run: |
-          cd rules
-          ../clash-merge.sh ../base
-          ../clash-merge.sh ../clash 
-
-      - name: Compile rule sets
-        run: |
-          cd rules
-          rm -f *.srs
-          ls -1 *.json | xargs -n1 sing-box rule-set compile
+      - name: Build rule sets
+        run: cd rules && ../build-sing-rules.sh
 
       - name: Commit and Push
         run: |
