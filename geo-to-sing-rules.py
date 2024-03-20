@@ -48,7 +48,7 @@ def simply(geosite: RelaxedStrings | None = None, geoip: RelaxedStrings | None =
 
 def generate(filename: str, *, geosite: RelaxedStrings | None = None, geoip: RelaxedStrings | None = None):
     geosite_set, geoip_set, text = simply(geosite, geoip)
-    print(f"Generating {filename}: {text}")
+    print(f"Generating {filename} from {text}")
 
     with open(filename, "w") as f:
         combine(f, geosite_set, geoip_set)
