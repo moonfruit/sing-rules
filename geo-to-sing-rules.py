@@ -67,7 +67,7 @@ def main():
     )
     generate(
         "direct.json",
-        geosite=["cn", "apple-cn", "google-cn", "tld-cn", "category-dev@cn", "category-games@cn"],
+        geosite=["cn", "apple-cn", "google-cn", "tld-cn", "geolocation-cn", "category-dev@cn", "category-games@cn"],
         geoip="cn",
     )
 

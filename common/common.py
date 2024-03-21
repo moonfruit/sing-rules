@@ -1,6 +1,12 @@
 import ipaddress
 from collections.abc import Callable, Iterable
 
+type Scalar = str | float | int
+type ScalarCollections = list[Scalar] | set[Scalar] | dict[str, Scalar]
+type Object = dict[str, Scalar | ScalarCollections | Object | ObjectCollections]
+type ObjectCollections = list[Object] | set[Object] | dict[str, Object]
+type SimpleObject = dict[str, Scalar]
+
 type RelaxedIterable[V] = V | Iterable[V]
 type RelaxedList[V] = V | list[V]
 type RelaxedStrings = RelaxedList[str]
