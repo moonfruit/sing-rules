@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Set Variables
         run: |
-          echo "TAG_NAME=$(env TZ=Asia/Shanghai date +%Y%m%d%H%M)" >>$GITHUB_ENV
+          echo "TAG=$(env TZ=Asia/Shanghai date +%Y%m%d%H%M)" >>$GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,16 +64,22 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build config
-        run: ./build-sing-config.sh "${{ secrets.GITEE_USER }}" "${{ secrets.GITEE_TOKEN }}" " ${{ secrets.CLASH_URL }}"
+        env:
+          GITEE_USER: ${{ secrets.GITEE_USER }}
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          CLASH_URL: ${{ secrets.CLASH_URL }}
+        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" "$CLASH_URL"
 
       - name: Build rule sets
         run: ./build-sing-rules.sh
 
       - name: Commit and Push
-        run: ./commit-and-push.sh "Update rules" "${{ env.TAG_NAME }}"
+        env:
+          TAG: ${{ env.TAG }}
+        run: ./commit-and-push.sh "Update rules" "$TAG"
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.TAG_NAME }}
+          tag_name: ${{ env.TAG }}
           files: rules/*
