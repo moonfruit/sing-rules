@@ -16,9 +16,6 @@ check-v2ray-rules() {
 }
 
 check-clash-url() {
-    if [[ -z "$1" ]]; then
-        return
-    fi
     echo -n "clash-config: "
     sha1sum dat/clash-config.yaml | awk '{print $1}' | tee "$TEMP"
     if diff "$TEMP" "$CLASS_CONFIG_SHA1"; then
@@ -29,4 +26,4 @@ check-clash-url() {
     fi
 }
 
-check-v2ray-rules || check-clash-url "$1"
+check-v2ray-rules || check-clash-url

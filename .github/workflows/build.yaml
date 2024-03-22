@@ -79,9 +79,7 @@ jobs:
         run: ./build-sing-rules.sh
 
       - name: Commit and Push
-        env:
-          TAG: ${{ env.TAG }}
-        run: ./commit-and-push.sh "Update rules" "$TAG"
+        run: ./commit-and-push.sh "Update rules" "${{ env.TAG }}"
 
       - name: Release
         uses: softprops/action-gh-release@v2
