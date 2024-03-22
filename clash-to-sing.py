@@ -208,10 +208,12 @@ def to_sing(clash: Object) -> Object:
                 },
                 {"tag": "dns-proxy", "address": "tls://1.1.1.1"},
                 {"tag": "dns-gingkoo", "address": "tcp://10.1.2.59", "detour": "DIRECT"},
+                {"tag": "dns-home", "address": "192.168.50.1", "detour": "DIRECT"},
                 {"tag": "dns-system", "address": "local", "detour": "Direct"},
             ],
             "rules": [
                 {"domain_suffix": "server.gingkoo", "server": "dns-gingkoo"},
+                {"domain": ["asusrouter.com", "router.asus.com", "www.asusrouter.com"], "server": "dns-home"},
                 {"rule_set": "Proxy", "server": "dns-proxy"},
             ],
             "final": "dns-direct",
