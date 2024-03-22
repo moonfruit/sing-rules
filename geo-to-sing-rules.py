@@ -23,11 +23,11 @@ def export(geo: str, name: str):
 
 def combine(output: TextIO, geosite: set[str], geoip: set[str]):
     rules = []
-    for name in geoip:
-        item = export_geoip(name)
-        rules += item["rules"]
     for name in geosite:
         item = export_geosite(name)
+        rules += item["rules"]
+    for name in geoip:
+        item = export_geoip(name)
         rules += item["rules"]
     json.dump({"version": 1, "rules": merge(rules)}, output, indent=2)
 

@@ -37,6 +37,6 @@ title "Merging clash rules to sing rule sets"
 title "Compile sing rule sets"
 for JSON in *.json; do
     echo "Compiling $JSON"
-    sing-box rule-set format -w "$JSON" >/dev/null
+    sing-box rule-set format -w "$JSON" >/dev/null 2>&1
     sing-box rule-set compile "$JSON"
 done
