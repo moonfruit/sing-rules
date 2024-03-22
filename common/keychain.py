@@ -18,6 +18,6 @@ def get_proxy_user() -> SimpleObject:
     try:
         proxy = get_password()
         user = proxy.split(":", 1)
-        return {"username": user[0], "password": user[1] if len(user) > 1 else user[0]}
+        return {"Username": user[0], "Password": user[1] if len(user) > 1 else user[0]}
     except NoKeyringError:
-        return {"username": "unknown", "password": "unknown"}
+        return {"Username": "unknown", "Password": "unknown"}
