@@ -1,6 +1,7 @@
 import functools
 
 import keyring
+from keyring.errors import NoKeyringError
 
 from .common import SimpleObject
 
@@ -14,6 +15,9 @@ def get_password(service: str = "ENV", password: str = "proxy") -> str:
 
 
 def get_proxy_user() -> SimpleObject:
-    proxy = get_password()
-    user = proxy.split(":", 1)
-    return {"username": user[0], "password": user[1] if len(user) > 1 else user[0]}
+    try:
+        proxy = get_password()
+        user = proxy.split(":", 1)
+        return {"username": user[0], "password": user[1] if len(user) > 1 else user[0]}
+    except NoKeyringError:
+        return {"username": "unknown", "password": "unknown"}
