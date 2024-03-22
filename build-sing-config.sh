@@ -2,7 +2,7 @@
 set -e
 BIN=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
-(($# >= 3))
+(($# >= 2))
 
 cd "$BIN"
 rm -fr private

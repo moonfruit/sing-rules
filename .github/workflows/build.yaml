@@ -72,8 +72,7 @@ jobs:
         env:
           GITEE_USER: ${{ secrets.GITEE_USER }}
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          CLASH_URL: ${{ secrets.CLASH_URL }}
-        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" "$CLASH_URL"
+        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN"
 
       - name: Build rule sets
         run: ./build-sing-rules.sh
