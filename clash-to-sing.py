@@ -215,9 +215,9 @@ def to_sing(clash: Object) -> Object:
                 {"rule_set": "Proxy", "server": "dns-proxy"},
             ],
             "final": "dns-direct",
+            "reverse_mapping": True,
             "strategy": "prefer_ipv4",
             "independent_cache": True,
-            "reverse_mapping": True,
         },
         "inbounds": [
             dns(),
