@@ -9,14 +9,6 @@ rm -fr private
 git clone "https://$1:$2@gitee.com/moonfruit/private.git"
 
 cd private
-curl "$3" | ../clash-to-sing.py >config.json
+curl "$3" | "$BIN/clash-to-sing.py" | sing-box format -c /dev/stdin >config.json
 
-git config user.name 'github-actions[bot]'
-git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-STATUS=$(git status --porcelain)
-if [[ -n $STATUS ]]; then
-    git add .
-    git commit -m "Update config"
-    git push
-fi
+"$BIN/commit-and-push.sh" "Update config" || true

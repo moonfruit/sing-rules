@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 BIN=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 title() {
@@ -9,6 +10,9 @@ title() {
     echo "$title"
     echo "$line"
 }
+
+mkdir -p rules
+cd rules
 
 title "Cleaning working directory"
 rm -fv ./*.db ./*.json ./*.srs
@@ -33,5 +37,6 @@ title "Merging clash rules to sing rule sets"
 title "Compile sing rule sets"
 for JSON in *.json; do
     echo "Compiling $JSON"
+    sing-box rule-set format -w "$JSON"
     sing-box rule-set compile "$JSON"
 done

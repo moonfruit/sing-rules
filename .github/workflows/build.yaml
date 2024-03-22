@@ -63,27 +63,17 @@ jobs:
       - name: Install python requirements
         run: pip install -r requirements.txt
 
+      - name: Build config
+        run: ./build-sing-config.sh "${{ secrets.GITEE_USER }}" "${{ secrets.GITEE_TOKEN }}" " ${{ secrets.CLASH_URL }}"
+
       - name: Build rule sets
-        run: cd rules && ../build-sing-rules.sh
+        run: ./build-sing-rules.sh
 
       - name: Commit and Push
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add .
-          git commit -m "Update rules"
-          git tag "${{ env.TAG_NAME }}"
-          git push --follow-tags
+        run: ./commit-and-push.sh "Update rules" "${{ env.TAG_NAME }}"
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
           files: rules/*
-
-      - name: Build config
-        env:
-          GITEE_USER: ${{ secrets.GITEE_USER }}
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          CLASH_URL: ${{ secrets.CLASH_URL }}
-        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" "$CLASH_URL"
