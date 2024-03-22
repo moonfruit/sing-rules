@@ -1,14 +1,32 @@
 #!/usr/bin/env bash
-if [[ ! -d dat ]]; then
-    echo "Loyalsoldier/v2ray-rules-dat does not exists" >&2
-    exit 1
-fi
-
 TEMP=$(mktemp)
-git -C dat rev-parse HEAD | tee "$TEMP"
-if diff "$TEMP" v2ray-rules-dat.commit; then
-    echo "Loyalsoldier/v2ray-rules-dat is not changed" >&2
-    exit 1
-else
-    mv "$TEMP" v2ray-rules-dat.commit
-fi
+
+V2RAY_RULES_COMMIT=preflight/v2ray-rules-dat.commit
+CLASS_CONFIG_SHA1=preflight/clash-config.sha1
+
+check-v2ray-rules() {
+    echo -n "Loyalsoldier/v2ray-rules-dat: "
+    git -C dat rev-parse HEAD | tee "$TEMP"
+    if diff "$TEMP" "$V2RAY_RULES_COMMIT"; then
+        echo "Loyalsoldier/v2ray-rules-dat is not changed" >&2
+        return 1
+    else
+        mv "$TEMP" "$V2RAY_RULES_COMMIT"
+    fi
+}
+
+check-clash-url() {
+    if [[ -z "$1" ]]; then
+        return
+    fi
+    echo -n "clash-config: "
+    sha1sum dat/clash-config.yaml | awk '{print $1}' | tee "$TEMP"
+    if diff "$TEMP" "$CLASS_CONFIG_SHA1"; then
+        echo "Clash config is not changed" >&2
+        return 1
+    else
+        mv "$TEMP" "$CLASS_CONFIG_SHA1"
+    fi
+}
+
+check-v2ray-rules || check-clash-url "$1"

@@ -29,6 +29,11 @@ jobs:
           path: dat
           ref: release
 
+      - name: Download clash config
+        env:
+          CLASH_URL: ${{ secrets.CLASH_URL }}
+        run: curl -fsSL "$CLASH_URL" >dat/clash-config.yaml
+
       - name: Preflight
         run: ./preflight.sh
 
