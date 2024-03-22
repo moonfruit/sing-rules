@@ -23,6 +23,7 @@ geo convert site -i v2ray -o sing -f geosite.db "$BIN/dat/geosite.dat"
 
 title "Exporting geo as sing rule sets"
 "$BIN/geo-to-sing-rules.py"
+rm -f geoip.db geosite.db
 
 title "Downloading clash rules"
 CLASH=$(mktemp -d)
