@@ -66,13 +66,6 @@ jobs:
       - name: Build rule sets
         run: cd rules && ../build-sing-rules.sh
 
-      - name: Build config
-        env:
-          GITEE_USER: ${{ secrets.GITEE_USER }}
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          CLASH_URL: ${{ secrets.CLASH_URL }}
-        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" "$CLASH_URL"
-
       - name: Commit and Push
         run: |
           git config user.name 'github-actions[bot]'
@@ -87,3 +80,10 @@ jobs:
         with:
           tag_name: ${{ env.TAG_NAME }}
           files: rules/*
+
+      - name: Build config
+        env:
+          GITEE_USER: ${{ secrets.GITEE_USER }}
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          CLASH_URL: ${{ secrets.CLASH_URL }}
+        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" "$CLASH_URL"
