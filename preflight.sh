@@ -19,7 +19,7 @@ check-clash-url() {
     echo -n "clash-config: "
     sha1sum dat/clash-config.yaml | awk '{print $1}' | tee "$TEMP"
     if diff "$TEMP" "$CLASS_CONFIG_SHA1"; then
-        echo "Clash config is not changed" >&2
+        echo "clash-config is not changed" >&2
         return 1
     else
         mv "$TEMP" "$CLASS_CONFIG_SHA1"
