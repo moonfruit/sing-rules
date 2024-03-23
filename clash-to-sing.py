@@ -167,7 +167,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     groups["🏳️ 其它节点"] = other_nodes
 
     outbounds.append(selector("🔰 默认出口",
-                              ["♻️ 自动选择", "🛢️ 省流节点", "👍 高级节点", "🚀 手动切换", *groups, "DIRECT"]))
+                              ["🛢️ 省流节点", "👍 高级节点", "♻️ 自动选择", "🚀 手动切换", *groups, "DIRECT"]))
 
     outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
@@ -175,12 +175,13 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(urltest("👍 高级节点", costs, expansive_nodes))
 
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
+    outbounds.append(selector("🎮 SonyPS5", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Youtube", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
-    outbounds.append(selector("🛑 全球拦截", ["REJECT", "DIRECT"]))
+    outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["DIRECT", "🔰 默认出口", "REJECT"]))
 
     for tag, nodes in groups.items():
@@ -194,7 +195,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
 def to_sing(clash: Object) -> Object:
     return {
         "log": {
-            "level": "info",
+            "level": "trace",
             "timestamp": True,
         },
         "dns": {
@@ -239,6 +240,7 @@ def to_sing(clash: Object) -> Object:
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
+                {"rule_set": "PlayStation", "outbound": "🎮 SonyPS5"},
                 {"rule_set": "Disney+", "outbound": "🎥 Disney+"},
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "Youtube", "outbound": "🎥 Youtube"},
@@ -287,6 +289,13 @@ def to_sing(clash: Object) -> Object:
                     "tag": "Direct",
                     "format": "binary",
                     "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/direct.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "PlayStation",
+                    "format": "binary",
+                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/playstation.srs",
                     "download_detour": "DIRECT",
                 },
                 {
