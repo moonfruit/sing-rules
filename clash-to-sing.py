@@ -175,7 +175,6 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(urltest("👍 高级节点", costs, expansive_nodes))
 
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
-    outbounds.append(selector("🎮 SonyPS5", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Youtube", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
@@ -240,7 +239,6 @@ def to_sing(clash: Object) -> Object:
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
-                {"rule_set": "PlayStation", "outbound": "🎮 SonyPS5"},
                 {"rule_set": "Disney+", "outbound": "🎥 Disney+"},
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "Youtube", "outbound": "🎥 Youtube"},
@@ -289,13 +287,6 @@ def to_sing(clash: Object) -> Object:
                     "tag": "Direct",
                     "format": "binary",
                     "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/direct.srs",
-                    "download_detour": "DIRECT",
-                },
-                {
-                    "type": "remote",
-                    "tag": "PlayStation",
-                    "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/playstation.srs",
                     "download_detour": "DIRECT",
                 },
                 {

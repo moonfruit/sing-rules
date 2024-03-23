@@ -58,7 +58,6 @@ def main():
     generate("ai.json", geosite=["anthropic", "bing", "jetbrains-ai", "openai", "perplexity"])
     generate("netflix.json", geosite="netflix", geoip="netflix")
     generate("youtube.json", geosite="youtube")
-    generate("playstation.json", geosite="playstation")
     generate("private.json", geosite="private", geoip="private")
     generate("block.json", geosite="category-ads-all")
     generate(

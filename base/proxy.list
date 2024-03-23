@@ -8,3 +8,5 @@ DOMAIN-SUFFIX,jsfiddle.net
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
+# CloudFront
+DOMAIN-SUFFIX,cloudfront.net
