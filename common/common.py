@@ -72,7 +72,7 @@ def as_list(items: set[str], *, key=None) -> RelaxedStrings:
         return sorted(items, key=key)
 
 
-def network_key(ip: str) -> (int, ipaddress.IPv4Network | ipaddress.IPv6Network):
+def network_key(ip: str) -> tuple[int, ipaddress.IPv4Network | ipaddress.IPv6Network]:
     network = ipaddress.ip_network(ip, strict=False)
     if isinstance(network, ipaddress.IPv4Network):
         return 4, network
