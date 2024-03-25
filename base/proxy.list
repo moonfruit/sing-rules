@@ -2,11 +2,13 @@
 DOMAIN-SUFFIX,cryptocompare.com
 DOMAIN-SUFFIX,infura.io
 DOMAIN-SUFFIX,metamask.io
+# CloudFront
+DOMAIN-SUFFIX,cloudfront.net
 # Development
 DOMAIN-SUFFIX,bitbucket.org
 DOMAIN-SUFFIX,jsfiddle.net
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
-# CloudFront
-DOMAIN-SUFFIX,cloudfront.net
+# Korean manga
+DOMAIN-SUFFIX,92hm.top
