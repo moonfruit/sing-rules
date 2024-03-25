@@ -6,9 +6,15 @@ DOMAIN-SUFFIX,metamask.io
 DOMAIN-SUFFIX,cloudfront.net
 # Development
 DOMAIN-SUFFIX,bitbucket.org
+DOMAIN-SUFFIX,mitmproxy.org
 DOMAIN-SUFFIX,jsfiddle.net
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
 # Korean manga
 DOMAIN-SUFFIX,92hm.top
+DOMAIN-SUFFIX,92hm.life
+# Lego
+DOMAIN-SUFFIX,brickset.com
+# Proxy
+DOMAIN-SUFFIX,gost.run
