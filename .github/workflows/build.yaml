@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Set Variables
         run: |
-          echo "TAG=$(env TZ=Asia/Shanghai date +%Y%m%d%H%M)" >>$GITHUB_ENV
+          echo "TAG=$(env TZ=Asia/Shanghai date +%Y%m%d%H%M)" | tee -a $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
         run: curl -fsSL "$CLASH_URL" >dat/clash-config.yaml
 
       - name: Preflight
-        run: ./preflight.sh >>$GITHUB_ENV
+        run: ./preflight.sh | tee -a $GITHUB_ENV
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
