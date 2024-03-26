@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-TEMP=$(mktemp)
 
-V2RAY_RULES_COMMIT=preflight/v2ray-rules-dat.commit
-CLASS_CONFIG_SHA1=preflight/clash-config.sha1
+DIR=preflight
+V2RAY_RULES_COMMIT=$DIR/v2ray-rules-dat.commit
+CLASS_CONFIG_SHA1=$DIR/clash-config.sha1
+
+TEMP=$(mktemp)
+mkdir -p "$DIR"
 
 check-v2ray-rules() {
     echo -n "Loyalsoldier/v2ray-rules-dat: " >&2
