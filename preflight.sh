@@ -11,6 +11,7 @@ check-v2ray-rules() {
         echo "Loyalsoldier/v2ray-rules-dat is not changed" >&2
         return 1
     else
+        echo "BUILD_RULES=1"
         mv "$TEMP" "$V2RAY_RULES_COMMIT"
     fi
 }
@@ -22,6 +23,7 @@ check-clash-url() {
         echo "clash-config is not changed" >&2
         return 1
     else
+        echo "BUILD_CONFIG=1"
         mv "$TEMP" "$CLASS_CONFIG_SHA1"
     fi
 }

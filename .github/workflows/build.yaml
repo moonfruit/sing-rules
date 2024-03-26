@@ -35,21 +35,24 @@ jobs:
         run: curl -fsSL "$CLASH_URL" >dat/clash-config.yaml
 
       - name: Preflight
-        run: ./preflight.sh
+        run: ./preflight.sh >>$GITHUB_ENV
 
       - name: Checkout geo
+        if: env.BUILD_RULES == 1
         uses: actions/checkout@v4
         with:
           repository: MetaCubeX/geo
           path: geo
 
       - name: Setup Go
+        if: env.BUILD_RULES == 1
         uses: actions/setup-go@v5
         with:
           go-version-file: geo/go.mod
           cache-dependency-path: geo/go.sum
 
       - name: Install geo
+        if: env.BUILD_RULES == 1
         run: |
           cd geo && go install -v ./cmd/geo
           geo | head -1
@@ -69,18 +72,22 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build config
+        if: env.BUILD_CONFIG == 1
         env:
           GITEE_USER: ${{ secrets.GITEE_USER }}
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN"
 
       - name: Build rule sets
+        if: env.BUILD_RULES == 1
         run: ./build-sing-rules.sh
 
       - name: Commit and Push
+        if: env.BUILD_RULES == 1
         run: ./commit-and-push.sh "Update rules" "${{ env.TAG }}"
 
       - name: Release
+        if: env.BUILD_RULES == 1
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
