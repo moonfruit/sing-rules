@@ -34,7 +34,7 @@ if check-v2ray-rules >&2; then
     echo "BUILD_RULES=1"
     RESULT=0
 fi
-echo "--------"
+echo "--------" >&2
 if check-clash-url >&2; then
     echo "BUILD_CONFIG=1"
     RESULT=0
