@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 from typing import TextIO
 
-from common import merge, as_set, RelaxedStrings
+from common import RelaxedStrings, as_set, merge
 
 
 def export_geoip(name: str):

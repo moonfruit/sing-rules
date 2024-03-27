@@ -71,6 +71,7 @@ jobs:
           cache: pip
 
       - name: Install python requirements
+        if: env.BUILD_CONFIG == 1
         run: pip install -r requirements.txt
 
       - name: Build config

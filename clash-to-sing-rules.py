@@ -2,7 +2,7 @@
 import json
 from typing import TextIO
 
-from common import get_set, as_rule, get_list, merge, Rule
+from common import Rule, as_rule, get_list, get_set, merge
 
 
 def load_rules(rule_set_file: str) -> list[Rule]:

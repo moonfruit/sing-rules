@@ -4,14 +4,7 @@ import re
 import sys
 from typing import TextIO
 
-import yaml
-
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
-
-from common import Object, SimpleObject, get_list
+from common import Object, SimpleObject, get_list, yaml
 
 
 def inbound(tag: str, type_: str, listen: str, port: int, **extra) -> Object:
@@ -319,7 +312,7 @@ def to_sing(clash: Object) -> Object:
 
 
 def main(clash_config: TextIO, sing_config: TextIO) -> None:
-    clash = yaml.load(clash_config, Loader)
+    clash = yaml.load(clash_config)
     sing = to_sing(clash)
     json.dump(sing, sing_config, ensure_ascii=False, indent=2)
 
