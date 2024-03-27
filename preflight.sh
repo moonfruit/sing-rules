@@ -39,4 +39,5 @@ if check-clash-url >&2; then
     echo "BUILD_CONFIG=1"
     RESULT=0
 fi
+echo $RESULT
 exit $RESULT
