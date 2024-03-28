@@ -29,14 +29,16 @@ check-clash-url() {
     fi
 }
 
-RESULT=1
+RESULT=()
 if check-v2ray-rules >&2; then
-    echo "BUILD_RULES=1"
-    RESULT=0
+    RESULT+=(BUILD_RULES)
 fi
 echo "--------" >&2
 if check-clash-url >&2; then
-    echo "BUILD_CONFIG=1"
-    RESULT=0
+    RESULT+=(BUILD_CONFIG)
 fi
-exit $RESULT
+echo "--------" >&2
+for KEY in "${RESULT[@]}"; do
+    echo "$KEY=1"
+done
+(( ${#RESULT[@]} > 0 ))
