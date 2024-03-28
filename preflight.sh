@@ -37,8 +37,11 @@ echo "--------" >&2
 if check-clash-url >&2; then
     RESULT+=(BUILD_CONFIG)
 fi
-echo "--------" >&2
-for KEY in "${RESULT[@]}"; do
-    echo "$KEY=1"
-done
-(( ${#RESULT[@]} > 0 ))
+if (( ${#RESULT[@]} > 0 )); then
+    echo "--------" >&2
+    for KEY in "${RESULT[@]}"; do
+        echo "$KEY=1"
+    done
+else
+    exit 1
+fi
