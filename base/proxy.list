@@ -8,6 +8,8 @@ DOMAIN-SUFFIX,cloudfront.net
 DOMAIN-SUFFIX,bitbucket.org
 DOMAIN-SUFFIX,mitmproxy.org
 DOMAIN-SUFFIX,jsfiddle.net
+# GBox
+DOMAIN-SUFFIX,gboxlab.com
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net

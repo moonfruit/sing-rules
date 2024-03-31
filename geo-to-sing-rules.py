@@ -62,7 +62,7 @@ def main():
     generate("block.json", geosite="category-ads-all")
     generate(
         "proxy.json",
-        geosite=["bytedance@!cn", "category-dev", "epicgames", "gfw", "origin", "steam", "telegram", "x"],
+        geosite=["bytedance@!cn", "category-dev", "epicgames", "firefox", "gfw", "origin", "steam", "telegram", "x"],
         geoip="telegram",
     )
     generate(
