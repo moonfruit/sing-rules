@@ -86,7 +86,6 @@ jobs:
         run: ./build-sing-rules.sh
 
       - name: Commit and Push
-        if: env.BUILD_RULES == 1
         run: ./commit-and-push.sh "Update rules" "${{ env.TAG }}"
 
       - name: Release

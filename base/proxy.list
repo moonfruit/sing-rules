@@ -10,6 +10,8 @@ DOMAIN-SUFFIX,mitmproxy.org
 DOMAIN-SUFFIX,jsfiddle.net
 # GBox
 DOMAIN-SUFFIX,gboxlab.com
+# FDroid
+DOMAIN-SUFFIX,f-droid.org
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
