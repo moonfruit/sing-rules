@@ -170,7 +170,8 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
-    outbounds.append(selector("🎥 Youtube", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
+    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
+    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
