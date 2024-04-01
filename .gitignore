@@ -1,6 +1,6 @@
-.*
 !.envrc
 !.git*
+.*
 
 *.pyc
 __pycache__
