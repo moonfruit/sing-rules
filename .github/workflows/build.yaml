@@ -105,4 +105,4 @@ jobs:
         if: env.BUILD_RULES == 1
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: ./npm-publish.sh
+        run: ./npm-publish.sh  "${{ env.TAG }}"
