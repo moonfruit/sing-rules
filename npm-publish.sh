@@ -8,7 +8,7 @@ fi
 cat >package.json <<END
 {
   "name": "sing-rules",
-  "version": "$1",
+  "version": "1.$1",
   "description": "sing-box rule sets base on Loyalsoldier/v2ray-rules-dat",
   "homepage": "https://github.com/moonfruit/sing-rules#readme",
   "repository": {
