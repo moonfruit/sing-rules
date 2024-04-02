@@ -14,7 +14,7 @@ fi
 
 cat >package.json <<END
 {
-  "name": "@dkmoonfruit/sing-rules",
+  "name": "sing-rules",
   "version": "$VERSION",
   "description": "sing-box rule sets base on Loyalsoldier/v2ray-rules-dat",
   "license": "GPL-3.0-or-later",
@@ -32,4 +32,4 @@ cat >package.json <<END
 }
 END
 
-npm publish --dry-run
+npm publish
