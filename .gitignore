@@ -6,6 +6,8 @@
 *.pyc
 __pycache__
 
+*.srs
+
 /dat
 /geo
 /node_modules
