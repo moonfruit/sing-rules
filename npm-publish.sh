@@ -14,7 +14,7 @@ fi
 
 cat >package.json <<END
 {
-  "name": "sing-rules",
+  "name": "@dkmoonfruit/sing-rules",
   "version": "$VERSION",
   "description": "sing-box rule sets base on Loyalsoldier/v2ray-rules-dat",
   "license": "GPL-3.0-or-later",
