@@ -94,3 +94,15 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           files: rules/*
+
+      - name: Setup Node
+        if: env.BUILD_RULES == 1
+        uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npmjs
+        if: env.BUILD_RULES == 1
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: ./npm-publish.sh

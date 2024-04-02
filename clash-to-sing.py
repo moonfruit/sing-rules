@@ -137,6 +137,8 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     }
 
     for proxy in proxies:
+        if proxy["server"] == "None":
+            continue
         group, cost, outbound = proxy_to_outbound(proxy)
         outbounds.append(outbound)
 
@@ -246,63 +248,63 @@ def to_sing(clash: Object) -> Object:
                     "type": "remote",
                     "tag": "AI",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/ai.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/ai.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "Disney+",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/disney-plus.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/disney-plus.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "Netflix",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/netflix.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/netflix.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "TikTok",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/tiktok.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/tiktok.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "YouTube",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/youtube.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/youtube.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "Block",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/block.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/block.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "Direct",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/direct.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/direct.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "Private",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/private.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/private.srs",
                     "download_detour": "DIRECT",
                 },
                 {
                     "type": "remote",
                     "tag": "Proxy",
                     "format": "binary",
-                    "url": "https://fastly.jsdelivr.net/gh/moonfruit/sing-rules/rules/proxy.srs",
+                    "url": "https://jsd.cdn.zzko.cn/gh/moonfruit/sing-rules/rules/proxy.srs",
                     "download_detour": "DIRECT",
                 },
             ],

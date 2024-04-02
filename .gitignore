@@ -1,12 +1,14 @@
+.*
 !.envrc
 !.git*
-.*
+.git
 
 *.pyc
 __pycache__
 
 /dat
 /geo
-/private
+/node_modules
+/package.json
 /venv
 /zoo
