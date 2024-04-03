@@ -4,6 +4,9 @@
     {
       "domain": [
         "byteoversea.com",
+        "coze.com",
+        "ibytedtos.com",
+        "ibyteimg.com",
         "muscdn.com",
         "musical.ly",
         "p16-tiktokcdn-com.akamaized.net",
@@ -20,6 +23,9 @@
       ],
       "domain_suffix": [
         ".byteoversea.com",
+        ".coze.com",
+        ".ibytedtos.com",
+        ".ibyteimg.com",
         ".muscdn.com",
         ".musical.ly",
         ".tik-tokapi.com",
