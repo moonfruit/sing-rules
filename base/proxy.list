@@ -11,6 +11,14 @@ DOMAIN-SUFFIX,jsfiddle.net
 # GBox
 DOMAIN-SUFFIX,gboxlab.com
 # FDroid
+DOMAIN,ftp.fau.de
+DOMAIN,ftp.lysator.liu.se
+DOMAIN,fdroid.tetaneutral.net
+DOMAIN,mirror.cyberbits.eu
+DOMAIN,mirror.fcix.net
+DOMAIN,mirror.kumi.systems
+DOMAIN,mirror.level66.network
+DOMAIN,mirror.ossplanet.net
 DOMAIN-SUFFIX,f-droid.org
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
