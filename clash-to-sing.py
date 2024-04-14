@@ -202,7 +202,7 @@ def to_sing(clash: Object) -> Object:
                     "address_resolver": "dns-resolver",
                     "detour": "DIRECT",
                 },
-                {"tag": "dns-proxy", "address": "tls://1.1.1.1"},
+                {"tag": "dns-proxy", "address": "https://1.1.1.1/dns-query"},
                 {"tag": "dns-gingkoo", "address": "tcp://10.1.2.59", "detour": "DIRECT"},
                 {"tag": "dns-home", "address": "192.168.50.1", "detour": "DIRECT"},
                 {"tag": "dns-system", "address": "local", "detour": "Direct"},

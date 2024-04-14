@@ -2,6 +2,8 @@
 DOMAIN-SUFFIX,cryptocompare.com
 DOMAIN-SUFFIX,infura.io
 DOMAIN-SUFFIX,metamask.io
+# CloudFlare
+DOMAIN,one.one.one.one
 # CloudFront
 DOMAIN-SUFFIX,cloudfront.net
 # Development
