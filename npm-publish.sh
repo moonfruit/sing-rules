@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-VERSION=$1
-if [[ -z $VERSION ]]; then
-    echo "No version defined"
-    exit 1
-fi
-
-if [[ $VERSION =~ ([0-9]{8})([0-9]{4}) ]]; then
-    VERSION=1.${BASH_REMATCH[1]}.${BASH_REMATCH[2]#0}
+if [[ $1 =~ ^([0-9]{4})([0-9]{4})([0-9]{4})$ ]]; then
+    VERSION=${BASH_REMATCH[1]}.${BASH_REMATCH[2]#0}.${BASH_REMATCH[3]#0}
+elif [[ $1 =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+    VERSION=$1
 else
-    VERSION=1.$VERSION.0
+    echo "Invalid version: '$1'"
+    exit 1
 fi
 
 cat >package.json <<END
