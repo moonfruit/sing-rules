@@ -5,6 +5,7 @@
       "domain": [
         "ai.com",
         "ai.google.dev",
+        "aistudio.google.com",
         "anthropic.com",
         "bard.google.com",
         "bing.com",
@@ -57,7 +58,6 @@
         "office365love.com",
         "office365tw.com",
         "openai.com",
-        "openai.nooc.ink",
         "openaiapi-site.azureedge.net",
         "openaicom.imgix.net",
         "openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net",
@@ -75,6 +75,7 @@
       ],
       "domain_suffix": [
         ".ai.com",
+        ".aistudio.google.com",
         ".anthropic.com",
         ".bing",
         ".bing.com",
@@ -121,7 +122,6 @@
         ".office365love.com",
         ".office365tw.com",
         ".openai.com",
-        ".openai.nooc.ink",
         ".openaiapi-site.azureedge.net",
         ".opendns.com",
         ".opera-api.com",
@@ -132,6 +132,7 @@
         ".sprinklesapp.com",
         ".statsigapi.net"
       ],
+      "domain_keyword": "openai",
       "domain_regex": "chatgpt-async-webps-prod-eastus-\\d+\\.webpubsub\\.azure\\.com$"
     }
   ]
