@@ -1023,7 +1023,6 @@
         "chaoex.com",
         "chapm25.com",
         "chat.lmsys.org",
-        "chat.openai.com.cdn.cloudflare.net",
         "chatgpt.com",
         "chatnook.com",
         "chaturbate.com",
@@ -4331,6 +4330,7 @@
         "oopsforum.com",
         "open.com.hk",
         "openai.com",
+        "openai.com.cdn.cloudflare.net",
         "openaiapi-site.azureedge.net",
         "openaicom.imgix.net",
         "openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net",
@@ -11182,6 +11182,7 @@
         ".oopsforum.com",
         ".open.com.hk",
         ".openai.com",
+        ".openai.com.cdn.cloudflare.net",
         ".openallweb.com",
         ".opendemocracy.net",
         ".opendn.xyz",
@@ -13720,10 +13721,10 @@
       "domain_regex": [
         ".+\\.dkr\\.ecr\\.[^\\.]+\\.amazonaws\\.com$",
         "^cdn\\d-epicgames-\\d+\\.file\\.myqcloud\\.com$",
+        "^chatgpt-async-webps-prod-eastus-\\d+\\.webpubsub\\.azure\\.com$",
         "^epicgames-download\\d-\\d+\\.file\\.myqcloud\\.com$",
         "^epicgames-download\\d\\.akamaized\\.net$",
-        "chatgpt-async-webps-prod-eastus-\\d+\\.webpubsub\\.azure\\.com$",
-        "github-production-release-asset-[0-9a-zA-Z]{6}\\.s3\\.amazonaws\\.com"
+        "^github-production-release-asset-[0-9a-zA-Z]{6}\\.s3\\.amazonaws\\.com$"
       ],
       "ip_cidr": [
         "91.105.192.0/23",
