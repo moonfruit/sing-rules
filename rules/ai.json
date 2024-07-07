@@ -24,6 +24,7 @@
         "bluehatnights.com",
         "cdn.auth0.com",
         "chatgpt.com",
+        "ciciai.com",
         "civitai.com",
         "claude.ai",
         "cn.bing.com",
@@ -94,6 +95,7 @@
         ".bluehatnights.com",
         ".cdn.auth0.com",
         ".chatgpt.com",
+        ".ciciai.com",
         ".civitai.com",
         ".claude.ai",
         ".cn.bing.com",
@@ -135,7 +137,10 @@
         ".sprinklesapp.com",
         ".statsigapi.net"
       ],
-      "domain_keyword": "openai",
+      "domain_keyword": [
+        "chatgpt",
+        "openai"
+      ],
       "domain_regex": "^chatgpt-async-webps-prod-eastus-\\d+\\.webpubsub\\.azure\\.com$"
     }
   ]
