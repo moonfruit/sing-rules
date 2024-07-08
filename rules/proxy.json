@@ -5587,6 +5587,9 @@
         "tellme.pw",
         "tenacy.com",
         "tencent.design",
+        "tencent-cloud.cn",
+        "tencent-cloud.com",
+        "tencentcloud.com",
         "tenor.com",
         "tensorflow.org",
         "tenzinpalmo.com",
@@ -12414,6 +12417,9 @@
         ".tellme.pw",
         ".tenacy.com",
         ".tencent.design",
+        ".tencent-cloud.cn",
+        ".tencent-cloud.com",
+        ".tencentcloud.com",
         ".tenor.com",
         ".tensorflow.org",
         ".tenzinpalmo.com",
@@ -13721,7 +13727,7 @@
       "domain_regex": [
         ".+\\.dkr\\.ecr\\.[^\\.]+\\.amazonaws\\.com$",
         "^cdn\\d-epicgames-\\d+\\.file\\.myqcloud\\.com$",
-        "^chatgpt-async-webps-prod-eastus-\\d+\\.webpubsub\\.azure\\.com$",
+        "^chatgpt-async-webps-prod-\\S+-\\d+\\.webpubsub\\.azure\\.com$",
         "^epicgames-download\\d-\\d+\\.file\\.myqcloud\\.com$",
         "^epicgames-download\\d\\.akamaized\\.net$",
         "^github-production-release-asset-[0-9a-zA-Z]{6}\\.s3\\.amazonaws\\.com$"

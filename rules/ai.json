@@ -141,7 +141,7 @@
         "chatgpt",
         "openai"
       ],
-      "domain_regex": "^chatgpt-async-webps-prod-eastus-\\d+\\.webpubsub\\.azure\\.com$"
+      "domain_regex": "^chatgpt-async-webps-prod-\\S+-\\d+\\.webpubsub\\.azure\\.com$"
     }
   ]
 }
