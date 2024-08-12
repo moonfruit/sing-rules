@@ -61,7 +61,7 @@ def main():
     generate("youtube.json", geosite="youtube")
     generate("private.json", geosite="private", geoip="private")
     generate("dev.json", geosite="category-dev")
-    generate("dev-cn.json", geosite="category-dev@cn")
+    generate("dev-cn.json", geosite=["category-dev@cn", "category-dev-cn"])
     generate("games.json", geosite="category-games")
     generate("games-cn.json", geosite="category-games@cn")
     generate("porn.json", geosite="category-porn")
