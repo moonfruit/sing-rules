@@ -175,6 +175,11 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
 
+    outbounds.append(selector("🖥️ 软件开发", ["🔰 默认出口", *groups, "DIRECT"]))
+    outbounds.append(selector("🖥️ 软件开发 🇨🇳", ["DIRECT", "🔰 默认出口", *groups]))
+    outbounds.append(selector("🎮 游戏天地", ["🔰 默认出口", *groups, "DIRECT"]))
+    outbounds.append(selector("🎮 游戏天地 🇨🇳", ["DIRECT", "🔰 默认出口", *groups]))
+
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["DIRECT", "🔰 默认出口", "REJECT"]))
@@ -240,6 +245,10 @@ def to_sing(clash: Object) -> Object:
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
+                {"rule_set": "Development@CN", "outbound": "🖥️ 软件开发 🇨🇳"},
+                {"rule_set": "Development", "outbound": "🖥️ 软件开发"},
+                {"rule_set": "Games@CN", "outbound": "🎮 游戏天地 🇨🇳"},
+                {"rule_set": "Games", "outbound": "🎮 游戏天地"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"inbound": "direct-in", "outbound": "🎯 全球直连"},
@@ -278,6 +287,34 @@ def to_sing(clash: Object) -> Object:
                     "tag": "YouTube",
                     "format": "binary",
                     "url": "https://jsd.cdn.zzko.cn/npm/sing-rules/rules/youtube.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Development",
+                    "format": "binary",
+                    "url": "https://jsd.cdn.zzko.cn/npm/sing-rules/rules/dev.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Development@CN",
+                    "format": "binary",
+                    "url": "https://jsd.cdn.zzko.cn/npm/sing-rules/rules/dev-cn.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Games",
+                    "format": "binary",
+                    "url": "https://jsd.cdn.zzko.cn/npm/sing-rules/rules/games.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Games@CN",
+                    "format": "binary",
+                    "url": "https://jsd.cdn.zzko.cn/npm/sing-rules/rules/games-cn.srs",
                     "download_detour": "DIRECT",
                 },
                 {

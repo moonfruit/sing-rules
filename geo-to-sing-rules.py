@@ -60,17 +60,14 @@ def main():
     generate("tiktok.json", geosite="bytedance@!cn")
     generate("youtube.json", geosite="youtube")
     generate("private.json", geosite="private", geoip="private")
+    generate("dev.json", geosite="category-dev")
+    generate("dev-cn.json", geosite="category-dev@cn")
+    generate("games.json", geosite="category-games")
+    generate("games-cn.json", geosite="category-games@cn")
+    generate("porn.json", geosite="category-porn")
     generate("block.json", geosite="category-ads-all")
-    generate(
-        "proxy.json",
-        geosite=["category-dev", "ea", "epicgames", "firefox", "gfw", "steam", "telegram", "x"],
-        geoip="telegram",
-    )
-    generate(
-        "direct.json",
-        geosite=["cn", "apple-cn", "google-cn", "tld-cn", "geolocation-cn", "category-dev@cn", "category-games@cn"],
-        geoip="cn",
-    )
+    generate("proxy.json", geosite=["firefox", "gfw", "telegram", "x"], geoip="telegram")
+    generate("direct.json", geosite=["cn", "apple-cn", "google-cn", "tld-cn", "geolocation-cn"], geoip="cn")
 
 
 if __name__ == "__main__":
