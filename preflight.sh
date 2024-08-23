@@ -34,9 +34,9 @@ if check-v2ray-rules >&2; then
     RESULT+=(BUILD_RULES)
 fi
 echo "--------" >&2
-if check-clash-url >&2; then
-    RESULT+=(BUILD_CONFIG)
-fi
+#if check-clash-url >&2; then
+#    RESULT+=(BUILD_CONFIG)
+#fi
 if (( ${#RESULT[@]} > 0 )); then
     echo "--------" >&2
     for KEY in "${RESULT[@]}"; do
