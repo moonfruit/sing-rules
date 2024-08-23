@@ -40,8 +40,23 @@ __FLAG_MAP = {
     "HK": "🇭🇰",
     "TW": "🇨🇳",
     "JP": "🇯🇵",
-    "VN": "🇻🇳",
     "SG": "🇸🇬",
+    "VN": "🇻🇳",
+    "ID": "🇮🇩",
+    "MY": "🇲🇾",
+}
+
+__TAG_GROUP = {
+    "去除5条不合适线路": "SG",
+}
+
+__GROUP_ALIAS = {
+    "US": "美国",
+    "TW": "台湾",
+    "JP": "日本",
+    "SG": "新加坡",
+    "ID": "印尼",
+    "MY": "马来西亚",
 }
 
 __GROUP_MAP = {
@@ -51,8 +66,10 @@ __GROUP_MAP = {
     "HK": "🇭🇰 香港节点",
     "TW": "🇨🇳 台湾节点",
     "JP": "🇯🇵 日本节点",
-    "VN": "🇻🇳 越南节点",
     "SG": "🇸🇬 新加坡节点",
+    "VN": "🇻🇳 越南节点",
+    "ID": "🇮🇩 印度尼西亚",
+    "MY": "🇲🇾 马来西亚",
 }
 
 
@@ -63,10 +80,21 @@ def __find_group(tag: str) -> str:
         return groups[1] if groups[1] in __FLAG_MAP else groups[0]
 
 
+def __fix_tag(tag: str, length: int) -> str:
+    if len(tag) > length and tag[length] != ' ':
+        return tag[:length] + ' ' + tag[length:]
+    return tag
+
+
 def find_group(tag: str) -> tuple[str, str]:
+    if tag in __TAG_GROUP:
+        return __TAG_GROUP[tag], tag
     for group, flag in __FLAG_MAP.items():
         if tag.startswith(flag):
             return group, tag[len(flag):].lstrip()
+    for group, alias in __GROUP_ALIAS.items():
+        if tag.startswith(alias):
+            return group, __fix_tag(tag, len(alias))
     return __find_group(tag), tag
 
 
@@ -167,7 +195,10 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
     outbounds.append(urltest("🛢️ 省流节点", costs, cheap_nodes))
-    outbounds.append(urltest("👍 高级节点", costs, expansive_nodes))
+    if expansive_nodes:
+        outbounds.append(urltest("👍 高级节点", costs, expansive_nodes))
+    else:
+        outbounds.append(selector("👍 高级节点", ["♻️ 自动选择"]))
 
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
@@ -192,7 +223,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     return outbounds
 
 
-def to_sing(clash: Object) -> Object:
+def to_sing(proxies: list[SimpleObject]) -> Object:
     return {
         "log": {
             "level": "trace",
@@ -230,7 +261,7 @@ def to_sing(clash: Object) -> Object:
             localhost("global-in", 7892),
             anyone("protected-in", 9999),
         ],
-        "outbounds": proxies_to_outbound(clash["proxies"]),
+        "outbounds": proxies_to_outbound(proxies),
         "route": {
             "rules": [
                 {"protocol": "dns", "outbound": "dns-out"},
@@ -360,30 +391,36 @@ def to_sing(clash: Object) -> Object:
     }
 
 
-def main(clash_config: TextIO, sing_config: TextIO) -> None:
-    clash = yaml.load(clash_config)
-    sing = to_sing(clash)
-    json.dump(sing, sing_config, ensure_ascii=False, indent=2)
-
-
-def open_in(filename: str) -> TextIO:
+def open_input(filename: str) -> TextIO:
     if filename == "-":
         return sys.stdin
     else:
         return open(filename)
 
 
-def open_out(filename: str) -> TextIO:
+def open_output(filename: str) -> TextIO:
     if filename == "-":
         return sys.stdout
     else:
         return open(filename, "w")
 
 
+def main(*args: str, output: str) -> None:
+    proxies = []
+    for filename in args:
+        with open_input(filename) as f:
+            clash = yaml.load(f)
+        if "proxies" in clash:
+            proxies.extend(clash["proxies"])
+    sing = to_sing(proxies)
+    with open_output(output) as f:
+        json.dump(sing, f, ensure_ascii=False, indent=2)
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        main(sys.stdin, sys.stdout)
+        main("-", output="-")
     elif len(sys.argv) == 2:
-        main(open_in(sys.argv[1]), sys.stdout)
-    elif len(sys.argv) > 2:
-        main(open_in(sys.argv[1]), open_out(sys.argv[2]))
+        main(sys.argv[1], output="-")
+    else:
+        main(*sys.argv[1:-1], output=sys.argv[-1])

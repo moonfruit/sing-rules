@@ -31,13 +31,16 @@ jobs:
 
       - name: Download clash config
         env:
-          CLASH_URL: ${{ secrets.CLASH_URL }}
-        run: curl -fsSL "$CLASH_URL" >dat/clash-config.yaml
+          XIPCLOUD_URL: ${{ secrets.XIPCLOUD_URL }}
+          FZG_URL: ${{ secrets.FZG_URL }}
+        run: |
+          curl -fsSL "$XIPCLOUD_URL" >dat/xipcloud.yaml
+          curl -fsSL "$FZG_URL" >dat/fzg.yaml
 
       - name: Preflight
         run: |
           set -o pipefail
-          ./preflight.sh | tee -a $GITHUB_ENV
+          ./preflight.sh xipcloud fzg | tee -a $GITHUB_ENV
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
@@ -78,7 +81,7 @@ jobs:
         env:
           GITEE_USER: ${{ secrets.GITEE_USER }}
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN"
+        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" dat/xipcloud.yaml dat/fzg.yaml
 
       - name: Build rule sets
         if: env.BUILD_RULES == 1

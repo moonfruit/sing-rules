@@ -2,7 +2,6 @@
 
 DIR=preflight
 V2RAY_RULES_COMMIT=$DIR/v2ray-rules-dat.commit
-CLASS_CONFIG_SHA1=$DIR/clash-config.sha1
 
 TEMP=$(mktemp)
 mkdir -p "$DIR"
@@ -18,15 +17,25 @@ check-v2ray-rules() {
     fi
 }
 
-check-clash-url() {
-    echo -n "clash-config: "
-    sha1sum dat/clash-config.yaml | awk '{print $1}' | tee "$TEMP"
-    if diff "$TEMP" "$CLASS_CONFIG_SHA1"; then
-        echo "clash-config is not changed"
+check-clash-yaml() {
+    echo -n "$1: "
+    sha1sum "dat/$1.yaml" | awk '{print $1}' | tee "$TEMP"
+    if diff "$TEMP" "$DIR/$1.sha1"; then
+        echo "$1.yaml is not changed"
         return 1
     else
-        mv "$TEMP" "$CLASS_CONFIG_SHA1"
+        mv "$TEMP" "$DIR/$1.sha1"
     fi
+}
+
+check-clash() {
+    local result=1
+    for name in "$@"; do
+        if check-clash-yaml "$name"; then
+            result=0
+        fi
+    done
+    return $result
 }
 
 RESULT=()
@@ -34,10 +43,12 @@ if check-v2ray-rules >&2; then
     RESULT+=(BUILD_RULES)
 fi
 echo "--------" >&2
-#if check-clash-url >&2; then
-#    RESULT+=(BUILD_CONFIG)
-#fi
-if (( ${#RESULT[@]} > 0 )); then
+if (($#)); then
+    if check-clash "$@" >&2; then
+        RESULT+=(BUILD_CONFIG)
+    fi
+fi
+if ((${#RESULT[@]})); then
     echo "--------" >&2
     for KEY in "${RESULT[@]}"; do
         echo "$KEY=1"
