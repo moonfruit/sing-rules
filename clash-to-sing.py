@@ -46,9 +46,9 @@ __FLAG_MAP = {
     "MY": "🇲🇾",
 }
 
-__TAG_GROUP = {
-    "去除5条不合适线路": "SG",
-}
+__TAG_GROUP = [
+    ("SG", re.compile(r"去除\s*\d\s*条不合适线路")),
+]
 
 __GROUP_ALIAS = {
     "US": "美国",
@@ -87,8 +87,9 @@ def __fix_tag(tag: str, length: int) -> str:
 
 
 def find_group(tag: str) -> tuple[str, str]:
-    if tag in __TAG_GROUP:
-        return __TAG_GROUP[tag], tag
+    for group, pattern in __TAG_GROUP:
+        if pattern.match(tag):
+            return group, tag
     for group, flag in __FLAG_MAP.items():
         if tag.startswith(flag):
             return group, tag[len(flag):].lstrip()
