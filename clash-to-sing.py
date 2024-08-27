@@ -272,6 +272,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
+                {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
                 {"inbound": "direct-in", "outbound": "🎯 全球直连"},
@@ -352,6 +353,13 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                     "tag": "Direct",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/direct.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "GFW",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/gfw.srs",
                     "download_detour": "DIRECT",
                 },
                 {
