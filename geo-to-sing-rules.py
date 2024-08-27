@@ -66,8 +66,13 @@ def main():
     generate("games-cn.json", geosite="category-games@cn")
     generate("porn.json", geosite="category-porn")
     generate("block.json", geosite="category-ads-all")
-    generate("proxy.json", geosite=["firefox", "gfw", "telegram", "x"], geoip="telegram")
-    generate("direct.json", geosite=["cn", "apple-cn", "google-cn", "tld-cn", "geolocation-cn"], geoip="cn")
+    generate("direct.json", geosite=[
+        "cn", "apple-cn", "google-cn", "tld-cn", "geolocation-cn", "china-list",
+        "category-dev-cn", "category-dev@cn", "category-games@cn",
+    ], geoip="cn")
+    generate("proxy.json", geosite=[
+        "category-dev", "ea", "epicgames", "firefox", "gfw", "steam", "telegram", "x",
+    ], geoip="telegram")
 
 
 if __name__ == "__main__":
