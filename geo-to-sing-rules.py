@@ -71,7 +71,7 @@ def main():
         "category-dev-cn", "category-dev@cn", "category-games@cn",
     ], geoip="cn")
     generate("proxy.json", geosite=[
-        "category-dev", "ea", "epicgames", "firefox", "gfw", "steam", "telegram", "x",
+        "category-dev", "ea", "epicgames", "firefox", "gfw", "origin", "steam", "telegram", "x",
     ], geoip="telegram")
 
 
