@@ -238,7 +238,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"tag": "doh-proxy", "address": "https://1.1.1.1/dns-query", "detour": "🔰 默认出口"},
                 {"tag": "dns-gingkoo", "address": "tcp://10.1.2.59", "detour": "DIRECT"},
                 {"tag": "dns-home", "address": "192.168.50.1", "detour": "DIRECT"},
-                {"tag": "dns-system", "address": "local", "detour": "Direct"},
+                {"tag": "dns-system", "address": "local", "detour": "DIRECT"},
             ],
             "rules": [
                 {"domain_suffix": "server.gingkoo", "server": "dns-gingkoo"},
