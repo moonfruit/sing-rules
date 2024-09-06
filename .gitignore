@@ -12,5 +12,6 @@ __pycache__
 /geo
 /node_modules
 /package.json
+/private
 /venv
 /zoo

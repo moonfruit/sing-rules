@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 import json
 import re
-import sys
-from typing import TextIO
+from pathlib import Path
+from typing import Annotated
+
+import typer
+from attrs import define
+from cattrs import structure
 
 from common import Object, SimpleObject, get_list, yaml
+from common.io import open_path
 
 
 def inbound(tag: str, type_: str, listen: str, port: int, **extra) -> Object:
@@ -81,8 +86,8 @@ def __find_group(tag: str) -> str:
 
 
 def __fix_tag(tag: str, length: int) -> str:
-    if len(tag) > length and tag[length] != ' ':
-        return tag[:length] + ' ' + tag[length:]
+    if len(tag) > length and tag[length] != " ":
+        return tag[:length] + " " + tag[length:]
     return tag
 
 
@@ -92,22 +97,22 @@ def find_group(tag: str) -> tuple[str, str]:
             return group, tag
     for group, flag in __FLAG_MAP.items():
         if tag.startswith(flag):
-            return group, tag[len(flag):].lstrip()
+            return group, tag[len(flag) :].lstrip()
     for group, alias in __GROUP_ALIAS.items():
         if tag.startswith(alias):
             return group, __fix_tag(tag, len(alias))
     return __find_group(tag), tag
 
 
-def find_cost(tag: str) -> float:
+def find_cost(tag: str, cost: float = 1) -> float:
     match = re.match(r".*\s(?:\(\s*)?(\d+(?:\.\d+)?)x(?:\s*\))?\s*$", tag)
-    return float(match.group(1)) if match else 1
+    return float(match.group(1)) if match else cost
 
 
 def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
     name = clash["name"].strip()
     group, name = find_group(name)
-    cost = find_cost(name)
+    cost = find_cost(name, clash.get("cost", 1))
     tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
     match clash["type"]:
         case "vmess":
@@ -146,6 +151,23 @@ def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
 __COST_LINE = 2
 
 
+def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float = None):
+    get_list(groups, group).append(tag)
+    if cost and cost < __COST_LINE:
+        get_list(groups, f"{group} 🛢️").append(tag)
+
+
+def remove_duple_keys(d: dict) -> dict:
+    keys_to_remove = []
+    for key in d:
+        new_key = key + " 🛢️"
+        if new_key in d and d[key] == d[new_key]:
+            keys_to_remove.append(new_key)
+    for key in keys_to_remove:
+        del d[key]
+    return d
+
+
 def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds = [
         {"type": "direct", "tag": "DIRECT"},
@@ -164,6 +186,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
         "🇺🇸 美国节点": ["⛰️ Gingkoo"],
         "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
     }
+    providers = {}
 
     for proxy in proxies:
         if proxy["server"] == "None":
@@ -171,27 +194,36 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
         group, cost, outbound = proxy_to_outbound(proxy)
         outbounds.append(outbound)
 
-        tag_ = outbound["tag"]
-        costs[tag_] = cost
-        all_nodes.append(tag_)
+        tag = outbound["tag"]
+        costs[tag] = cost
+        all_nodes.append(tag)
 
         if cost <= __COST_LINE:
-            cheap_nodes.append(tag_)
+            cheap_nodes.append(tag)
         else:
-            expansive_nodes.append(tag_)
+            expansive_nodes.append(tag)
 
         if group in __GROUP_MAP:
-            get_list(groups, __GROUP_MAP[group]).append(tag_)
-            if group == "US" and cost <= __COST_LINE:
-                get_list(groups, "🇺🇸 美国节点 🛢️").append(tag_)
-            elif group == "UK":
-                get_list(groups, "🇪🇺 欧洲节点").append(tag_)
+            if group == "US":
+                add_to_group(groups, __GROUP_MAP[group], tag, cost)
+            else:
+                if group == "UK":
+                    add_to_group(groups, __GROUP_MAP["EU"], tag)
+                add_to_group(groups, __GROUP_MAP[group], tag)
         else:
-            other_nodes.append(tag_)
-    groups["🏳️ 其它节点"] = other_nodes
+            other_nodes.append(tag)
 
-    outbounds.append(selector("🔰 默认出口",
-                              ["🛢️ 省流节点", "👍 高级节点", "♻️ 自动选择", "🚀 手动切换", *groups, "DIRECT"]))
+        if "provider" in proxy:
+            provider = proxy["provider"]
+            add_to_group(providers, provider, tag, cost)
+
+    groups["🏳️ 其它节点"] = other_nodes
+    remove_duple_keys(providers)
+    group_tags = [*providers, *groups]
+
+    outbounds.append(
+        selector("🔰 默认出口", ["🛢️ 省流节点", "👍 高级节点", "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
+    )
 
     outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
@@ -201,15 +233,18 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     else:
         outbounds.append(selector("👍 高级节点", ["♻️ 自动选择"]))
 
-    outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
-    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
-    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
-    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
-    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *groups, "DIRECT"]))
+    outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["DIRECT", "🔰 默认出口", "REJECT"]))
+
+    for tag, nodes in providers.items():
+        outbounds.append(urltest(tag, costs, nodes))
 
     for tag, nodes in groups.items():
         outbounds.append(urltest(tag, costs, nodes))
@@ -391,36 +426,53 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
     }
 
 
-def open_input(filename: str) -> TextIO:
-    if filename == "-":
-        return sys.stdin
-    else:
-        return open(filename)
+@define
+class ConfigFile:
+    path: Path
+    name: str = None
+    cost: float = 1
 
 
-def open_output(filename: str) -> TextIO:
-    if filename == "-":
-        return sys.stdout
-    else:
-        return open(filename, "w")
+def load_config_files(path: Path) -> list[ConfigFile]:
+    with open_path(path) as f:
+        configs = json.load(f)
+    return structure(configs, list[ConfigFile])
 
 
-def main(*args: str, output: str) -> None:
-    proxies = []
-    for filename in args:
-        with open_input(filename) as f:
-            clash = yaml.load(f)
-        if "proxies" in clash:
-            proxies.extend(clash["proxies"])
+def load_proxies(config: ConfigFile) -> list[SimpleObject]:
+    with open_path(config.path) as f:
+        clash = yaml.load(f)
+    if "proxies" not in clash:
+        return []
+    proxies = clash["proxies"]
+    for proxy in proxies:
+        if config.name:
+            proxy["provider"] = config.name
+        proxy["cost"] = config.cost
+    return proxies
+
+
+def main(
+    filenames: Annotated[
+        list[Path], typer.Argument(show_default=False, exists=True, dir_okay=False, readable=True)
+    ] = None,
+    configs: Annotated[
+        list[Path], typer.Option("--config", "-c", show_default=False, exists=True, dir_okay=False, readable=True)
+    ] = None,
+    output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
+):
+    config_files = [ConfigFile(f) for f in filenames] if filenames else []
+    if configs:
+        for config in configs:
+            config_files.extend(load_config_files(config))
+    proxies = sum([load_proxies(config) for config in config_files], start=[])
+    if not proxies:
+        raise ValueError("No proxies found")
+
     sing = to_sing(proxies)
-    with open_output(output) as f:
+    with open_path(output, "w") as f:
         json.dump(sing, f, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        main("-", output="-")
-    elif len(sys.argv) == 2:
-        main(sys.argv[1], output="-")
-    else:
-        main(*sys.argv[1:-1], output=sys.argv[-1])
+    typer.run(main)

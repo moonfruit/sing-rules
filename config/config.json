@@ -1,0 +1,12 @@
+[
+  {
+    "name": "☁️ xipCloud",
+    "cost": 1.0,
+    "path": "dat/xipcloud.yaml"
+  },
+  {
+    "name": "💨 风之谷",
+    "cost": 0.1,
+    "path": "dat/fzg.yaml"
+  }
+]

@@ -1,2 +1,5 @@
+attrs
+cattrs
 keyring
 pyyaml
+typer
