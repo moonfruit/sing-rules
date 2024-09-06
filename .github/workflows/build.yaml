@@ -81,7 +81,7 @@ jobs:
         env:
           GITEE_USER: ${{ secrets.GITEE_USER }}
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN" config/config.json
+        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN"
 
       - name: Build rule sets
         if: env.BUILD_RULES == 1
