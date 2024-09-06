@@ -7,11 +7,13 @@ if (($# < 3)); then
     exit 1
 fi
 
+CONFIG=$(realpath "$3")
+
 cd "$BIN"
 rm -fr private
 git clone "https://$1:$2@gitee.com/moonfruit/private.git"
 
 cd private
-"$BIN/clash-to-sing.py" -c "$3" | sing-box format -c /dev/stdin >config.json
+"$BIN/clash-to-sing.py" -c "$CONFIG" | sing-box format -c /dev/stdin >config.json
 
 "$BIN/commit-and-push.sh" "Update config" || true
