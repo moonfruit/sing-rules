@@ -283,7 +283,6 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
             "final": "dns-direct",
             "reverse_mapping": True,
             "strategy": "prefer_ipv4",
-            "independent_cache": True,
         },
         "inbounds": [
             dns(),
