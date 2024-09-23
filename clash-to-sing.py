@@ -439,6 +439,8 @@ def load_config_files(path: Path) -> list[ConfigFile]:
 
 
 def load_proxies(config: ConfigFile) -> list[SimpleObject]:
+    if config.cost <= 0:
+        return []
     with open_path(config.path) as f:
         clash = yaml.load(f)
     if "proxies" not in clash:

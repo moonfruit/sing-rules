@@ -35,7 +35,7 @@ jobs:
           FZG_URL: ${{ secrets.FZG_URL }}
         run: |
           curl -fsSL "$XIPCLOUD_URL" >dat/xipcloud.yaml
-          curl -fsSL "$FZG_URL" >dat/fzg.yaml
+          : #curl -fsSL "$FZG_URL" >dat/fzg.yaml
 
       - name: Preflight
         run: |

@@ -6,7 +6,7 @@
   },
   {
     "name": "💨 风之谷",
-    "cost": 0.1,
+    "cost": -1,
     "path": "dat/fzg.yaml"
   }
 ]
