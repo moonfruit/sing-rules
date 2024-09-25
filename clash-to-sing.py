@@ -238,6 +238,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎮 PlayStation", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -306,6 +307,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
+                {"rule_set": "PlayStation", "outbound": "🎮 PlayStation"},
                 {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
@@ -349,30 +351,9 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 },
                 {
                     "type": "remote",
-                    "tag": "Development",
+                    "tag": "PlayStation",
                     "format": "binary",
-                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/dev.srs",
-                    "download_detour": "DIRECT",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Development@CN",
-                    "format": "binary",
-                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/dev-cn.srs",
-                    "download_detour": "DIRECT",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Games",
-                    "format": "binary",
-                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/games.srs",
-                    "download_detour": "DIRECT",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Games@CN",
-                    "format": "binary",
-                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/games-cn.srs",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/playstation.srs",
                     "download_detour": "DIRECT",
                 },
                 {

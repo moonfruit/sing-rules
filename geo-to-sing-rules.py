@@ -59,18 +59,32 @@ def main():
     generate("netflix.json", geosite="netflix", geoip="netflix")
     generate("tiktok.json", geosite="bytedance@!cn")
     generate("youtube.json", geosite="youtube")
-    generate("private.json", geosite="private", geoip="private")
+    generate("playstation.json", geosite="playstation")
+
     generate("dev.json", geosite="category-dev")
     generate("dev-cn.json", geosite=["category-dev@cn", "category-dev-cn"])
     generate("games.json", geosite="category-games")
     generate("games-cn.json", geosite="category-games@cn")
     generate("porn.json", geosite="category-porn")
+
+    generate("private.json", geosite="private", geoip="private")
     generate("block.json", geosite="category-ads-all")
     generate("gfw.json", geosite=["gfw", "telegram", "x"], geoip="telegram")
-    generate("direct.json", geosite=[
-        "cn", "apple-cn", "google-cn", "tld-cn", "geolocation-cn", "china-list",
-        "category-dev-cn", "category-dev@cn", "category-games@cn",
-    ], geoip="cn")
+    generate(
+        "direct.json",
+        geosite=[
+            "cn",
+            "apple-cn",
+            "google-cn",
+            "tld-cn",
+            "geolocation-cn",
+            "china-list",
+            "category-dev-cn",
+            "category-dev@cn",
+            "category-games@cn",
+        ],
+        geoip="cn",
+    )
     generate("proxy.json", geosite=["category-dev", "ea", "epicgames", "firefox", "origin", "steam"])
 
 
