@@ -25,7 +25,6 @@ def to_rules(f: TextIO) -> list[Rule]:
             case "DOMAIN":
                 get_set(rule, "domain").add(values[1].lower())
             case "DOMAIN-SUFFIX":
-                # TODO: Check to see if this needs to be changed when sing-box 1.9 is released.
                 domain_suffix = values[1].lower()
                 if domain_suffix.startswith("."):
                     get_set(rule, "domain_suffix").add(domain_suffix)

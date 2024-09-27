@@ -238,7 +238,8 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎮 PlayStation", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -307,6 +308,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
+                {"rule_set": "PlayStation@CN", "outbound": "🎮 PlayStation@CN"},
                 {"rule_set": "PlayStation", "outbound": "🎮 PlayStation"},
                 {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
@@ -354,6 +356,13 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                     "tag": "PlayStation",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/playstation.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "PlayStation@CN",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/playstation-cn.srs",
                     "download_detour": "DIRECT",
                 },
                 {
@@ -453,6 +462,7 @@ def main(
 
     sing = to_sing(proxies)
     with open_path(output, "w") as f:
+        # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)
 
 
