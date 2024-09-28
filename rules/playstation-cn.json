@@ -2,8 +2,14 @@
   "version": 1,
   "rules": [
     {
-      "domain": "gst.prod.dl.playstation.net",
-      "domain_suffix": ".gst.prod.dl.playstation.net"
+      "domain": [
+        "gst.prod.dl.playstation.net",
+        "image.api.playstation.com"
+      ],
+      "domain_suffix": [
+        ".gst.prod.dl.playstation.net",
+        ".image.api.playstation.com"
+      ]
     }
   ]
 }
