@@ -28,6 +28,7 @@ DOMAIN-SUFFIX,hsreplay.net
 # Korean Manga
 DOMAIN-SUFFIX,92hm.top
 DOMAIN-SUFFIX,92hm.life
+DOMAIN-REGEX,^mxs\d+\.cc$
 # Lego
 DOMAIN-SUFFIX,brickset.com
 # Proxy
