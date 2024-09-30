@@ -1453,7 +1453,8 @@
         "^cdn\\d-epicgames-\\d+\\.file\\.myqcloud\\.com$",
         "^epicgames-download\\d-\\d+\\.file\\.myqcloud\\.com$",
         "^epicgames-download\\d\\.akamaized\\.net$",
-        "^github-production-release-asset-[0-9a-zA-Z]{6}\\.s3\\.amazonaws\\.com$"
+        "^github-production-release-asset-[0-9a-zA-Z]{6}\\.s3\\.amazonaws\\.com$",
+        "^mxs\\d+\\.cc$"
       ]
     }
   ]
