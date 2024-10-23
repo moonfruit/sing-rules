@@ -10,8 +10,6 @@ DOMAIN-SUFFIX,cloudfront.net
 DOMAIN-SUFFIX,bitbucket.org
 DOMAIN-SUFFIX,mitmproxy.org
 DOMAIN-SUFFIX,jsfiddle.net
-# GBox
-DOMAIN-SUFFIX,gboxlab.com
 # FDroid
 DOMAIN,ftp.fau.de
 DOMAIN,ftp.lysator.liu.se
@@ -22,6 +20,8 @@ DOMAIN,mirror.kumi.systems
 DOMAIN,mirror.level66.network
 DOMAIN,mirror.ossplanet.net
 DOMAIN-SUFFIX,f-droid.org
+# GBox
+DOMAIN-SUFFIX,gboxlab.com
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
@@ -31,5 +31,7 @@ DOMAIN-SUFFIX,92hm.life
 DOMAIN-REGEX,^mxs\d+\.cc$
 # Lego
 DOMAIN-SUFFIX,brickset.com
+# Maven
+DOMAIN-SUFFIX,maven.org
 # Proxy
 DOMAIN-SUFFIX,gost.run
