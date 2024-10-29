@@ -1,7 +1,7 @@
 name: Build sing-box rule-sets
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0,12 * * *"
   push:
     branches:
       - main
@@ -101,7 +101,7 @@ jobs:
         if: env.BUILD_RULES == 1
         uses: actions/setup-node@v4
         with:
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Publish to npmjs
         if: env.BUILD_RULES == 1
