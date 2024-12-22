@@ -22,9 +22,11 @@
         "bingworld.com",
         "bj1.api.bing.com",
         "bluehatnights.com",
+        "browser-intake-datadoghq.com",
         "cdn.auth0.com",
         "chat.com",
         "chatgpt.com",
+        "chatgpt.livekit.cloud",
         "ciciai.com",
         "civitai.com",
         "claude.ai",
@@ -45,6 +47,7 @@
         "grazie.aws.intellij.net",
         "groq.com",
         "hanime1.me",
+        "host.livekit.cloud",
         "intercom.io",
         "jetbrains.ai",
         "location.microsoft.com",
@@ -77,7 +80,8 @@
         "servd-anthropic-website.b-cdn.net",
         "sora.com",
         "sprinklesapp.com",
-        "statsigapi.net"
+        "statsigapi.net",
+        "turn.livekit.cloud"
       ],
       "domain_suffix": [
         ".ai.com",
@@ -100,6 +104,7 @@
         ".cdn.auth0.com",
         ".chat.com",
         ".chatgpt.com",
+        ".chatgpt.livekit.cloud",
         ".ciciai.com",
         ".civitai.com",
         ".claude.ai",
@@ -118,6 +123,7 @@
         ".grazie.aws.intellij.net",
         ".groq.com",
         ".hanime1.me",
+        ".host.livekit.cloud",
         ".intercom.io",
         ".jetbrains.ai",
         ".masalladeloslimites.com",
@@ -143,7 +149,8 @@
         ".sentry.io",
         ".sora.com",
         ".sprinklesapp.com",
-        ".statsigapi.net"
+        ".statsigapi.net",
+        ".turn.livekit.cloud"
       ],
       "domain_keyword": [
         "chatgpt",
