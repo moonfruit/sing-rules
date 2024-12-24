@@ -115,6 +115,23 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
     cost = find_cost(name, clash.get("cost", 1))
     tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
     match clash["type"]:
+        case "ss":
+            outbound = {
+                "type": "shadowsocks",
+                "tag": tag,
+                "server": clash["server"],
+                "server_port": clash["port"],
+                "method": clash["cipher"],
+                "password": clash["password"],
+            }
+        case "trojan":
+            outbound = {
+                "type": "trojan",
+                "tag": tag,
+                "server": clash["server"],
+                "server_port": clash["port"],
+                "password": clash["password"],
+            }
         case "vmess":
             outbound = {
                 "type": "vmess",
@@ -124,15 +141,6 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
                 "uuid": clash["uuid"],
                 "security": clash["cipher"],
                 "alter_id": clash["alterId"],
-            }
-        case "ss":
-            outbound = {
-                "type": "shadowsocks",
-                "tag": tag,
-                "server": clash["server"],
-                "server_port": clash["port"],
-                "method": clash["cipher"],
-                "password": clash["password"],
             }
         case _:
             raise ValueError(f"Unknown type '{clash['type']}'")
