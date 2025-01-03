@@ -131,6 +131,9 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
                 "server": clash["server"],
                 "server_port": clash["port"],
                 "password": clash["password"],
+                "tls": {
+                    "enabled": True,
+                },
             }
         case "vmess":
             outbound = {
