@@ -115,6 +115,21 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
     cost = find_cost(name, clash.get("cost", 1))
     tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
     match clash["type"]:
+        case "hysteria2":
+            outbound = {
+                "type": "hysteria2",
+                "tag": tag,
+                "server": clash["server"],
+            }
+            if "ports" in clash:
+                outbound["server_ports"] = [
+                    p.replace("-", ":") if "-" in p else f"{p}:{p}" for p in clash["ports"].split(",")
+                ]
+            else:
+                outbound["server_port"] = clash["port"]
+            outbound.update(password=clash["password"], tls={"enabled": True})
+            if clash.get("skip-cert-verify", False):
+                outbound["tls"]["insecure"] = True
         case "ss":
             outbound = {
                 "type": "shadowsocks",
@@ -135,6 +150,8 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
                     "enabled": True,
                 },
             }
+            if clash.get("skip-cert-verify", False):
+                outbound["tls"]["insecure"] = True
         case "vmess":
             outbound = {
                 "type": "vmess",
