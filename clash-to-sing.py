@@ -271,6 +271,8 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -353,6 +355,8 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
                 {"rule_set": "PlayStation@CN", "outbound": "🎮 PlayStation@CN"},
                 {"rule_set": "PlayStation", "outbound": "🎮 PlayStation"},
+                {"rule_set": "Steam@CN", "outbound": "🎮 Steam@CN"},
+                {"rule_set": "Steam", "outbound": "🎮 Steam"},
                 {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
@@ -406,6 +410,20 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                     "tag": "PlayStation@CN",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/playstation-cn.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Steam",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/steam.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Steam@CN",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/steam-cn.srs",
                     "download_detour": "DIRECT",
                 },
                 {
