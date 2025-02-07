@@ -59,6 +59,8 @@ def main():
     generate("netflix.json", geosite="netflix", geoip="netflix")
     generate("tiktok.json", geosite="bytedance@!cn")
     generate("youtube.json", geosite="youtube")
+    generate("steam.json", geosite="steam")
+    generate("steam-cn.json", geosite="steam@cn")
     generate("playstation.json", geosite="playstation")
 
     generate("dev.json", geosite="category-dev")
