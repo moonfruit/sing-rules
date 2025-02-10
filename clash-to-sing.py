@@ -179,7 +179,7 @@ def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
     return {"type": "urltest", "tag": tag, "outbounds": nodes, "interval": "10m0s"}
 
 
-__COST_LINE = 2
+__COST_LINE = 1.5
 
 
 def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float = None):
