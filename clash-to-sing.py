@@ -179,12 +179,13 @@ def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
     return {"type": "urltest", "tag": tag, "outbounds": nodes, "interval": "10m0s"}
 
 
-__COST_LINE = 1.5
+def is_cheap(cost):
+    return cost < 1.5
 
 
 def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float = None):
     get_list(groups, group).append(tag)
-    if cost and cost < __COST_LINE:
+    if cost and is_cheap(cost):
         get_list(groups, f"{group} 🛢️").append(tag)
 
 
@@ -229,7 +230,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
         costs[tag] = cost
         all_nodes.append(tag)
 
-        if cost <= __COST_LINE:
+        if is_cheap(cost):
             cheap_nodes.append(tag)
         else:
             expansive_nodes.append(tag)
