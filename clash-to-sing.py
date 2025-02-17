@@ -443,6 +443,13 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 },
                 {
                     "type": "remote",
+                    "tag": "First",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/first.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
                     "tag": "GFW",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/gfw.srs",
