@@ -349,6 +349,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
+                {"rule_set": "First", "outbound": "🔰 默认出口"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
                 {"rule_set": "Disney+", "outbound": "🎥 Disney+"},
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
