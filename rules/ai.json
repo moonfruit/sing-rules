@@ -82,7 +82,8 @@
         "sora.com",
         "sprinklesapp.com",
         "statsigapi.net",
-        "turn.livekit.cloud"
+        "turn.livekit.cloud",
+        "x.ai"
       ],
       "domain_suffix": [
         ".ai.com",
@@ -152,7 +153,8 @@
         ".sora.com",
         ".sprinklesapp.com",
         ".statsigapi.net",
-        ".turn.livekit.cloud"
+        ".turn.livekit.cloud",
+        ".x.ai"
       ],
       "domain_keyword": [
         "chatgpt",
