@@ -32,8 +32,8 @@ echo ">>> $CLASH"
 (cd "$CLASH" && "$BIN/clash-download.sh" "$BIN/clash-list.txt")
 
 title "Merging clash rules to sing rule sets"
-"$BIN/clash-merge.sh" "$BIN/config"
 "$BIN/clash-merge.sh" "$CLASH"
+"$BIN/clash-merge.sh" "$BIN/config"
 
 title "Compile sing rule sets"
 for JSON in *.json; do
