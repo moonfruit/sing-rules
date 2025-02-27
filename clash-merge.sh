@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -v
 BIN=$(dirname "${BASH_SOURCE[0]}")
 for LIST in "$1"/*.list; do
     BASENAME="${LIST##*/}"
@@ -8,7 +7,9 @@ for LIST in "$1"/*.list; do
     echo "Merging $BASENAME.json from $LIST"
     "$BIN/clash-to-sing-rules.py" "$LIST" "$BASENAME.json"
     if [[ -r "$1/$BASENAME.exclude" ]]; then
-        echo "Excluding $BASENAME.json from $BASENAME.exclude"
+        echo "Excluding $BASENAME.json from $1/$BASENAME.exclude"
+        cat "$1/$BASENAME.exclude"
+        echo "grep -f \"$1/$BASENAME.exclude\" \"$BASENAME.json\""
         grep -f "$1/$BASENAME.exclude" "$BASENAME.json"
         grep -vf "$1/$BASENAME.exclude" "$BASENAME.json" >"$BASENAME.json.new"
         mv "$BASENAME.json.new" "$BASENAME.json"
