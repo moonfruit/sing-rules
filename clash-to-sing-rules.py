@@ -7,8 +7,8 @@ from common import Rule, as_rule, get_list, get_set, merge
 
 def load_rules(rule_set_file: str) -> list[Rule]:
     try:
-        with open(rule_set_file, "r") as f2:
-            return get_list(json.load(f2), "rules")
+        with open(rule_set_file, "r") as f:
+            return get_list(json.load(f), "rules")
     except FileNotFoundError:
         return []
 
