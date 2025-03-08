@@ -1,2 +1,3 @@
-DOMAIN-SUFFIX,gst.prod.dl.playstation.net
-DOMAIN-SUFFIX,image.api.playstation.com
+DOMAIN,gst.prod.dl.playstation.net
+DOMAIN,sgst.prod.dl.playstation.net
+DOMAIN,image.api.playstation.com
