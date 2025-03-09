@@ -4,11 +4,8 @@
     {
       "domain": [
         "gst.prod.dl.playstation.net",
-        "image.api.playstation.com"
-      ],
-      "domain_suffix": [
-        ".gst.prod.dl.playstation.net",
-        ".image.api.playstation.com"
+        "image.api.playstation.com",
+        "sgst.prod.dl.playstation.net"
       ]
     }
   ]
