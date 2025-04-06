@@ -3,15 +3,17 @@
   "rules": [
     {
       "domain": [
+        "a4e8s8k3.map2.ssl.hwcdn.net",
+        "alibaba.cdn.steampipe.steamcontent.com",
         "csgo.wmsj.cn",
         "dl.steam.clngaa.com",
-        "dl.steam.ksyna.com",
         "dota2.wmsj.cn",
         "edge.steam-dns.top.comcast.net",
         "f3b7q2p3.ssl.hwcdn.net",
         "fanatical.com",
         "gstore.val.manlaxy.com",
         "humblebundle.com",
+        "lv.queniujq.cn",
         "playartifact.com",
         "s.team",
         "st.dl.bscstorage.net",
@@ -38,7 +40,6 @@
         "steamgames.com",
         "steammobile.akamaized.net",
         "steampipe.akamaized.net",
-        "steampipe.steamcontent.tnkjmec.com",
         "steampipe-kr.akamaized.net",
         "steampipe-partner.akamaized.net",
         "steampowered.com",
@@ -60,7 +61,6 @@
       "domain_suffix": [
         ".csgo.wmsj.cn",
         ".dl.steam.clngaa.com",
-        ".dl.steam.ksyna.com",
         ".dota2.wmsj.cn",
         ".edge.steam-dns.top.comcast.net",
         ".fanatical.com",
@@ -87,7 +87,6 @@
         ".steamcontent.com",
         ".steamdeck.com",
         ".steamgames.com",
-        ".steampipe.steamcontent.tnkjmec.com",
         ".steampowered.com",
         ".steampowered.com.8686c.com",
         ".steamserver.net",
