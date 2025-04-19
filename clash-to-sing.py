@@ -358,6 +358,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "PlayStation", "outbound": "🎮 PlayStation"},
                 {"rule_set": "Steam@CN", "outbound": "🎮 Steam@CN"},
                 {"rule_set": "Steam", "outbound": "🎮 Steam"},
+                {"rule_set": "Minecraft", "outbound": "🎮 Steam"},
                 {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
@@ -404,6 +405,13 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                     "tag": "PlayStation",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/playstation.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Minecraft",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/minecraft.srs",
                     "download_detour": "DIRECT",
                 },
                 {
