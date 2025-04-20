@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": [
+        "account.xbox.com",
+        "clientconfig.xboxlive.com",
+        "login.live.com",
+        "minecraft.net",
+        "minecraftservices.com",
+        "mojang.com",
+        "notify.xboxlive.com",
+        "presence-heartbeat.xboxlive.com",
+        "storeedgefd.dsx.mp.microsoft.com",
+        "user.auth.xboxlive.com",
+        "xsts.auth.xboxlive.com"
+      ],
+      "domain_suffix": [
+        ".account.xbox.com",
+        ".clientconfig.xboxlive.com",
+        ".login.live.com",
+        ".minecraft.net",
+        ".minecraftservices.com",
+        ".mojang.com",
+        ".notify.xboxlive.com",
+        ".presence-heartbeat.xboxlive.com",
+        ".storeedgefd.dsx.mp.microsoft.com",
+        ".user.auth.xboxlive.com",
+        ".xsts.auth.xboxlive.com"
+      ]
+    }
+  ]
+}
