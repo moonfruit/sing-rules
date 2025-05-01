@@ -5,6 +5,7 @@
       "domain": [
         "a4e8s8k3.map2.ssl.hwcdn.net",
         "alibaba.cdn.steampipe.steamcontent.com",
+        "client-update.queniuqe.com",
         "csgo.wmsj.cn",
         "dl.steam.clngaa.com",
         "dota2.wmsj.cn",
@@ -59,6 +60,7 @@
         "xz.pphimalayanrt.com"
       ],
       "domain_suffix": [
+        ".client-update.queniuqe.com",
         ".csgo.wmsj.cn",
         ".dl.steam.clngaa.com",
         ".dota2.wmsj.cn",
