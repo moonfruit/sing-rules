@@ -277,7 +277,8 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
-    outbounds.append(selector("🐟 漏网之鱼", ["DIRECT", "🔰 默认出口", "REJECT"]))
+    outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
+    outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
     for tag, nodes in providers.items():
         outbounds.append(urltest(tag, costs, nodes))
@@ -363,6 +364,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
                 {"inbound": "direct-in", "outbound": "🎯 全球直连"},
+                {"inbound": ["redirect-in", "tproxy-in"], "outbound": "👻 透明代理"},
             ],
             "rule_set": [
                 {
