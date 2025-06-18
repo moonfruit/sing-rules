@@ -81,11 +81,12 @@ __GROUP_MAP = {
 }
 
 
-def __find_group(tag: str) -> str:
+def __find_group(tag: str) -> str | None:
     match = re.match(r"(?:IPLC)?([A-Z]{2})\w*(?:-([A-Z]{2}))?\b", tag)
     if match:
         groups = match.groups()
         return groups[1] if groups[1] in __FLAG_MAP else groups[0]
+    return None
 
 
 def __fix_tag(tag: str, length: int) -> str:
@@ -119,7 +120,7 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
     tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
     match clash["type"]:
         case "hysteria2":
-            outbound = {
+            outbound: Object = {
                 "type": "hysteria2",
                 "tag": tag,
                 "server": clash["server"],
@@ -185,8 +186,11 @@ def is_cheap(cost):
 
 def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float = None):
     get_list(groups, group).append(tag)
-    if cost and is_cheap(cost):
-        get_list(groups, f"{group} 🛢️").append(tag)
+    if cost:
+        if is_cheap(cost):
+            get_list(groups, f"{group} 🛢️").append(tag)
+        else:
+            get_list(groups, f"{group} 👍").append(tag)
 
 
 def remove_duple_keys(d: dict) -> dict:
@@ -209,7 +213,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
         {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
     ]
 
-    costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
+    costs: dict[str, float] = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
     all_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
     cheap_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
     expansive_nodes = []
@@ -217,6 +221,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     groups = {
         "🇺🇸 美国节点": ["⛰️ Gingkoo"],
         "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
+        "🇺🇸 美国节点 👍": ["⛰️ Gingkoo"],
     }
     providers = {}
 
@@ -251,14 +256,15 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
 
     groups["🏳️ 其它节点"] = other_nodes
     remove_duple_keys(providers)
-    group_tags = [*providers, *groups]
+    group_tags = ["🍑 自由切换", *providers, *groups]
 
     outbounds.append(
         selector("🔰 默认出口", ["🛢️ 省流节点", "👍 高级节点", "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
     )
 
-    outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
+    outbounds.append(selector("🚀 手动切换", all_nodes))
+    outbounds.append(selector("🍑 自由切换", all_nodes))
     outbounds.append(urltest("🛢️ 省流节点", costs, cheap_nodes))
     if expansive_nodes:
         outbounds.append(urltest("👍 高级节点", costs, expansive_nodes))
@@ -274,6 +280,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("👻 Ghost", ["DIRECT", "GLOBAL", "REJECT"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
