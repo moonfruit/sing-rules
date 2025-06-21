@@ -296,8 +296,9 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
         "route": {
             "rules": [
                 {"action": "sniff"},
-                {"domain": sorted(servers), "outbound": "DIRECT"},
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
+                {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
+                {"domain": sorted(servers), "outbound": "DIRECT"},
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
