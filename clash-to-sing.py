@@ -186,6 +186,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[Simple
     expansive_nodes = []
     other_nodes = []
     groups = {}
+    servers = set()
 
     if local:
         outbounds = [
@@ -210,6 +211,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[Simple
             continue
         group, cost, outbound = proxy_to_outbound(proxy)
         outbounds.append(outbound)
+        servers.add(proxy["server"])
 
         tag = outbound["tag"]
         costs[tag] = cost
@@ -278,10 +280,11 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[Simple
 
     outbounds.append(selector("GLOBAL", [*all_nodes]))
 
-    return outbounds
+    return outbounds, servers
 
 
 def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
+    outbounds, servers = proxies_to_outbound(local, proxies)
     return {
         "dns": {
             "rules": [
@@ -289,9 +292,11 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Proxy", "server": "doh-proxy"},
             ],
         },
-        "outbounds": proxies_to_outbound(local, proxies),
+        "outbounds": outbounds,
         "route": {
             "rules": [
+                {"action": "sniff"},
+                {"domain": sorted(servers), "outbound": "DIRECT"},
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
