@@ -263,7 +263,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     for tag, nodes in groups.items():
         outbounds.append(urltest(tag, costs, nodes))
 
-    outbounds.append(selector("GLOBAL", ["DIRECT", "REJECT", *all_nodes]))
+    outbounds.append(selector("GLOBAL", [*all_nodes]))
 
     return outbounds
 
