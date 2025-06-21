@@ -234,7 +234,8 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[Simple
             provider = proxy["provider"]
             add_to_group(providers, provider, tag, cost)
 
-    groups["🏳️ 其它节点"] = other_nodes
+    if other_nodes:
+        groups["🏳️ 其它节点"] = other_nodes
     remove_duple_keys(providers)
     group_tags = ["🍑 自由切换", *providers, *groups]
 
