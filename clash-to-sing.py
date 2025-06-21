@@ -178,29 +178,30 @@ def remove_duple_keys(d: dict) -> dict:
 
 
 def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[SimpleObject]:
-    outbounds = [
-        {"type": "http", "tag": "⛰️ Gingkoo", "server": "10.1.2.12", "server_port": 8118},
-        {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
-    ]
+    outbounds = []
+    costs: dict[str, float] = {}
 
-    costs: dict[str, float] = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
+    all_nodes = []
+    cheap_nodes = []
+    expansive_nodes = []
+    other_nodes = []
+    groups = {}
 
     if local:
+        outbounds = [
+            {"type": "http", "tag": "⛰️ Gingkoo", "server": "10.1.2.12", "server_port": 8118},
+            {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
+        ]
+        costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
+
         all_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
         cheap_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-        expansive_nodes = []
         other_nodes = ["🧅 Tor Browser"]
         groups = {
             "🇺🇸 美国节点": ["⛰️ Gingkoo"],
             "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
             "🇺🇸 美国节点 👍": ["⛰️ Gingkoo"],
         }
-    else:
-        all_nodes = []
-        cheap_nodes = []
-        expansive_nodes = []
-        other_nodes = []
-        groups = {}
 
     providers = {}
 
