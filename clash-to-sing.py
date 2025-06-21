@@ -11,33 +11,6 @@ from cattrs import structure
 from common import Object, SimpleObject, get_list, yaml
 from common.io import open_path
 
-
-def inbound(tag: str, type_: str, listen: str, port: int, **extra) -> Object:
-    return {
-        "type": type_,
-        "tag": tag,
-        "listen": listen,
-        "listen_port": port,
-        "sniff": True,
-        **extra,
-    }
-
-
-def dns(tag: str = "dns-in", port: int = 53) -> Object:
-    return inbound(tag, "direct", "127.0.0.1", port, udp_fragment=True)
-
-
-def localhost(tag: str, port: int = 7890) -> Object:
-    return inbound(tag, "mixed", "127.0.0.1", port, tcp_fast_open=True)
-
-
-def anyone(tag: str, port: int) -> Object:
-    from common.keychain import get_proxy_user
-
-    user = get_proxy_user()
-    return inbound(tag, "mixed", "::", port, tcp_fast_open=True, users=[user])
-
-
 __FLAG_MAP = {
     "EU": "🇪🇺",
     "HK": "🇭🇰",
@@ -206,9 +179,6 @@ def remove_duple_keys(d: dict) -> dict:
 
 def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds = [
-        {"type": "direct", "tag": "DIRECT"},
-        {"type": "block", "tag": "REJECT"},
-        {"type": "dns", "tag": "dns-out"},
         {"type": "http", "tag": "⛰️ Gingkoo", "server": "10.1.2.12", "server_port": 8118},
         {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
     ]
@@ -300,60 +270,15 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
 
 def to_sing(proxies: list[SimpleObject]) -> Object:
     return {
-        "log": {
-            "level": "trace",
-            "timestamp": True,
-        },
         "dns": {
-            "servers": [
-                {"tag": "dns-resolver", "address": "223.5.5.5", "detour": "DIRECT"},
-                {
-                    "tag": "dns-direct",
-                    "address": "h3://dns.alidns.com/dns-query",
-                    "address_resolver": "dns-resolver",
-                    "detour": "DIRECT",
-                },
-                {
-                    "tag": "dot-direct",
-                    "address": "tls://dns.alidns.com",
-                    "address_resolver": "dns-resolver",
-                    "detour": "DIRECT",
-                },
-                {
-                    "tag": "doh-direct",
-                    "address": "https://dns.alidns.com/dns-query",
-                    "address_resolver": "dns-resolver",
-                    "detour": "DIRECT",
-                },
-                {"tag": "dot-proxy", "address": "tls://1.1.1.1"},
-                {"tag": "doh-proxy", "address": "https://1.1.1.1/dns-query", "detour": "🔰 默认出口"},
-                {"tag": "dns-gingkoo", "address": "tcp://10.1.2.59", "detour": "DIRECT"},
-                {"tag": "dns-home", "address": "192.168.50.1", "detour": "DIRECT"},
-                {"tag": "dns-system", "address": "local", "detour": "DIRECT"},
-            ],
             "rules": [
-                {"domain_suffix": "server.gingkoo", "server": "dns-gingkoo"},
-                {"domain": ["asusrouter.com", "router.asus.com", "www.asusrouter.com"], "server": "dns-home"},
+                {"rule_set": "Direct", "server": "doh-direct"},
                 {"rule_set": "Proxy", "server": "doh-proxy"},
             ],
-            "final": "doh-direct",
-            "reverse_mapping": True,
-            "strategy": "prefer_ipv4",
         },
-        "inbounds": [
-            dns(),
-            localhost("mixed-in"),
-            localhost("direct-in", 7891),
-            localhost("global-in", 7892),
-            anyone("protected-in", 9999),
-        ],
         "outbounds": proxies_to_outbound(proxies),
         "route": {
             "rules": [
-                {"protocol": "dns", "outbound": "dns-out"},
-                {"clash_mode": "Direct", "outbound": "DIRECT"},
-                {"clash_mode": "Global", "outbound": "GLOBAL"},
-                {"inbound": "global-in", "outbound": "GLOBAL"},
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
@@ -481,15 +406,6 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 },
             ],
             "final": "🐟 漏网之鱼",
-        },
-        "experimental": {
-            "cache_file": {
-                "enabled": True,
-            },
-            "clash_api": {
-                "external_controller": "127.0.0.1:9090",
-                "external_ui": "ui",
-            },
         },
     }
 
