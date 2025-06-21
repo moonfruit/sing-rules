@@ -1,5 +1,15 @@
 ai          https://raw.githubusercontent.com/juewuy/ShellClash/master/rules/ai.list
+apple       https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Apple.list
+block       https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list
+block       https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list
+direct      https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/GoogleCN.list
+direct      https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list
 disney-plus https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/DisneyPlus.list
+gfw         https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyGFWlist.list
+gfw         https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyLite.list
+gfw         https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list
+gfw         https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Telegram.list
+microsoft   https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Microsoft.list
 netflix     https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Netflix.list
 netflix     https://raw.githubusercontent.com/LM-Firefly/Rules/master/Global-Services/Netflix.list
 proxy       https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Epic.list

@@ -253,6 +253,8 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[Simple
         outbounds.append(selector("👍 高级节点", ["♻️ 自动选择"]))
 
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
@@ -294,6 +296,8 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
+                {"rule_set": "Apple", "outbound": "🍎 苹果服务"},
+                {"rule_set": "Microsoft", "outbound": "Ⓜ️ 微软服务"},
                 {"rule_set": "Disney+", "outbound": "🎥 Disney+"},
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
@@ -315,6 +319,20 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                     "tag": "AI",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/ai.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Apple",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/apple.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Microsoft",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/microsoft.srs",
                     "download_detour": "DIRECT",
                 },
                 {
@@ -354,13 +372,6 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 },
                 {
                     "type": "remote",
-                    "tag": "Minecraft",
-                    "format": "binary",
-                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/minecraft.srs",
-                    "download_detour": "DIRECT",
-                },
-                {
-                    "type": "remote",
                     "tag": "PlayStation@CN",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/playstation-cn.srs",
@@ -378,6 +389,13 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                     "tag": "Steam@CN",
                     "format": "binary",
                     "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/steam-cn.srs",
+                    "download_detour": "DIRECT",
+                },
+                {
+                    "type": "remote",
+                    "tag": "Minecraft",
+                    "format": "binary",
+                    "url": "https://cdn.jsdmirror.com/npm/sing-rules/rules/minecraft.srs",
                     "download_detour": "DIRECT",
                 },
                 {
