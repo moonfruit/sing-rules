@@ -177,22 +177,31 @@ def remove_duple_keys(d: dict) -> dict:
     return d
 
 
-def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
+def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[SimpleObject]:
     outbounds = [
         {"type": "http", "tag": "⛰️ Gingkoo", "server": "10.1.2.12", "server_port": 8118},
         {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
     ]
 
     costs: dict[str, float] = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
-    all_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-    cheap_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-    expansive_nodes = []
-    other_nodes = ["🧅 Tor Browser"]
-    groups = {
-        "🇺🇸 美国节点": ["⛰️ Gingkoo"],
-        "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
-        "🇺🇸 美国节点 👍": ["⛰️ Gingkoo"],
-    }
+
+    if local:
+        all_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
+        cheap_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
+        expansive_nodes = []
+        other_nodes = ["🧅 Tor Browser"]
+        groups = {
+            "🇺🇸 美国节点": ["⛰️ Gingkoo"],
+            "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
+            "🇺🇸 美国节点 👍": ["⛰️ Gingkoo"],
+        }
+    else:
+        all_nodes = []
+        cheap_nodes = []
+        expansive_nodes = []
+        other_nodes = []
+        groups = {}
+
     providers = {}
 
     for proxy in proxies:
@@ -268,7 +277,7 @@ def proxies_to_outbound(proxies: list[SimpleObject]) -> list[SimpleObject]:
     return outbounds
 
 
-def to_sing(proxies: list[SimpleObject]) -> Object:
+def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
     return {
         "dns": {
             "rules": [
@@ -276,7 +285,7 @@ def to_sing(proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Proxy", "server": "doh-proxy"},
             ],
         },
-        "outbounds": proxies_to_outbound(proxies),
+        "outbounds": proxies_to_outbound(local, proxies),
         "route": {
             "rules": [
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
@@ -446,6 +455,7 @@ def main(
         list[Path], typer.Option("--config", "-c", show_default=False, exists=True, dir_okay=False, readable=True)
     ] = None,
     output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
+    local: Annotated[bool, typer.Option("--local", "-l")] = False,
 ):
     config_files = [ConfigFile(f) for f in filenames] if filenames else []
     if configs:
@@ -455,7 +465,7 @@ def main(
     if not proxies:
         raise ValueError("No proxies found")
 
-    sing = to_sing(proxies)
+    sing = to_sing(local, proxies)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)
