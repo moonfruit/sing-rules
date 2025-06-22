@@ -177,8 +177,9 @@ def remove_duple_keys(d: dict) -> dict:
     return d
 
 
-def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[SimpleObject]:
+def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[SimpleObject], set[str]]:
     outbounds = []
+    servers = set()
     costs: dict[str, float] = {}
 
     all_nodes = []
@@ -186,7 +187,6 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> list[Simple
     expansive_nodes = []
     other_nodes = []
     groups = {}
-    servers = set()
 
     if local:
         outbounds = [
