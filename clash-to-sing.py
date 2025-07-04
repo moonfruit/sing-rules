@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import ipaddress
 import json
 import re
 from pathlib import Path
@@ -177,9 +178,18 @@ def remove_duple_keys(d: dict) -> dict:
     return d
 
 
-def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[SimpleObject], set[str]]:
+def is_ipv4_address(hostname):
+    try:
+        ip = ipaddress.ip_address(hostname)
+        return isinstance(ip, ipaddress.IPv4Address)
+    except ValueError:
+        return False
+
+
+def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[SimpleObject], set[str], set[str]]:
     outbounds = []
-    servers = set()
+    domains = set()
+    ips = set()
     costs: dict[str, float] = {}
 
     all_nodes = []
@@ -207,11 +217,15 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     providers = {}
 
     for proxy in proxies:
-        if proxy["server"] == "None":
+        server = proxy["server"]
+        if server == "None":
             continue
         group, cost, outbound = proxy_to_outbound(proxy)
         outbounds.append(outbound)
-        servers.add(proxy["server"])
+        if is_ipv4_address(server):
+            ips.add(server + "/32")
+        else:
+            domains.add(server)
 
         tag = outbound["tag"]
         costs[tag] = cost
@@ -280,15 +294,35 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
 
     outbounds.append(selector("GLOBAL", [*all_nodes]))
 
-    return outbounds, servers
+    return outbounds, domains, ips
 
 
 __CDN = "cdn.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.com"
 
 
+def as_tuple(ip):
+    parts = ip.split("/", maxsplit=1)
+    return *(int(n) for n in parts[0].split(".")), int(parts[1])
+
+
+def build_direct(domains, ips):
+    direct = {}
+    if domains:
+        direct["domain"] = sorted(domains)
+    if ips:
+        direct["ip_cidr"] = sorted(ips, key=as_tuple)
+
+    if direct:
+        direct["outbound"] = "DIRECT"
+        return direct
+    return None
+
+
 def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
-    outbounds, servers = proxies_to_outbound(local, proxies)
+    outbounds, domains, ips = proxies_to_outbound(local, proxies)
+    direct = build_direct(domains, ips)
+    directs = [direct] if direct else []
     return {
         "dns": {
             "rules": [
@@ -302,7 +336,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"action": "sniff"},
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
-                {"domain": sorted(servers), "outbound": "DIRECT"},
+                *directs,
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
