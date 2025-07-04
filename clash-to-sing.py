@@ -271,6 +271,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("👻 Ghost", ["DIRECT", "GLOBAL", "REJECT"]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
@@ -279,7 +280,6 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
-    outbounds.append(selector("👻 Ghost", ["DIRECT", "GLOBAL", "REJECT"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -317,6 +317,26 @@ def build_direct(domains, ips):
         direct["outbound"] = "DIRECT"
         return direct
     return None
+
+
+def rule_set(tag: str, url: str):
+    # noinspection HttpUrlsUsage
+    if url.startswith("http://") or url.startswith("https://"):
+        url_to_use = f"https://{__CDN}/npm/#{url}"
+    else:
+        url_to_use = url
+
+    if url.endswith(".json"):
+        format_to_use = "source"
+    else:
+        format_to_use = "binary"
+
+    return {
+        "type": "remote",
+        "tag": tag,
+        "format": format_to_use,
+        "url": url_to_use,
+    }
 
 
 def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
@@ -358,108 +378,23 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"inbound": ["redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
             ],
             "rule_set": [
-                {
-                    "type": "remote",
-                    "tag": "AI",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/ai.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Apple",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/apple.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Microsoft",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/microsoft.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Disney+",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/disney-plus.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Netflix",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/netflix.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "TikTok",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/tiktok.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "YouTube",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/youtube.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "PlayStation",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/playstation.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "PlayStation@CN",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/playstation-cn.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Steam",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/steam.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Steam@CN",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/steam-cn.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Minecraft",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/minecraft.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Block",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/block.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Direct",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/direct.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "GFW",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/gfw.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Private",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/private.srs",
-                },
-                {
-                    "type": "remote",
-                    "tag": "Proxy",
-                    "format": "binary",
-                    "url": f"https://{__CDN}/npm/sing-rules/rules/proxy.srs",
-                },
+                rule_set("AI", "sing-rules/rules/ai.srs"),
+                rule_set("Apple", "sing-rules/rules/apple.srs"),
+                rule_set("Block", "sing-rules/rules/block.srs"),
+                rule_set("Direct", "sing-rules/rules/direct.srs"),
+                rule_set("Disney+", "sing-rules/rules/disney-plus.srs"),
+                rule_set("GFW", "sing-rules/rules/gfw.srs"),
+                rule_set("Microsoft", "sing-rules/rules/microsoft.srs"),
+                rule_set("Minecraft", "sing-rules/rules/minecraft.srs"),
+                rule_set("Netflix", "sing-rules/rules/netflix.srs"),
+                rule_set("PlayStation", "sing-rules/rules/playstation.srs"),
+                rule_set("PlayStation@CN", "sing-rules/rules/playstation-cn.srs"),
+                rule_set("Private", "sing-rules/rules/private.srs"),
+                rule_set("Proxy", "sing-rules/rules/proxy.srs"),
+                rule_set("Steam", "sing-rules/rules/steam.srs"),
+                rule_set("Steam@CN", "sing-rules/rules/steam-cn.srs"),
+                rule_set("TikTok", "sing-rules/rules/tiktok.srs"),
+                rule_set("YouTube", "sing-rules/rules/youtube.srs"),
             ],
             "final": "🐟 漏网之鱼",
         },
