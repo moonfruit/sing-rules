@@ -297,10 +297,6 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     return outbounds, domains, ips
 
 
-__CDN = "cdn.jsdelivr.net"
-# __CDN = "cdn.jsdmirror.com"
-
-
 def as_tuple(ip):
     parts = ip.split("/", maxsplit=1)
     return *(int(n) for n in parts[0].split(".")), int(parts[1])
@@ -317,6 +313,10 @@ def build_direct(domains, ips):
         direct["outbound"] = "DIRECT"
         return direct
     return None
+
+
+__CDN = "cdn.jsdelivr.net"
+# __CDN = "cdn.jsdmirror.com"
 
 
 def rule_set(tag: str, url: str):
