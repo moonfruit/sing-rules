@@ -55,7 +55,7 @@ def generate(filename: str, *, geosite: RelaxedStrings | None = None, geoip: Rel
 
 
 def main():
-    generate("ai.json", geosite=["anthropic", "bing", "jetbrains-ai", "openai", "perplexity"])
+    generate("ai.json", geosite=["anthropic", "jetbrains-ai", "openai", "perplexity"])
     generate("netflix.json", geosite="netflix", geoip="netflix")
     generate("tiktok.json", geosite="bytedance@!cn")
     generate("youtube.json", geosite="youtube")
