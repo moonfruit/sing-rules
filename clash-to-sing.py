@@ -353,7 +353,6 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
         "outbounds": outbounds,
         "route": {
             "rules": [
-                {"action": "sniff"},
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
                 *directs,
