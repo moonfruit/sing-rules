@@ -202,6 +202,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         outbounds = [
             {"type": "http", "tag": "⛰️ Gingkoo", "server": "10.1.2.12", "server_port": 8118},
             {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
+            {"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085},
         ]
         costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
 
@@ -269,9 +270,9 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         outbounds.append(selector("👍 高级节点", ["♻️ 自动选择"]))
 
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat"]))
     outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
-    outbounds.append(selector("👻 Ghost", ["DIRECT", "GLOBAL", "REJECT"]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
@@ -356,6 +357,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
             "rules": [
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
+                {"domain": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
                 *directs,
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
