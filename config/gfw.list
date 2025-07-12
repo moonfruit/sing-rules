@@ -1,1 +1,18 @@
-DOMAIN-SUFFIX,x.com
+# Blockchain
+DOMAIN-SUFFIX,cryptocompare.com
+DOMAIN-SUFFIX,infura.io
+DOMAIN-SUFFIX,metamask.io
+# Development
+DOMAIN-SUFFIX,bitbucket.org
+DOMAIN-SUFFIX,mitmproxy.org
+DOMAIN-SUFFIX,jsfiddle.net
+# Korean Manga
+DOMAIN-SUFFIX,92hm.top
+DOMAIN-SUFFIX,92hm.life
+DOMAIN-REGEX,^mxs\d+\.cc$
+# Maven
+DOMAIN-SUFFIX,maven.org
+# Proxy
+DOMAIN-SUFFIX,gost.run
+DOMAIN-SUFFIX,openvpn.net
+DOMAIN-SUFFIX,sagernet.org

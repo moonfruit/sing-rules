@@ -1,15 +1,7 @@
-# Blockchain
-DOMAIN-SUFFIX,cryptocompare.com
-DOMAIN-SUFFIX,infura.io
-DOMAIN-SUFFIX,metamask.io
 # CloudFlare
 DOMAIN,one.one.one.one
 # CloudFront
 DOMAIN-SUFFIX,cloudfront.net
-# Development
-DOMAIN-SUFFIX,bitbucket.org
-DOMAIN-SUFFIX,mitmproxy.org
-DOMAIN-SUFFIX,jsfiddle.net
 # FDroid
 DOMAIN,ftp.fau.de
 DOMAIN,ftp.lysator.liu.se
@@ -25,14 +17,5 @@ DOMAIN-SUFFIX,gboxlab.com
 # Hearthstone
 DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
-# Korean Manga
-DOMAIN-SUFFIX,92hm.top
-DOMAIN-SUFFIX,92hm.life
-DOMAIN-REGEX,^mxs\d+\.cc$
 # Lego
 DOMAIN-SUFFIX,brickset.com
-# Maven
-DOMAIN-SUFFIX,maven.org
-# Proxy
-DOMAIN-SUFFIX,gost.run
-DOMAIN-SUFFIX,openvpn.net
