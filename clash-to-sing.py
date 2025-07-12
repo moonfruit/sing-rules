@@ -322,9 +322,9 @@ __CDN = "cdn.jsdelivr.net"
 def rule_set(tag: str, url: str):
     # noinspection HttpUrlsUsage
     if url.startswith("http://") or url.startswith("https://"):
-        url_to_use = f"https://{__CDN}/npm/#{url}"
-    else:
         url_to_use = url
+    else:
+        url_to_use = f"https://{__CDN}/npm/{url}"
 
     if url.endswith(".json"):
         format_to_use = "source"
@@ -336,6 +336,7 @@ def rule_set(tag: str, url: str):
         "tag": tag,
         "format": format_to_use,
         "url": url_to_use,
+        "download_detour": "DIRECT",
     }
 
 
