@@ -152,8 +152,6 @@
         "91porny.com",
         "91vps.club",
         "92ccav.com",
-        "92hm.life",
-        "92hm.top",
         "991.com",
         "99btgc01.com",
         "99cn.info",
@@ -7575,8 +7573,6 @@
         ".91porny.com",
         ".91vps.club",
         ".92ccav.com",
-        ".92hm.life",
-        ".92hm.top",
         ".991.com",
         ".99btgc01.com",
         ".99cn.info",
@@ -14830,7 +14826,6 @@
         "whatsapp",
         "youtube"
       ],
-      "domain_regex": "^mxs\\d+\\.cc$",
       "ip_cidr": [
         "1.201.0.0/24",
         "8.41.4.0/24",
