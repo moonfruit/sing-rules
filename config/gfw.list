@@ -6,10 +6,6 @@ DOMAIN-SUFFIX,metamask.io
 DOMAIN-SUFFIX,bitbucket.org
 DOMAIN-SUFFIX,mitmproxy.org
 DOMAIN-SUFFIX,jsfiddle.net
-# Korean Manga
-DOMAIN-SUFFIX,92hm.top
-DOMAIN-SUFFIX,92hm.life
-DOMAIN-REGEX,^mxs\d+\.cc$
 # Maven
 DOMAIN-SUFFIX,maven.org
 # Proxy
