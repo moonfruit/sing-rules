@@ -202,7 +202,6 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         outbounds = [
             {"type": "http", "tag": "⛰️ Gingkoo", "server": "10.1.2.12", "server_port": 8118},
             {"type": "socks", "tag": "🧅 Tor Browser", "server": "127.0.0.1", "server_port": 9150},
-            {"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085},
         ]
         costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
 
@@ -214,6 +213,8 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
             "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
             "🇺🇸 美国节点 👍": ["⛰️ Gingkoo"],
         }
+
+    outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
 
     providers = {}
 
