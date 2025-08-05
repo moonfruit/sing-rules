@@ -274,14 +274,16 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat"]))
     outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
-    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("⚙️ 软件开发", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("📦 软件仓库", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
     outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -365,6 +367,9 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
                 {"rule_set": "Apple", "outbound": "🍎 苹果服务"},
                 {"rule_set": "Microsoft", "outbound": "Ⓜ️ 微软服务"},
+                {"rule_set": "Development@CN", "outbound": "🎯 全球直连"},
+                {"rule_set": "Development", "outbound": "⚙️ 软件开发"},
+                {"rule_set": "Sources", "outbound": "📦 软件仓库"},
                 {"rule_set": "Disney+", "outbound": "🎥 Disney+"},
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
@@ -384,6 +389,8 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 rule_set("AI", "sing-rules/rules/ai.srs"),
                 rule_set("Apple", "sing-rules/rules/apple.srs"),
                 rule_set("Block", "sing-rules/rules/block.srs"),
+                rule_set("Development", "sing-rules/rules/dev.srs"),
+                rule_set("Development@CN", "sing-rules/rules/dev-cn.srs"),
                 rule_set("Direct", "sing-rules/rules/direct.srs"),
                 rule_set("Disney+", "sing-rules/rules/disney-plus.srs"),
                 rule_set("GFW", "sing-rules/rules/gfw.srs"),
@@ -395,6 +402,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 rule_set("Porn", "sing-rules/rules/porn.srs"),
                 rule_set("Private", "sing-rules/rules/private.srs"),
                 rule_set("Proxy", "sing-rules/rules/proxy.srs"),
+                rule_set("Sources", "sing-rules/rules/sources.srs"),
                 rule_set("Steam", "sing-rules/rules/steam.srs"),
                 rule_set("Steam@CN", "sing-rules/rules/steam-cn.srs"),
                 rule_set("TikTok", "sing-rules/rules/tiktok.srs"),

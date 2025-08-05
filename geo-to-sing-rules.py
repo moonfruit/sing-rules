@@ -62,9 +62,10 @@ def main():
     generate("steam.json", geosite="steam")
     generate("steam-cn.json", geosite="steam@cn")
     generate("playstation.json", geosite="playstation")
-
     generate("dev.json", geosite="category-dev")
     generate("dev-cn.json", geosite=["category-dev@cn", "category-dev-cn"])
+    generate("sources.json", geosite=["github", "gitlab", "sourceforge"])
+
     generate("games.json", geosite="category-games")
     generate("games-cn.json", geosite="category-games@cn")
     generate("porn.json", geosite="category-porn")

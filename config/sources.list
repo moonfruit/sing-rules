@@ -1,0 +1,56 @@
+# SCM
+DOMAIN_SUFFIX,bitbucket.org
+# Software
+DOMAIN_SUFFIX,fury.io
+DOMAIN_SUFFIX,gemfury.com
+DOMAIN_SUFFIX,packagecloud.io
+DOMAIN_SUFFIX,snapcraft.io
+DOMAIN,apt.postgresql.org
+DOMAIN,dl.google.com
+DOMAIN,download.postgresql.org
+DOMAIN,opensource.wandisco.com
+DOMAIN,repo.mongodb.org
+DOMAIN,zypp.postgresql.org
+# Go
+DOMAIN_SUFFIX,golang.org
+DOMAIN_SUFFIX,googlesource.com
+DOMAIN_SUFFIX,gopkg.in
+DOMAIN,go.etcd.io
+DOMAIN,go.mongodb.org
+DOMAIN,go.uber.org
+# Java
+DOMAIN_SUFFIX,maven.org
+DOMAIN_SUFFIX,gradle.org
+DOMAIN_SUFFIX,shibboleth.net
+# JavaScript
+DOMAIN_SUFFIX,npmjs.org
+DOMAIN_SUFFIX,nodesource.com
+DOMAIN_SUFFIX,yarnpkg.com
+# Lua
+DOMAIN_SUFFIX,luarocks.org
+DOMAIN,rocks.moonscript.org
+# Perl
+DOMAIN_SUFFIX,cpan.org
+DOMAIN_SUFFIX,metacpan.org
+# Python
+DOMAIN_SUFFIX,pypi.org
+# Ruby
+DOMAIN_SUFFIX,rubygems.org
+# Rust
+DOMAIN_SUFFIX,crates.io
+# Docker
+DOMAIN_SUFFIX,docker.com
+DOMAIN_SUFFIX,docker.elastic.co
+DOMAIN_SUFFIX,docker.io
+DOMAIN_SUFFIX,docker.swagger.io
+DOMAIN_SUFFIX,gcr.io
+DOMAIN_SUFFIX,ghcr.io
+DOMAIN_SUFFIX,icr.io
+DOMAIN_SUFFIX,lscr.io
+DOMAIN_SUFFIX,mcr.microsoft.com
+DOMAIN_SUFFIX,nvcr.io
+DOMAIN_SUFFIX,quay.io
+DOMAIN_SUFFIX,registry.jetbrains.team
+DOMAIN_SUFFIX,registry.k8s.io
+# Helm
+DOMAIN_SUFFIX,artifacthub.io
