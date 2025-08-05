@@ -1,19 +1,20 @@
 # SCM
 DOMAIN-SUFFIX,bitbucket.org
 # Software
+DOMAIN-SUFFIX,brew.sh
 DOMAIN-SUFFIX,fury.io
 DOMAIN-SUFFIX,gemfury.com
 DOMAIN-SUFFIX,packagecloud.io
 DOMAIN-SUFFIX,snapcraft.io
-DOMAIN,apt.postgresql.org
-DOMAIN,apt.puppet.com
 DOMAIN,dl.google.com
-DOMAIN,download.postgresql.org
 DOMAIN,opensource.wandisco.com
 DOMAIN,packages.microsoft.com
 DOMAIN,repo.mongodb.org
-DOMAIN,yum.puppet.com
+DOMAIN,apt.postgresql.org
+DOMAIN,download.postgresql.org
 DOMAIN,zypp.postgresql.org
+DOMAIN,apt.puppet.com
+DOMAIN,yum.puppet.com
 # Go
 DOMAIN-SUFFIX,golang.org
 DOMAIN-SUFFIX,googlesource.com
