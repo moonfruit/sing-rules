@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -euo pipefail
 BIN=$(dirname "${BASH_SOURCE[0]}")
 for LIST in "$1"/*.list; do
     BASENAME="${LIST##*/}"
