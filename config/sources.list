@@ -6,10 +6,13 @@ DOMAIN_SUFFIX,gemfury.com
 DOMAIN_SUFFIX,packagecloud.io
 DOMAIN_SUFFIX,snapcraft.io
 DOMAIN,apt.postgresql.org
+DOMAIN,apt.puppet.com
 DOMAIN,dl.google.com
 DOMAIN,download.postgresql.org
 DOMAIN,opensource.wandisco.com
+DOMAIN,packages.microsoft.com
 DOMAIN,repo.mongodb.org
+DOMAIN,yum.puppet.com
 DOMAIN,zypp.postgresql.org
 # Go
 DOMAIN_SUFFIX,golang.org
