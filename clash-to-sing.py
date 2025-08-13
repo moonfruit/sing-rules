@@ -351,8 +351,8 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
     return {
         "dns": {
             "rules": [
-                {"rule_set": "Direct", "server": "doh-direct"},
-                {"rule_set": "Proxy", "server": "doh-proxy"},
+                {"rule_set": "Direct", "server": "dns-direct"},
+                {"rule_set": "Proxy", "server": "dns-proxy"},
             ],
         },
         "outbounds": outbounds,
