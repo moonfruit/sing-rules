@@ -3,7 +3,10 @@
   "rules": [
     {
       "domain": [
+        "bytedance.map.fastly.net",
+        "byteglb.com",
         "byteoversea.com",
+        "byteoversea.net",
         "coze.com",
         "ibytedtos.com",
         "ibyteimg.com",
@@ -29,7 +32,9 @@
         "ttwstatic.com"
       ],
       "domain_suffix": [
+        ".byteglb.com",
         ".byteoversea.com",
+        ".byteoversea.net",
         ".coze.com",
         ".ibytedtos.com",
         ".ibyteimg.com",
