@@ -56,7 +56,7 @@ def generate(filename: str, *, geosite: RelaxedStrings | None = None, geoip: Rel
 
 def main():
     generate("geoip-cn.json", geoip="cn")
-    generate("geosites-cn.json", geosite=["cn", "geolocation-cn"])
+    generate("geosites-cn.json", geosite=["cn", "geolocation-cn", "geolocation-cn@cn"])
     generate("geosites-not-cn.json", geosite="geolocation-!cn")
 
     generate("ai.json", geosite=["anthropic", "jetbrains-ai", "openai", "perplexity"])
@@ -65,18 +65,20 @@ def main():
     generate("youtube.json", geosite="youtube")
     generate("steam.json", geosite="steam")
     generate("steam-cn.json", geosite="steam@cn")
+    generate("nintendo.json", geosite="nintendo")
+    generate("nintendo-cn.json", geosite="nintendo@cn")
     generate("playstation.json", geosite="playstation")
-    generate("dev.json", geosite="category-dev")
-    generate("dev-cn.json", geosite=["category-dev@cn", "category-dev-cn"])
     generate("sources.json", geosite=["github", "gitlab", "sourceforge"])
 
+    generate("dev.json", geosite="category-dev")
+    generate("dev-cn.json", geosite=["category-dev-cn", "category-dev-cn@cn", "category-dev@cn"])
     generate("games.json", geosite="category-games")
-    generate("games-cn.json", geosite="category-games@cn")
+    generate("games-cn.json", geosite=["category-games-cn", "category-games-cn@cn", "category-games@cn"])
     generate("porn.json", geosite="category-porn")
 
     generate("private.json", geosite="private", geoip="private")
     generate("block.json", geosite="category-ads-all")
-    generate("gfw.json", geosite=["gfw", "telegram", "x"], geoip="telegram")
+    generate("gfw.json", geosite=["gfw", "telegram", "twitter", "x"], geoip=["telegram", "twitter"])
     generate(
         "direct.json",
         geosite=[

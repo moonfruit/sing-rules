@@ -276,14 +276,18 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("⚙️ 软件开发", ["🔰 默认出口", "DIRECT", "👍 高级节点", *group_tags]))
     outbounds.append(selector("📦 软件仓库", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
-    outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎮 Nintendo", ["🔰 默认出口", "DIRECT", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎮 Nintendo@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "DIRECT", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
-    outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "DIRECT", "👍 高级节点", *group_tags]))
     outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
-    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    outbounds.append(selector("🎮 Games", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
+    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", "👍 高级节点", "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", "👍 高级节点", "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", "👍 高级节点", "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", "👍 高级节点", "DIRECT", *group_tags]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -374,10 +378,14 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
+                {"rule_set": "Nintendo@CN", "outbound": "🎮 Nintendo@CN"},
+                {"rule_set": "Nintendo", "outbound": "🎮 Nintendo"},
                 {"rule_set": "PlayStation@CN", "outbound": "🎮 PlayStation@CN"},
                 {"rule_set": "PlayStation", "outbound": "🎮 PlayStation"},
                 {"rule_set": "Steam@CN", "outbound": "🎮 Steam@CN"},
                 {"rule_set": "Steam", "outbound": "🎮 Steam"},
+                {"rule_set": "Games@CN", "outbound": "🎮 Games@CN"},
+                {"rule_set": "Games", "outbound": "🎮 Games"},
                 {"rule_set": "Minecraft", "outbound": "🎮 Steam"},
                 {"rule_set": ["GFW", "Porn"], "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
@@ -393,10 +401,14 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 rule_set("Development@CN", "sing-rules/rules/dev-cn.srs"),
                 rule_set("Direct", "sing-rules/rules/direct.srs"),
                 rule_set("Disney+", "sing-rules/rules/disney-plus.srs"),
+                rule_set("Games", "sing-rules/rules/games.srs"),
+                rule_set("Games@CN", "sing-rules/rules/games-cn.srs"),
                 rule_set("GFW", "sing-rules/rules/gfw.srs"),
                 rule_set("Microsoft", "sing-rules/rules/microsoft.srs"),
                 rule_set("Minecraft", "sing-rules/rules/minecraft.srs"),
                 rule_set("Netflix", "sing-rules/rules/netflix.srs"),
+                rule_set("Nintendo", "sing-rules/rules/nintendo.srs"),
+                rule_set("Nintendo@CN", "sing-rules/rules/nintendo-cn.srs"),
                 rule_set("PlayStation", "sing-rules/rules/playstation.srs"),
                 rule_set("PlayStation@CN", "sing-rules/rules/playstation-cn.srs"),
                 rule_set("Porn", "sing-rules/rules/porn.srs"),
