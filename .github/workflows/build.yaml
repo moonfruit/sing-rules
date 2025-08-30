@@ -35,12 +35,12 @@ jobs:
           FZG_URL: ${{ secrets.FZG_URL }}
         run: |
           curl -fsSL "$XIPCLOUD_URL" >dat/xipcloud.yaml
-#          curl -fsSL "$FZG_URL" >dat/fzg.yaml
+          : #curl -fsSL "$FZG_URL" >dat/fzg.yaml
 
       - name: Preflight
         run: |
           set -o pipefail
-#          ./preflight.sh xipcloud fzg | tee -a $GITHUB_ENV
+          : #./preflight.sh xipcloud fzg | tee -a $GITHUB_ENV
           ./preflight.sh xipcloud | tee -a $GITHUB_ENV
 
       - name: Checkout geo
