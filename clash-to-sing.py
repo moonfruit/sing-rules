@@ -311,16 +311,12 @@ def as_tuple(ip):
 
 
 def build_direct(domains, ips):
-    direct = {}
+    direct: dict = {"ip_is_private": True, "outbound": "DIRECT"}
     if domains:
         direct["domain"] = sorted(domains)
     if ips:
         direct["ip_cidr"] = sorted(ips, key=as_tuple)
-
-    if direct:
-        direct["outbound"] = "DIRECT"
-        return direct
-    return None
+    return direct
 
 
 __CDN = "cdn.jsdelivr.net"
@@ -350,8 +346,6 @@ def rule_set(tag: str, url: str):
 
 def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
     outbounds, domains, ips = proxies_to_outbound(local, proxies)
-    direct = build_direct(domains, ips)
-    directs = [direct] if direct else []
     return {
         "outbounds": outbounds,
         "route": {
@@ -359,7 +353,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
                 {"domain": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
-                *directs,
+                build_direct(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
