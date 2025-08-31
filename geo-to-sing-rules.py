@@ -79,22 +79,8 @@ def main():
     generate("private.json", geosite="private", geoip="private")
     generate("block.json", geosite="category-ads-all")
     generate("gfw.json", geosite=["gfw", "telegram", "twitter", "x"], geoip=["telegram", "twitter"])
-    generate(
-        "direct.json",
-        geosite=[
-            "cn",
-            "apple-cn",
-            "google-cn",
-            "tld-cn",
-            "geolocation-cn",
-            "china-list",
-            "category-dev-cn",
-            "category-dev@cn",
-            "category-games@cn",
-        ],
-        geoip="cn",
-    )
-    generate("proxy.json", geosite=["category-dev", "ea", "epicgames", "firefox", "origin", "steam"])
+    generate("direct.json", geosite=["china-list", "cn", "geolocation-cn", "google-cn", "tld-cn"], geoip="cn")
+    generate("proxy.json", geosite=["firefox"])
 
 
 if __name__ == "__main__":
