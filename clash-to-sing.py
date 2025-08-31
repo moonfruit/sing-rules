@@ -353,12 +353,6 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
     direct = build_direct(domains, ips)
     directs = [direct] if direct else []
     return {
-        "dns": {
-            "rules": [
-                {"rule_set": "Direct", "server": "dns-direct"},
-                {"rule_set": "Proxy", "server": "dns-proxy"},
-            ],
-        },
         "outbounds": outbounds,
         "route": {
             "rules": [
