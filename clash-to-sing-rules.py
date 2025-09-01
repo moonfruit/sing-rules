@@ -39,7 +39,13 @@ def to_rules(f: TextIO) -> list[Rule]:
                 if values[2] != "no-resolve":
                     raise ValueError(f"Invalid rule: {line}")
                 get_set(rule, "ip_cidr").add(values[1])
-            case "PROCESS-NAME" | "URL-REGEX" | "USER-AGENT":
+            case "PROCESS-NAME":
+                get_set(rule, "process_name").add(values[1])
+            case "PROCESS-PATH":
+                get_set(rule, "process_path").add(values[1])
+            case "PROCESS-PATH-REGEX":
+                get_set(rule, "process_path_regex").add(values[1])
+            case "URL-REGEX" | "USER-AGENT":
                 pass
             case _:
                 raise ValueError(f"Unknown rule method: {line}")

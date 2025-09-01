@@ -7,3 +7,11 @@ DOMAIN-SUFFIX,groq.com
 DOMAIN-SUFFIX,hanime1.me
 DOMAIN-SUFFIX,poe.com
 DOMAIN-SUFFIX,x.ai
+PROCESS-NAME,ChatGPT
+PROCESS-NAME,ChatGPTHelper
+PROCESS-NAME,Claude
+PROCESS-NAME,Claude Helper
+PROCESS-NAME,Claude Helper (GPU)
+PROCESS-NAME,Claude Helper (Renderer)
+PROCESS-PATH-REGEX,/Applications/ChatGPT.app/.*
+PROCESS-PATH-REGEX,/Applications/Claude.app/.*
