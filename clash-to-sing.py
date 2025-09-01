@@ -155,7 +155,11 @@ def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
 
 
 def is_cheap(cost):
-    return cost < 1.5
+    return cost < 2
+
+
+def is_expansive(cost):
+    return cost > 1
 
 
 def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float = None):
@@ -163,7 +167,7 @@ def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float
     if cost:
         if is_cheap(cost):
             get_list(groups, f"{group} 🛢️").append(tag)
-        else:
+        elif is_expansive(cost):
             get_list(groups, f"{group} 👍").append(tag)
 
 
@@ -235,7 +239,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
 
         if is_cheap(cost):
             cheap_nodes.append(tag)
-        else:
+        elif is_expansive(cost):
             expansive_nodes.append(tag)
 
         if group in __GROUP_MAP:
