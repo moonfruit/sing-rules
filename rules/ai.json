@@ -18,17 +18,10 @@
         "civitai.com",
         "claude.ai",
         "claudeusercontent.com",
-        "cloudcode-pa.googleapis.com",
-        "coze.com",
-        "designer.microsoft.com",
         "featuregates.org",
         "gemini.google.com",
-        "generativelanguage.googleapis.com",
-        "gooai.chatkit.app",
         "grazie.ai",
         "grazie.aws.intellij.net",
-        "groq.com",
-        "hanime1.me",
         "host.livekit.cloud",
         "intercom.io",
         "jetbrains.ai",
@@ -45,7 +38,6 @@
         "opera-api.com",
         "perplexity.ai",
         "perplexity.com",
-        "poe.com",
         "pplx.ai",
         "pplx-res.cloudinary.com",
         "production-openaicom-storage.azureedge.net",
@@ -53,8 +45,7 @@
         "servd-anthropic-website.b-cdn.net",
         "sora.com",
         "statsigapi.net",
-        "turn.livekit.cloud",
-        "x.ai"
+        "turn.livekit.cloud"
       ],
       "domain_suffix": [
         ".ai.com",
@@ -69,16 +60,9 @@
         ".civitai.com",
         ".claude.ai",
         ".claudeusercontent.com",
-        ".cloudcode-pa.googleapis.com",
-        ".coze.com",
-        ".designer.microsoft.com",
         ".featuregates.org",
-        ".generativelanguage.googleapis.com",
-        ".gooai.chatkit.app",
         ".grazie.ai",
         ".grazie.aws.intellij.net",
-        ".groq.com",
-        ".hanime1.me",
         ".host.livekit.cloud",
         ".intercom.io",
         ".jetbrains.ai",
@@ -91,19 +75,53 @@
         ".opera-api.com",
         ".perplexity.ai",
         ".perplexity.com",
-        ".poe.com",
         ".pplx.ai",
         ".sentry.io",
         ".sora.com",
         ".statsigapi.net",
-        ".turn.livekit.cloud",
-        ".x.ai"
+        ".turn.livekit.cloud"
       ],
       "domain_keyword": [
         "chatgpt",
         "openai"
       ],
       "domain_regex": "^chatgpt-async-webps-prod-\\S+-\\d+\\.webpubsub\\.azure\\.com$"
+    },
+    {
+      "domain": [
+        "cloudcode-pa.googleapis.com",
+        "coze.com",
+        "designer.microsoft.com",
+        "generativelanguage.googleapis.com",
+        "gooai.chatkit.app",
+        "groq.com",
+        "hanime1.me",
+        "poe.com",
+        "x.ai"
+      ],
+      "domain_suffix": [
+        ".cloudcode-pa.googleapis.com",
+        ".coze.com",
+        ".designer.microsoft.com",
+        ".generativelanguage.googleapis.com",
+        ".gooai.chatkit.app",
+        ".groq.com",
+        ".hanime1.me",
+        ".poe.com",
+        ".x.ai"
+      ],
+      "process_name": [
+        "ChatGPT",
+        "ChatGPTHelper",
+        "Claude",
+        "Claude Helper",
+        "Claude Helper (GPU)",
+        "Claude Helper (Renderer)"
+      ],
+      "process_path_regex": [
+        "/Applications/ChatGPT.app/.*",
+        "/Applications/Claude.app/.*"
+      ]
     }
   ]
 }
