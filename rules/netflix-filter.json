@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": "honeycomb.io",
+      "domain_suffix": ".honeycomb.io"
+    }
+  ]
+}
