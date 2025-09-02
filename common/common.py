@@ -32,26 +32,39 @@ def as_rule(rule: dict[str, set[str]]) -> Rule:
     return {key: as_sorted_list(key, values) for key, values in rule.items()}
 
 
-__SITE_RULE_KEYS = frozenset(["domain", "domain_suffix", "domain_keyword", "domain_regex", "ip_cidr"])
+__RULES_GROUP_ = [
+    frozenset(["domain", "domain_suffix", "domain_keyword", "domain_regex", "ip_cidr", "ip_is_private"]),
+    frozenset(["port", "port_range"]),
+    frozenset(["source_geoip", "source_ip_cidr", "source_ip_is_private"]),
+    frozenset(["source_port", "source_port_range"]),
+]
+
+
+def split(rule: Rule) -> list[Rule]:
+    result = []
+    used_keys = set()
+
+    # 先按 group 分配
+    for group in __RULES_GROUP_:
+        sub_dict = {k: v for k, v in rule.items() if k in group}
+        if sub_dict:
+            result.append(sub_dict)
+            used_keys.update(sub_dict.keys())
+
+    # 把剩余的 key 单独放入 dict
+    for k, v in rule.items():
+        if k not in used_keys:
+            result.append({k: v})
+
+    return result
 
 
 def merge(rules: list[Rule]) -> list[Rule]:
-    results = []
     merged = {}
-
     for rule in rules:
-        if not rule:
-            continue
-        if rule.keys() <= __SITE_RULE_KEYS:
-            for key, values in rule.items():
-                get_set(merged, key).update(as_set(values))
-        else:
-            results.append(rule)
-
-    if merged:
-        results.insert(0, as_rule(merged))
-
-    return results
+        for key, values in rule.items():
+            get_set(merged, key).update(as_set(values))
+    return split(merged)
 
 
 def as_set(items: RelaxedIterable[str] | None) -> set[str]:
