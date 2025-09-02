@@ -1,5 +1,5 @@
 import ipaddress
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Collection, Iterable
 
 type Scalar = str | float | int
 type ScalarCollections = list[Scalar] | set[Scalar] | dict[str, Scalar]
@@ -28,7 +28,7 @@ def compute_if_absent[K, V](d: dict[K, V], key: K, func: Callable[[], V]) -> V:
     return value
 
 
-def as_rule(rule: dict[str, set[str]]) -> Rule:
+def as_rule(rule: dict[str, Collection[str]]) -> Rule:
     return {key: as_sorted_list(key, values) for key, values in rule.items()}
 
 
@@ -48,13 +48,13 @@ def split(rule: Rule) -> list[Rule]:
     for group in __RULES_GROUP_:
         sub_dict = {k: v for k, v in rule.items() if k in group}
         if sub_dict:
-            result.append(sub_dict)
+            result.append(as_rule(sub_dict))
             used_keys.update(sub_dict.keys())
 
     # 把剩余的 key 单独放入 dict
     for k, v in rule.items():
         if k not in used_keys:
-            result.append({k: v})
+            result.append(as_rule({k: v}))
 
     return result
 
@@ -78,7 +78,7 @@ def as_set(items: RelaxedIterable[str] | None) -> set[str]:
         return set(items)
 
 
-def as_list(items: set[str], *, key=None) -> RelaxedStrings:
+def as_list(items: Collection[str], *, key=None) -> RelaxedStrings:
     if len(items) == 1:
         return next(iter(items))
     else:
@@ -106,5 +106,5 @@ __KEY_FUNCTIONS = {
 }
 
 
-def as_sorted_list(key, items: set[str]) -> RelaxedStrings:
+def as_sorted_list(key, items: Collection[str]) -> RelaxedStrings:
     return as_list(items, key=__KEY_FUNCTIONS.get(key, None))
