@@ -155,7 +155,7 @@ def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
 
 
 def is_cheap(cost):
-    return cost < 2
+    return cost < 1.5
 
 
 def is_expansive(cost):
