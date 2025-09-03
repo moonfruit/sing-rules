@@ -25,6 +25,7 @@
         "featuregates.org",
         "gemini.google.com",
         "generativelanguage.googleapis.com",
+        "githubcopilot.com",
         "grazie.ai",
         "grazie.aws.intellij.net",
         "grok.com",
@@ -76,6 +77,7 @@
         ".designer.microsoft.com",
         ".featuregates.org",
         ".generativelanguage.googleapis.com",
+        ".githubcopilot.com",
         ".grazie.ai",
         ".grazie.aws.intellij.net",
         ".grok.com",
@@ -119,8 +121,8 @@
     },
     {
       "process_path_regex": [
-        "/Applications/ChatGPT.app/.*",
-        "/Applications/Claude.app/.*"
+        "/Applications/ChatGPT\\.app/.*",
+        "/Applications/Claude\\.app/.*"
       ]
     }
   ]
