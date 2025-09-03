@@ -315,7 +315,7 @@ def as_tuple(ip):
 
 
 def build_direct(domains, ips):
-    direct: dict = {"ip_is_private": True, "outbound": "DIRECT"}
+    direct: dict = {"outbound": "DIRECT"}
     if domains:
         direct["domain"] = sorted(domains)
     if ips:
@@ -360,7 +360,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 build_direct(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
-                {"process_name": ["ChatGPT", "Claude"], "outbound": "🤖 人工智能"},
+                {"process_name": ["ChatGPT", "ChatGPTHelper", "Claude"], "outbound": "🤖 人工智能"},
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
                 {"rule_set": "Apple", "outbound": "🍎 苹果服务"},
                 {"rule_set": "Microsoft", "outbound": "Ⓜ️ 微软服务"},
