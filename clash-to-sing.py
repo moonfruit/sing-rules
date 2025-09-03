@@ -9,7 +9,7 @@ import typer
 from attrs import define
 from cattrs import structure
 
-from common import Object, SimpleObject, get_list, yaml
+from common import Object, Rule, SimpleObject, get_list, yaml
 from common.io import open_path
 
 __FLAG_MAP = {
@@ -314,13 +314,19 @@ def as_tuple(ip):
     return *(int(n) for n in parts[0].split(".")), int(parts[1])
 
 
-def build_direct(domains, ips):
+def build_direct_rules(domains, ips):
     direct: dict = {"outbound": "DIRECT"}
     if domains:
         direct["domain"] = sorted(domains)
     if ips:
         direct["ip_cidr"] = sorted(ips, key=as_tuple)
     return direct
+
+
+def build_local_rules(local: bool):
+    if not local:
+        return []
+    return [{"process_name": ["ChatGPT", "ChatGPTHelper", "Claude"], "outbound": "🤖 人工智能"}]
 
 
 __CDN = "cdn.jsdelivr.net"
@@ -357,10 +363,10 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
                 {"domain": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
-                build_direct(domains, ips),
+                build_direct_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
-                {"process_name": ["ChatGPT", "ChatGPTHelper", "Claude"], "outbound": "🤖 人工智能"},
+                *build_local_rules(local),
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
                 {"rule_set": "Apple", "outbound": "🍎 苹果服务"},
                 {"rule_set": "Microsoft", "outbound": "Ⓜ️ 微软服务"},

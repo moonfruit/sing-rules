@@ -20,10 +20,10 @@ jobs:
           echo "TAG=$(env TZ=Asia/Shanghai date +%Y%m%d%H%M)" | tee -a $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Checkout Rules
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: Loyalsoldier/v2ray-rules-dat
           path: dat
@@ -45,7 +45,7 @@ jobs:
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: MetaCubeX/geo
           path: geo

@@ -17,5 +17,5 @@ PROCESS-NAME,Claude
 PROCESS-NAME,Claude Helper
 PROCESS-NAME,Claude Helper (GPU)
 PROCESS-NAME,Claude Helper (Renderer)
-PROCESS-PATH-REGEX,/Applications/ChatGPT.app/.*
-PROCESS-PATH-REGEX,/Applications/Claude.app/.*
+PROCESS-PATH-REGEX,/Applications/ChatGPT\.app/.*
+PROCESS-PATH-REGEX,/Applications/Claude\.app/.*

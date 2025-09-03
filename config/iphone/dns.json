@@ -1,0 +1,164 @@
+{
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns-resolver",
+        "type": "udp",
+        "server": "223.5.5.5"
+      },
+      {
+        "tag": "dns-direct",
+        "type": "h3",
+        "server": "dns.alidns.com",
+        "domain_resolver": "dns-resolver"
+      },
+      {
+        "tag": "dns-proxy",
+        "type": "tls",
+        "server": "1.1.1.1"
+      },
+      {
+        "tag": "dns-gingkoo",
+        "type": "udp",
+        "server": "10.1.2.59"
+      },
+      {
+        "tag": "dns-hosts",
+        "type": "hosts",
+        "predefined": {
+          "asusrouter.com": "192.168.50.1",
+          "router.asus.com": "192.168.50.1",
+          "www.asusrouter.com": "192.168.50.1"
+        }
+      },
+      {
+        "tag": "dns-fakeip",
+        "type": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
+    ],
+    "rules": [
+      {
+        "ip_accept_any": true,
+        "server": "dns-hosts",
+        "rewrite_ttl": 2592000
+      },
+      {
+        "domain_suffix": [
+          "arpa",
+          "local",
+          "heiyu.space"
+        ],
+        "action": "predefined",
+        "rcode": "NXDOMAIN"
+      },
+      {
+        "domain_suffix": [
+          "cdn.jsdelivr.net",
+          "lazycat.cloud",
+          "v2ray.in"
+        ],
+        "server": "dns-direct"
+      },
+      {
+        "domain_suffix": "server.gingkoo",
+        "server": "dns-gingkoo",
+        "rewrite_ttl": 2592000
+      },
+      {
+        "clash_mode": "Global",
+        "server": "dns-proxy"
+      },
+      {
+        "clash_mode": "Direct",
+        "server": "dns-direct"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip"
+      },
+      {
+        "rule_set": "GeoSites@CN",
+        "server": "dns-direct"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": "GeoSites@!CN",
+            "invert": true
+          },
+          {
+            "rule_set": "GeoIP@CN"
+          }
+        ],
+        "server": "dns-direct"
+      }
+    ],
+    "final": "dns-proxy",
+    "independent_cache": true,
+    "reverse_mapping": true,
+    "strategy": "prefer_ipv4"
+  },
+  "inbounds": [
+    {
+      "type": "direct",
+      "tag": "dns-in",
+      "listen": "127.0.0.1",
+      "listen_port": 53
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "network": "icmp",
+        "outbound": "DIRECT"
+      },
+      {
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
+        "protocol": "stun",
+        "action": "reject"
+      },
+      {
+        "domain_suffix": [
+          "cdn.jsdelivr.net",
+          "v2ray.in"
+        ],
+        "ip_is_private": true,
+        "outbound": "DIRECT"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "GeoIP@CN",
+        "url": "https://cdn.jsdelivr.net/npm/sing-rules/rules/geoip-cn.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "type": "remote",
+        "tag": "GeoSites@CN",
+        "url": "https://cdn.jsdelivr.net/npm/sing-rules/rules/geosites-cn.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "type": "remote",
+        "tag": "GeoSites@!CN",
+        "url": "https://cdn.jsdelivr.net/npm/sing-rules/rules/geosites-not-cn.srs",
+        "download_detour": "DIRECT"
+      }
+    ],
+    "default_domain_resolver": "dns-direct"
+  }
+}
