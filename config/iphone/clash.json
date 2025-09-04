@@ -6,8 +6,8 @@
       "external_ui_download_url": "https://github.com/Zephyruso/zashboard/archive/gh-pages-cdn-fonts.zip",
       "secret": "QAZ@wsx3EDC",
       "access_control_allow_origin": [
-        "http://127.0.0.1",
-        "http://moons-iphone.local"
+        "http://127.0.0.1:9999",
+        "http://moons-iphone.local:9999"
       ],
       "access_control_allow_private_network": true
     }
