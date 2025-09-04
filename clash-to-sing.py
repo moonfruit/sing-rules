@@ -364,7 +364,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
             "rules": [
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
-                {"domain": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
+                {"domain_suffix": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
                 build_direct_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
