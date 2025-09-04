@@ -331,7 +331,7 @@ def build_direct_rules(domains, ips):
 def build_local_rules(local: bool):
     if not local:
         return []
-    return [{"process_name": ["ChatGPT", "ChatGPTHelper", "Claude", "claude"], "outbound": "🤖 人工智能"}]
+    return [{"process_name": ["ChatGPT", "ChatGPTHelper", "Claude"], "outbound": "🤖 人工智能"}]
 
 
 __CDN = "cdn.jsdelivr.net"
