@@ -55,6 +55,8 @@
       {
         "domain_suffix": [
           "cdn.jsdelivr.net",
+          "ip.sb",
+          "ipip.net",
           "v2ray.in"
         ],
         "server": "dns-direct"
