@@ -3,12 +3,14 @@
   "rules": [
     {
       "domain": [
+        "account.sony.com",
         "playstation.com",
         "playstation.net",
         "prod-ps5.wws-gs3.com",
         "sonyentertainmentnetwork.com"
       ],
       "domain_suffix": [
+        ".account.sony.com",
         ".playstation",
         ".playstation.com",
         ".playstation.net",

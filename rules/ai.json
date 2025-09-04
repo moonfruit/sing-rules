@@ -116,7 +116,9 @@
         "Claude",
         "Claude Helper",
         "Claude Helper (GPU)",
-        "Claude Helper (Renderer)"
+        "Claude Helper (Renderer)",
+        "claude",
+        "gemini"
       ]
     },
     {
