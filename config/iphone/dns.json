@@ -73,6 +73,13 @@
         "server": "dns-direct"
       },
       {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip"
+      },
+      {
         "rule_set": "GeoSites@CN",
         "server": "dns-direct"
       },
