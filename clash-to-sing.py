@@ -219,6 +219,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         }
 
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
+    outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
 
     providers = {}
 
@@ -275,7 +276,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         outbounds.append(selector("👍 高级节点", ["♻️ 自动选择"]))
 
     outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
-    outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat"]))
+    outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]))
     outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("⚙️ 软件开发", ["🔰 默认出口", "DIRECT", "👍 高级节点", *group_tags]))

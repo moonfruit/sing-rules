@@ -23,11 +23,6 @@
         "server": "10.1.2.59"
       },
       {
-        "tag": "dns-lazycat",
-        "type": "udp",
-        "server": "fc03:1136:3800::1"
-      },
-      {
         "tag": "dns-hosts",
         "type": "hosts",
         "predefined": {
@@ -58,13 +53,8 @@
         "rcode": "NXDOMAIN"
       },
       {
-        "domain_suffix": "heiyu.space",
-        "server": "dns-lazycat"
-      },
-      {
         "domain_suffix": [
           "cdn.jsdelivr.net",
-          "lazycat.cloud",
           "v2ray.in"
         ],
         "server": "dns-direct"
