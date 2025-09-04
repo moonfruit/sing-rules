@@ -75,13 +75,6 @@
         "server": "dns-direct"
       },
       {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
-        "server": "dns-fakeip"
-      },
-      {
         "rule_set": "GeoSites@CN",
         "server": "dns-direct"
       },
@@ -135,7 +128,6 @@
           "cdn.jsdelivr.net",
           "v2ray.in"
         ],
-        "ip_is_private": true,
         "outbound": "DIRECT"
       }
     ],

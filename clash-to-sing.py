@@ -9,7 +9,7 @@ import typer
 from attrs import define
 from cattrs import structure
 
-from common import Object, Rule, SimpleObject, get_list, yaml
+from common import Object, SimpleObject, get_list, yaml
 from common.io import open_path
 
 __FLAG_MAP = {
@@ -317,7 +317,10 @@ def as_tuple(ip):
 
 
 def build_direct_rules(domains, ips):
-    direct: dict = {"outbound": "DIRECT"}
+    direct: Object = {
+        "ip_is_private": True,
+        "outbound": "DIRECT",
+    }
     if domains:
         direct["domain"] = sorted(domains)
     if ips:
