@@ -92,9 +92,10 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
     group, name = find_group(name)
     cost = find_cost(name, clash.get("cost", 1))
     tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
+    outbound: Object = {}
     match clash["type"]:
         case "hysteria2":
-            outbound: Object = {
+            outbound = {
                 "type": "hysteria2",
                 "tag": tag,
                 "server": clash["server"],
