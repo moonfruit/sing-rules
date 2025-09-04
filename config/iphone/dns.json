@@ -67,19 +67,19 @@
         "rewrite_ttl": 2592000
       },
       {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip"
+      },
+      {
         "clash_mode": "Global",
         "server": "dns-proxy"
       },
       {
         "clash_mode": "Direct",
         "server": "dns-direct"
-      },
-      {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
-        "server": "dns-fakeip"
       },
       {
         "rule_set": "GeoSites@CN",
