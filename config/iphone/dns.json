@@ -55,8 +55,10 @@
       {
         "domain_suffix": [
           "cdn.jsdelivr.net",
+          "fastly.jsdelivr.net",
           "ip.sb",
           "ipip.net",
+          "xipcloud.org",
           "v2ray.in"
         ],
         "server": "dns-direct"
@@ -133,6 +135,8 @@
       {
         "domain_suffix": [
           "cdn.jsdelivr.net",
+          "fastly.jsdelivr.net",
+          "xipcloud.org",
           "v2ray.in"
         ],
         "outbound": "DIRECT"
