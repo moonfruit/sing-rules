@@ -331,7 +331,7 @@ def build_direct_rules(domains, ips):
 def build_local_rules(local: bool):
     if not local:
         return []
-    return [{"process_name": ["ChatGPT", "ChatGPTHelper", "Claude"], "outbound": "🤖 人工智能"}]
+    return [{"rule_set": "AI:Process", "outbound": "🤖 人工智能"}]
 
 
 __CDN = "cdn.jsdelivr.net"
@@ -399,6 +399,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
             ],
             "rule_set": [
                 rule_set("AI", "sing-rules/rules/ai.srs"),
+                rule_set("AI->proc", "sing-rules/rules/ai-proc.srs"),
                 rule_set("Apple", "sing-rules/rules/apple.srs"),
                 rule_set("Block", "sing-rules/rules/block.srs"),
                 rule_set("Development", "sing-rules/rules/dev.srs"),

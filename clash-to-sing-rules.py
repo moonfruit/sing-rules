@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 import json
-from typing import TextIO
+from pathlib import Path
+from typing import Annotated, TextIO
+
+import typer
 
 from common import Rule, as_rule, get_list, get_set, merge
 
 
-def load_rules(rule_set_file: str) -> list[Rule]:
-    try:
-        with open(rule_set_file, "r") as f:
+def load_rules(rule_set_file: Path) -> list[Rule]:
+    if rule_set_file.exists():
+        with rule_set_file.open("r") as f:
             return get_list(json.load(f), "rules")
-    except FileNotFoundError:
-        return []
+    return []
 
 
-def to_rules(f: TextIO) -> list[Rule]:
+def to_rules(f: TextIO, enable_process=False) -> list[Rule]:
     rule = {}
     for line in f:
         line = line.split("#", 1)[0].strip()
@@ -40,11 +42,14 @@ def to_rules(f: TextIO) -> list[Rule]:
                     raise ValueError(f"Invalid rule: {line}")
                 get_set(rule, "ip_cidr").add(values[1])
             case "PROCESS-NAME":
-                get_set(rule, "process_name").add(values[1])
+                if enable_process:
+                    get_set(rule, "process_name").add(values[1])
             case "PROCESS-PATH":
-                get_set(rule, "process_path").add(values[1])
+                if enable_process:
+                    get_set(rule, "process_path").add(values[1])
             case "PROCESS-PATH-REGEX":
-                get_set(rule, "process_path_regex").add(values[1])
+                if enable_process:
+                    get_set(rule, "process_path_regex").add(values[1])
             case "URL-REGEX" | "USER-AGENT":
                 pass
             case _:
@@ -56,17 +61,19 @@ def to_rules(f: TextIO) -> list[Rule]:
     return [as_rule(rule)]
 
 
-def main(list_file: str, rule_set_file: str) -> None:
+def main(
+    list_file: Annotated[Path, typer.Argument(show_default=False, exists=True, dir_okay=False)],
+    rule_set_file: Annotated[Path, typer.Argument(show_default=False, dir_okay=False, writable=True)],
+    enable_process: Annotated[bool, typer.Option("--enable-process", "-p")] = False,
+):
     rules = load_rules(rule_set_file)
 
-    with open(list_file, "r") as f:
-        rules.extend(to_rules(f))
+    with list_file.open("r") as f:
+        rules.extend(to_rules(f, enable_process))
 
-    with open(rule_set_file, "w") as f:
+    with rule_set_file.open("w") as f:
         json.dump({"version": 1, "rules": merge(rules)}, f, indent=2)
 
 
 if __name__ == "__main__":
-    import sys
-
-    main(sys.argv[1], sys.argv[2])
+    typer.run(main)
