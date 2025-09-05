@@ -69,19 +69,12 @@
         "rewrite_ttl": 2592000
       },
       {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
-        "server": "dns-fakeip"
+        "clash_mode": "Direct",
+        "server": "dns-direct"
       },
       {
         "clash_mode": "Global",
         "server": "dns-proxy"
-      },
-      {
-        "clash_mode": "Direct",
-        "server": "dns-direct"
       },
       {
         "rule_set": "GeoSites@CN",
@@ -100,6 +93,13 @@
           }
         ],
         "server": "dns-direct"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip"
       }
     ],
     "final": "dns-proxy",
@@ -131,6 +131,13 @@
       {
         "protocol": "stun",
         "action": "reject"
+      },
+      {
+        "protocol": [
+          "bittorrent",
+          "ntp"
+        ],
+        "outbound": "DIRECT"
       },
       {
         "domain_suffix": [
