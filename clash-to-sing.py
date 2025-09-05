@@ -399,7 +399,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
             ],
             "rule_set": [
                 rule_set("AI", "sing-rules/rules/ai.srs"),
-                rule_set("AI->proc", "sing-rules/rules/ai-proc.srs"),
+                rule_set("AI:Process", "sing-rules/rules/ai-proc.srs"),
                 rule_set("Apple", "sing-rules/rules/apple.srs"),
                 rule_set("Block", "sing-rules/rules/block.srs"),
                 rule_set("Development", "sing-rules/rules/dev.srs"),
