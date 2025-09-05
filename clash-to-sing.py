@@ -334,6 +334,12 @@ def build_local_rules(local: bool):
     return [{"rule_set": "AI:Process", "outbound": "🤖 人工智能"}]
 
 
+def build_local_rule_sets(local: bool):
+    if not local:
+        return []
+    return [rule_set("AI:Process", "sing-rules/rules/ai-proc.srs")]
+
+
 __CDN = "cdn.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.com"
 
@@ -399,7 +405,6 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
             ],
             "rule_set": [
                 rule_set("AI", "sing-rules/rules/ai.srs"),
-                rule_set("AI:Process", "sing-rules/rules/ai-proc.srs"),
                 rule_set("Apple", "sing-rules/rules/apple.srs"),
                 rule_set("Block", "sing-rules/rules/block.srs"),
                 rule_set("Development", "sing-rules/rules/dev.srs"),
@@ -424,6 +429,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 rule_set("Steam@CN", "sing-rules/rules/steam-cn.srs"),
                 rule_set("TikTok", "sing-rules/rules/tiktok.srs"),
                 rule_set("YouTube", "sing-rules/rules/youtube.srs"),
+                *build_local_rule_sets(local),
             ],
             "final": "🐟 漏网之鱼",
         },
