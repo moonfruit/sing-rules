@@ -276,7 +276,14 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     else:
         outbounds.append(selector("👍 高级节点", ["♻️ 自动选择"]))
 
-    outbounds.append(selector("🤖 人工智能", ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]))
+    if "🇺🇸 美国节点" in group_tags:
+        us_tags = [tag for tag in group_tags if tag.startswith("🇺🇸 美国节点")]
+        not_us_tags = [tag for tag in group_tags if not tag.startswith("🇺🇸 美国节点")]
+        ai_tags = [*us_tags, "🔰 默认出口", "👍 高级节点", *not_us_tags, "DIRECT"]
+    else:
+        ai_tags = ["🔰 默认出口", "👍 高级节点", *group_tags, "DIRECT"]
+
+    outbounds.append(selector("🤖 人工智能", ai_tags))
     outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]))
     outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
     outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", "👍 高级节点", *group_tags]))
@@ -341,6 +348,7 @@ def build_local_rule_sets(local: bool):
 
 
 __CDN = "cdn.jsdelivr.net"
+# __CDN = "fastly.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.com"
 
 
