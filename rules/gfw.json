@@ -14941,13 +14941,6 @@
         "2a04:9d40:f000::/36",
         "2a0a:f280::/32"
       ]
-    },
-    {
-      "process_name": [
-        "com.viu.pad",
-        "com.viu.phone",
-        "com.vuclip.viu"
-      ]
     }
   ]
 }

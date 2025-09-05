@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "process_name": [
+        "ChatGPT",
+        "ChatGPTHelper",
+        "Claude",
+        "Claude Helper",
+        "Claude Helper (GPU)",
+        "Claude Helper (Renderer)",
+        "claude",
+        "gemini"
+      ]
+    },
+    {
+      "process_path_regex": [
+        "/Applications/ChatGPT\\.app/.*",
+        "/Applications/Claude\\.app/.*"
+      ]
+    }
+  ]
+}

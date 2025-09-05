@@ -108,24 +108,6 @@
         "openai"
       ],
       "domain_regex": "^chatgpt-async-webps-prod-\\S+-\\d+\\.webpubsub\\.azure\\.com$"
-    },
-    {
-      "process_name": [
-        "ChatGPT",
-        "ChatGPTHelper",
-        "Claude",
-        "Claude Helper",
-        "Claude Helper (GPU)",
-        "Claude Helper (Renderer)",
-        "claude",
-        "gemini"
-      ]
-    },
-    {
-      "process_path_regex": [
-        "/Applications/ChatGPT\\.app/.*",
-        "/Applications/Claude\\.app/.*"
-      ]
     }
   ]
 }

@@ -668,9 +668,6 @@
         "2a00:86c0:ff0a::/48",
         "2a03:5640::/32"
       ]
-    },
-    {
-      "process_name": "com.netflix.mediaclient"
     }
   ]
 }
