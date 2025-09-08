@@ -324,15 +324,17 @@ def as_tuple(ip):
 
 
 def build_direct_rules(domains, ips):
-    direct: Object = {
-        "ip_is_private": True,
-        "outbound": "DIRECT",
-    }
-    if domains:
-        direct["domain"] = sorted(domains)
-    if ips:
-        direct["ip_cidr"] = sorted(ips, key=as_tuple)
-    return direct
+    rules = [{"ip_is_private": True, "outbound": "DIRECT"}]
+    if domains or ips:
+        direct: Object = {
+            "outbound": "DIRECT",
+        }
+        if domains:
+            direct["domain"] = sorted(domains)
+        if ips:
+            direct["ip_cidr"] = sorted(ips, key=as_tuple)
+        rules.append(direct)
+    return rules
 
 
 def build_local_rules(local: bool):
@@ -382,7 +384,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
                 {"domain_suffix": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
-                build_direct_rules(domains, ips),
+                *build_direct_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 *build_local_rules(local),
