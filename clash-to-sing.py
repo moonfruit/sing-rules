@@ -410,8 +410,7 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"rule_set": ["GFW", "Porn"], "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
-                {"inbound": "direct-in", "outbound": "🎯 全球直连"},
-                {"inbound": ["redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
+                {"inbound": ["direct-in", "redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
             ],
             "rule_set": [
                 rule_set("AI", "sing-rules/rules/ai.srs"),
