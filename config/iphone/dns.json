@@ -99,7 +99,8 @@
           "A",
           "AAAA"
         ],
-        "server": "dns-fakeip"
+        "server": "dns-fakeip",
+        "rewrite_ttl": 60
       }
     ],
     "final": "dns-proxy",
