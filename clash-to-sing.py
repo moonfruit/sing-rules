@@ -3,7 +3,7 @@ import ipaddress
 import json
 import re
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 from attrs import define
@@ -160,24 +160,39 @@ def is_cheap(cost):
 
 
 def is_expansive(cost):
-    return cost > 1
+    return cost < 0 or cost > 1
 
 
-def add_to_group(groups: dict[str, list[str]], group: str, tag: str, cost: float = None):
+def add_to_group(groups: dict[str, list[str]], group: str, tag: str, *, cost: float = None, protocol: str = False):
     get_list(groups, group).append(tag)
     if cost:
         if is_cheap(cost):
             get_list(groups, f"{group} 🛢️").append(tag)
-        elif is_expansive(cost):
+        if is_expansive(cost):
             get_list(groups, f"{group} 👍").append(tag)
+    if protocol:
+        match protocol:
+            case "hysteria2":
+                get_list(groups, f"{group} 🌪️").append(tag)
+            case "shadowsocks":
+                get_list(groups, f"{group} 🚀").append(tag)
+            case "trojan":
+                get_list(groups, f"{group} 🐴").append(tag)
+            case "vmess":
+                get_list(groups, f"{group} 🎯").append(tag)
 
 
-def remove_duple_keys(d: dict) -> dict:
+def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
     keys_to_remove = []
-    for key in d:
-        new_key = key + " 🛢️"
-        if new_key in d and d[key] == d[new_key]:
-            keys_to_remove.append(new_key)
+    for key, value in d.items():
+        if not value:
+            keys_to_remove.append(key)
+        for icon in (" 🛢️", " 👍", " 🌪️", " 🚀", " 🐴", " 🎯"):
+            if key.endswith(icon):
+                break
+            new_key = key + icon
+            if new_key in d and value == d[new_key]:
+                keys_to_remove.append(new_key)
     for key in keys_to_remove:
         del d[key]
     return d
@@ -201,7 +216,15 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     cheap_nodes = []
     expansive_nodes = []
     other_nodes = []
-    groups = {}
+    groups = {
+        "🇺🇸 美国节点": [],
+        "🇺🇸 美国节点 🛢️": [],
+        "🇺🇸 美国节点 👍": [],
+        "🇺🇸 美国节点 🌪️": [],
+        "🇺🇸 美国节点 🚀": [],
+        "🇺🇸 美国节点 🐴": [],
+        "🇺🇸 美国节点 🎯": [],
+    }
 
     if local:
         outbounds = [
@@ -213,11 +236,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         all_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
         cheap_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
         other_nodes = ["🧅 Tor Browser"]
-        groups = {
-            "🇺🇸 美国节点": ["⛰️ Gingkoo"],
-            "🇺🇸 美国节点 🛢️": ["⛰️ Gingkoo"],
-            "🇺🇸 美国节点 👍": ["⛰️ Gingkoo"],
-        }
+        add_to_group(groups, __GROUP_MAP["US"], "⛰️ Gingkoo", cost=-1)
 
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
@@ -246,7 +265,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
 
         if group in __GROUP_MAP:
             if group == "US":
-                add_to_group(groups, __GROUP_MAP[group], tag, cost)
+                add_to_group(groups, __GROUP_MAP[group], tag, cost=cost, protocol=outbound["type"])
             else:
                 if group == "UK":
                     add_to_group(groups, __GROUP_MAP["EU"], tag)
@@ -256,11 +275,12 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
 
         if "provider" in proxy:
             provider = proxy["provider"]
-            add_to_group(providers, provider, tag, cost)
+            add_to_group(providers, provider, tag, cost=cost)
 
     if other_nodes:
         groups["🏳️ 其它节点"] = other_nodes
-    remove_duple_keys(providers)
+    clean_keys(groups)
+    clean_keys(providers)
     group_tags = ["🍑 自由切换", *providers, *groups]
 
     outbounds.append(
