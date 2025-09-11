@@ -5,8 +5,8 @@
     "path": "dat/xipcloud.yaml"
   },
   {
-    "name": "💨 风之谷",
-    "cost": -1,
-    "path": "dat/fzg.yaml"
+    "name": "🌸 nanoCloud",
+    "cost": 1.0,
+    "path": "dat/nanocloud.yaml"
   }
 ]

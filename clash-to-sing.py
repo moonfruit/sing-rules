@@ -24,6 +24,14 @@ __FLAG_MAP = {
     "UK": "🇬🇧",
     "US": "🇺🇸",
     "VN": "🇻🇳",
+    # Alias
+    "BGP": "❇️",
+    "TWN": "🇹🇼",
+}
+
+__FLAG_ALIAS_MAP = {
+    "BGP": "US",
+    "TWN": "TW",
 }
 
 __TAG_GROUP = [
@@ -75,7 +83,7 @@ def find_group(tag: str) -> tuple[str, str]:
             return group, tag
     for group, flag in __FLAG_MAP.items():
         if tag.startswith(flag):
-            return group, tag[len(flag) :].lstrip()
+            return __FLAG_ALIAS_MAP.get(group, group), tag[len(flag) :].lstrip()
     for group, alias in __GROUP_ALIAS.items():
         if tag.startswith(alias):
             return group, __fix_tag(tag, len(alias))
@@ -87,7 +95,7 @@ def find_cost(tag: str, cost: float = 1) -> float:
     return float(match.group(1)) if match else cost
 
 
-def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
+def proxy_to_outbound(clash: Object) -> tuple[str, float, Object]:
     name = clash["name"].strip()
     group, name = find_group(name)
     cost = find_cost(name, clash.get("cost", 1))
@@ -131,6 +139,26 @@ def proxy_to_outbound(clash: SimpleObject) -> tuple[str, float, SimpleObject]:
             }
             if clash.get("skip-cert-verify", False):
                 outbound["tls"]["insecure"] = True
+            if "sni" in clash:
+                outbound["tls"]["server_name"] = clash["sni"]
+
+            match clash.get("network", None):
+                case None:
+                    pass
+                case "ws":
+                    transport = {
+                        "type": "ws",
+                    }
+                    opts = clash.get("ws-opts", {})
+                    if opts:
+                        if "path" in opts:
+                            transport["path"] = opts["path"]
+                        if "headers" in opts:
+                            transport["headers"] = opts["headers"]
+                    outbound["transport"] = transport
+                case _:
+                    raise ValueError(f"Unknown network '{clash['network']}'")
+
         case "vmess":
             outbound = {
                 "type": "vmess",
