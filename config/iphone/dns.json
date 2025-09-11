@@ -142,8 +142,6 @@
       },
       {
         "domain_suffix": [
-          "cdn.jsdelivr.net",
-          "fastly.jsdelivr.net",
           "xipcloud.org",
           "v2ray.in"
         ],
@@ -154,19 +152,19 @@
       {
         "type": "remote",
         "tag": "GeoIP@CN",
-        "url": "https://cdn.jsdelivr.net/npm/sing-rules/rules/geoip-cn.srs",
+        "url": "https://fastly.jsdelivr.net/npm/sing-rules/rules/geoip-cn.srs",
         "download_detour": "DIRECT"
       },
       {
         "type": "remote",
         "tag": "GeoSites@CN",
-        "url": "https://cdn.jsdelivr.net/npm/sing-rules/rules/geosites-cn.srs",
+        "url": "https://fastly.jsdelivr.net/npm/sing-rules/rules/geosites-cn.srs",
         "download_detour": "DIRECT"
       },
       {
         "type": "remote",
         "tag": "GeoSites@!CN",
-        "url": "https://cdn.jsdelivr.net/npm/sing-rules/rules/geosites-not-cn.srs",
+        "url": "https://fastly.jsdelivr.net/npm/sing-rules/rules/geosites-not-cn.srs",
         "download_detour": "DIRECT"
       }
     ],

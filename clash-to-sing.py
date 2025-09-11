@@ -369,9 +369,10 @@ def build_local_rule_sets(local: bool):
     return [rule_set("AI:Process", "sing-rules/rules/ai-proc.srs")]
 
 
-__CDN = "cdn.jsdelivr.net"
-# __CDN = "fastly.jsdelivr.net"
+# __CDN = "cdn.jsdelivr.net"
+__CDN = "fastly.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.com"
+# __CDN = "cdn.jsdmirror.cn"
 
 
 def rule_set(tag: str, url: str):
