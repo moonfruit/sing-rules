@@ -40,8 +40,7 @@ jobs:
       - name: Preflight
         run: |
           set -o pipefail
-          : #./preflight.sh xipcloud fzg | tee -a $GITHUB_ENV
-          ./preflight.sh xipcloud | tee -a $GITHUB_ENV
+          ./preflight.sh xipcloud nanocloud | tee -a $GITHUB_ENV
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
