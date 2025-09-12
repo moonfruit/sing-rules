@@ -30,7 +30,7 @@ __FLAG_MAP = {
 }
 
 __FLAG_ALIAS_MAP = {
-    "BGP": "US",
+    # "BGP": "US",
     "TWN": "TW",
 }
 
