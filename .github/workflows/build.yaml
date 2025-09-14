@@ -35,12 +35,12 @@ jobs:
           NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
         run: |
           curl -fsSL "$XIPCLOUD_URL" >dat/xipcloud.yaml
-          curl -fsSL -H "User-Agent: clash/*" "$NANOCLOUD_URL" >dat/nanocloud.yaml
+          curl -fsSL -H "User-Agent: sing-box/*" "$NANOCLOUD_URL" >dat/nanocloud.json
 
       - name: Preflight
         run: |
           set -o pipefail
-          ./preflight.sh xipcloud nanocloud | tee -a $GITHUB_ENV
+          ./preflight.sh xipcloud.yaml nanocloud.json | tee -a $GITHUB_ENV
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1

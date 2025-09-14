@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
-from typing import TextIO
+from typing import Any, IO, TextIO
 
 
-def open_path(path: Path, mode="r", **kwargs) -> TextIO:
+def open_path(path: Path, mode="r", **kwargs) -> IO[Any]:
     if str(path) == "-":
         match mode:
             case "r":

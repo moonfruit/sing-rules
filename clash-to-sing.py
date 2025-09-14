@@ -1,15 +1,17 @@
 #!/usr/bin/env python
+import base64
 import ipaddress
 import json
 import re
 from pathlib import Path
 from typing import Annotated, Any
+from urllib.parse import parse_qs, unquote, urlparse
 
 import typer
 from attrs import define
 from cattrs import structure
 
-from common import Object, SimpleObject, get_list, yaml
+from common import Object, SimpleObject, get_list, simplify_dict, yaml
 from common.io import open_path
 
 __FLAG_MAP = {
@@ -95,11 +97,23 @@ def find_cost(tag: str, cost: float = 1) -> float:
     return float(match.group(1)) if match else cost
 
 
-def proxy_to_outbound(clash: Object) -> tuple[str, float, Object]:
-    name = clash["name"].strip()
+def proxy_to_outbound(proxy: Object) -> tuple[str, float, Object]:
+    name = proxy["name"].strip()
     group, name = find_group(name)
-    cost = find_cost(name, clash.get("cost", 1))
+    cost = find_cost(name, proxy.get("cost", 1))
     tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
+    outbound = {}
+    match proxy["format"]:
+        case "clash":
+            outbound = clash_proxy_to_outbound(proxy, tag)
+        case "sing-box":
+            outbound = sing_box_proxy_to_outbound(proxy, tag)
+        case _:
+            raise ValueError(f"Unknown proxy format: {proxy['format']}")
+    return group, cost, outbound
+
+
+def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
     outbound: Object = {}
     match clash["type"]:
         case "hysteria2":
@@ -141,7 +155,6 @@ def proxy_to_outbound(clash: Object) -> tuple[str, float, Object]:
                 outbound["tls"]["insecure"] = True
             if "sni" in clash:
                 outbound["tls"]["server_name"] = clash["sni"]
-
             match clash.get("network", None):
                 case None:
                     pass
@@ -158,7 +171,6 @@ def proxy_to_outbound(clash: Object) -> tuple[str, float, Object]:
                     outbound["transport"] = transport
                 case _:
                     raise ValueError(f"Unknown network '{clash['network']}'")
-
         case "vmess":
             outbound = {
                 "type": "vmess",
@@ -171,7 +183,13 @@ def proxy_to_outbound(clash: Object) -> tuple[str, float, Object]:
             }
         case _:
             raise ValueError(f"Unknown type '{clash['type']}'")
-    return group, cost, outbound
+    return outbound
+
+
+def sing_box_proxy_to_outbound(sing: Object, tag: str) -> Object:
+    outbound = sing["outbound"]
+    outbound["tag"] = tag
+    return outbound
 
 
 def selector(tag: str, nodes: list[str]) -> Object:
@@ -499,6 +517,7 @@ class ConfigFile:
     path: Path
     name: str = None
     cost: float = 1
+    format: str = "clash"
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
@@ -507,18 +526,73 @@ def load_config_files(path: Path) -> list[ConfigFile]:
     return structure(configs, list[ConfigFile])
 
 
-def load_proxies(config: ConfigFile) -> list[SimpleObject]:
-    if config.cost <= 0:
-        return []
-    with open_path(config.path) as f:
+def load_clash_proxies(path: Path) -> list[SimpleObject]:
+    with open_path(path) as f:
         clash = yaml.load(f)
     if "proxies" not in clash:
         return []
-    proxies = clash["proxies"]
+    return clash["proxies"]
+
+
+def load_shadow_rocket_proxies(path: Path) -> list[SimpleObject]:
+    with open_path(path) as f:
+        data = f.read()
+    lines = base64.b64decode(data).decode().splitlines()
+    proxies = []
+    for index, line in enumerate(lines):
+        if line.startswith("STATUS="):
+            continue
+        if "#" in line:
+            url, name = line.split("#", 1)
+            name = unquote(name)
+        else:
+            url = line
+            name = "Line#{}".format(index)
+        parsed = urlparse(url)
+        proxies.append(
+            {
+                "url": line,
+                "name": name,
+                "type": parsed.scheme,
+                "server": parsed.hostname,
+                "port": parsed.port,
+                "query": simplify_dict(parse_qs(parsed.query)),
+                "struct": parsed,
+            }
+        )
+    return proxies
+
+
+def load_sing_box_proxies(path: Path) -> list[SimpleObject]:
+    with open_path(path) as f:
+        config = json.load(f)
+    if "outbounds" not in config:
+        return []
+    return [
+        {"name": outbound["tag"], "server": outbound["server"], "outbound": outbound}
+        for outbound in config["outbounds"]
+        if outbound["type"] not in ("direct", "selector", "urltest")
+    ]
+
+
+def load_proxies(config: ConfigFile) -> list[SimpleObject]:
+    if config.cost <= 0:
+        return []
+    proxies = []
+    match config.format:
+        case "clash":
+            proxies = load_clash_proxies(config.path)
+        case "shadow-rocket":
+            proxies = load_shadow_rocket_proxies(config.path)
+        case "sing-box":
+            proxies = load_sing_box_proxies(config.path)
+        case _:
+            raise ValueError(f"Unknown format: {config.format}")
     for proxy in proxies:
         if config.name:
             proxy["provider"] = config.name
         proxy["cost"] = config.cost
+        proxy["format"] = config.format
     return proxies
 
 

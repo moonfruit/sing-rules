@@ -17,21 +17,21 @@ check-v2ray-rules() {
     fi
 }
 
-check-clash-yaml() {
+check-config() {
     echo -n "$1: "
-    sha1sum "dat/$1.yaml" | awk '{print $1}' | tee "$TEMP"
+    sha1sum "dat/$1" | awk '{print $1}' | tee "$TEMP"
     if diff "$TEMP" "$DIR/$1.sha1"; then
-        echo "$1.yaml is not changed"
+        echo "$1 is not changed"
         return 1
     else
         mv "$TEMP" "$DIR/$1.sha1"
     fi
 }
 
-check-clash() {
+check-all-config() {
     local result=1
     for name in "$@"; do
-        if check-clash-yaml "$name"; then
+        if check-config "$name"; then
             result=0
         fi
     done
@@ -44,7 +44,7 @@ if check-v2ray-rules >&2; then
 fi
 echo "--------" >&2
 if (($#)); then
-    if check-clash "$@" >&2; then
+    if check-all-config "$@" >&2; then
         RESULT+=(BUILD_CONFIG)
     fi
 fi

@@ -13,6 +13,25 @@ type RelaxedStrings = RelaxedList[str]
 type Rule = dict[str, RelaxedStrings]
 
 
+def simplify_dict(d: dict) -> dict:
+    """
+    将字典中只包含一个元素的列表转换为该元素本身
+
+    Args:
+        d: 输入字典
+
+    Returns:
+        处理后的字典
+    """
+    result = {}
+    for key, value in d.items():
+        if isinstance(value, list) and len(value) == 1:
+            result[key] = value[0]
+        else:
+            result[key] = value
+    return result
+
+
 def get_list[V](d: dict[str, list[V]], key: str) -> list[V]:
     return compute_if_absent(d, key, lambda: [])
 
