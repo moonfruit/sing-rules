@@ -1,10 +1,11 @@
 PROCESS-NAME,ChatGPT
 PROCESS-NAME,ChatGPTHelper
 PROCESS-NAME,Claude
-PROCESS-NAME,claude
 PROCESS-NAME,Claude Helper
 PROCESS-NAME,Claude Helper (GPU)
 PROCESS-NAME,Claude Helper (Renderer)
+PROCESS-NAME,claude
+PROCESS-NAME,codex
 PROCESS-NAME,gemini
 PROCESS-PATH-REGEX,/Applications/ChatGPT\.app/.*
 PROCESS-PATH-REGEX,/Applications/Claude\.app/.*
