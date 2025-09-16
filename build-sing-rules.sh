@@ -44,6 +44,7 @@ done
 
 cd ..
 if [[ -d private ]]; then
+    title "Publishing sing rule sets"
     rm -fr private/rules
     cp -r rules private
 fi

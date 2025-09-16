@@ -411,10 +411,10 @@ def build_local_rules(local: bool):
     return [{"rule_set": "AI:Process", "outbound": "🤖 人工智能"}]
 
 
-def build_local_rule_sets(local: bool):
+def build_local_rule_sets(local: bool, gitee_token: str | None):
     if not local:
         return []
-    return [rule_set("AI:Process", "sing-rules/rules/ai-proc.srs")]
+    return [rule_set(gitee_token, "AI:Process", "rules/ai-proc.srs")]
 
 
 # __CDN = "cdn.jsdelivr.net"
@@ -509,7 +509,7 @@ def to_sing(proxies: list[SimpleObject], local: bool, gitee_token: str | None) -
                 rule_set(gitee_token, "Steam@CN", "rules/steam-cn.srs"),
                 rule_set(gitee_token, "TikTok", "rules/tiktok.srs"),
                 rule_set(gitee_token, "YouTube", "rules/youtube.srs"),
-                *build_local_rule_sets(local),
+                *build_local_rule_sets(local, gitee_token),
             ],
             "final": "🐟 漏网之鱼",
         },
