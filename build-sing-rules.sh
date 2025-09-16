@@ -41,3 +41,9 @@ for JSON in *.json; do
     sing-box rule-set format -w "$JSON" >/dev/null 2>&1
     sing-box rule-set compile "$JSON"
 done
+
+cd ..
+if [[ -d private ]]; then
+    rm -fr private/rules
+    cp -r rules private
+fi

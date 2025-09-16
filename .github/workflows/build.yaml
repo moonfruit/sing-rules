@@ -76,16 +76,25 @@ jobs:
       - name: Install python requirements
         run: pip install -r requirements.txt
 
+      - name: Checkout private
+        uses: actions/checkout@v5
+        with:
+          repository: https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/moonfruit/private.git
+          path: private
+
       - name: Build config
         if: env.BUILD_CONFIG == 1
         env:
-          GITEE_USER: ${{ secrets.GITEE_USER }}
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: ./build-sing-config.sh "$GITEE_USER" "$GITEE_TOKEN"
+        run: ./build-sing-config.sh "$GITEE_TOKEN"
 
       - name: Build rule sets
         if: env.BUILD_RULES == 1
         run: ./build-sing-rules.sh
+
+      - name: Commit and Push (private)
+        run: ../commit-and-push.sh "Update config"
+        working-directory: private
 
       - name: Commit and Push
         run: ./commit-and-push.sh "Update rules" "${{ env.TAG }}"

@@ -423,12 +423,14 @@ __CDN = "fastly.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.cn"
 
 
-def rule_set(tag: str, url: str):
+def rule_set(gitee_token: str | None, tag: str, url: str):
     # noinspection HttpUrlsUsage
     if url.startswith("http://") or url.startswith("https://"):
         url_to_use = url
+    elif gitee_token:
+        url_to_use = f"https://gitee.com/api/v5/repos/moonfruit/private/raw/{url}?access_token={gitee_token}&ref=main"
     else:
-        url_to_use = f"https://{__CDN}/npm/{url}"
+        url_to_use = f"https://{__CDN}/npm/sing-rules/{url}"
 
     if url.endswith(".json"):
         format_to_use = "source"
@@ -444,7 +446,7 @@ def rule_set(tag: str, url: str):
     }
 
 
-def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
+def to_sing(proxies: list[SimpleObject], local: bool, gitee_token: str | None) -> Object:
     outbounds, domains, ips = proxies_to_outbound(local, proxies)
     return {
         "outbounds": outbounds,
@@ -482,31 +484,31 @@ def to_sing(local: bool, proxies: list[SimpleObject]) -> Object:
                 {"inbound": ["direct-in", "redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
             ],
             "rule_set": [
-                rule_set("AI", "sing-rules/rules/ai.srs"),
-                rule_set("Apple", "sing-rules/rules/apple.srs"),
-                rule_set("Block", "sing-rules/rules/block.srs"),
-                rule_set("Development", "sing-rules/rules/dev.srs"),
-                rule_set("Development@CN", "sing-rules/rules/dev-cn.srs"),
-                rule_set("Direct", "sing-rules/rules/direct.srs"),
-                rule_set("Disney+", "sing-rules/rules/disney-plus.srs"),
-                rule_set("Games", "sing-rules/rules/games.srs"),
-                rule_set("Games@CN", "sing-rules/rules/games-cn.srs"),
-                rule_set("GFW", "sing-rules/rules/gfw.srs"),
-                rule_set("Microsoft", "sing-rules/rules/microsoft.srs"),
-                rule_set("Minecraft", "sing-rules/rules/minecraft.srs"),
-                rule_set("Netflix", "sing-rules/rules/netflix.srs"),
-                rule_set("Nintendo", "sing-rules/rules/nintendo.srs"),
-                rule_set("Nintendo@CN", "sing-rules/rules/nintendo-cn.srs"),
-                rule_set("PlayStation", "sing-rules/rules/playstation.srs"),
-                rule_set("PlayStation@CN", "sing-rules/rules/playstation-cn.srs"),
-                rule_set("Porn", "sing-rules/rules/porn.srs"),
-                rule_set("Private", "sing-rules/rules/private.srs"),
-                rule_set("Proxy", "sing-rules/rules/proxy.srs"),
-                rule_set("Sources", "sing-rules/rules/sources.srs"),
-                rule_set("Steam", "sing-rules/rules/steam.srs"),
-                rule_set("Steam@CN", "sing-rules/rules/steam-cn.srs"),
-                rule_set("TikTok", "sing-rules/rules/tiktok.srs"),
-                rule_set("YouTube", "sing-rules/rules/youtube.srs"),
+                rule_set(gitee_token, "AI", "rules/ai.srs"),
+                rule_set(gitee_token, "Apple", "rules/apple.srs"),
+                rule_set(gitee_token, "Block", "rules/block.srs"),
+                rule_set(gitee_token, "Development", "rules/dev.srs"),
+                rule_set(gitee_token, "Development@CN", "rules/dev-cn.srs"),
+                rule_set(gitee_token, "Direct", "rules/direct.srs"),
+                rule_set(gitee_token, "Disney+", "rules/disney-plus.srs"),
+                rule_set(gitee_token, "Games", "rules/games.srs"),
+                rule_set(gitee_token, "Games@CN", "rules/games-cn.srs"),
+                rule_set(gitee_token, "GFW", "rules/gfw.srs"),
+                rule_set(gitee_token, "Microsoft", "rules/microsoft.srs"),
+                rule_set(gitee_token, "Minecraft", "rules/minecraft.srs"),
+                rule_set(gitee_token, "Netflix", "rules/netflix.srs"),
+                rule_set(gitee_token, "Nintendo", "rules/nintendo.srs"),
+                rule_set(gitee_token, "Nintendo@CN", "rules/nintendo-cn.srs"),
+                rule_set(gitee_token, "PlayStation", "rules/playstation.srs"),
+                rule_set(gitee_token, "PlayStation@CN", "rules/playstation-cn.srs"),
+                rule_set(gitee_token, "Porn", "rules/porn.srs"),
+                rule_set(gitee_token, "Private", "rules/private.srs"),
+                rule_set(gitee_token, "Proxy", "rules/proxy.srs"),
+                rule_set(gitee_token, "Sources", "rules/sources.srs"),
+                rule_set(gitee_token, "Steam", "rules/steam.srs"),
+                rule_set(gitee_token, "Steam@CN", "rules/steam-cn.srs"),
+                rule_set(gitee_token, "TikTok", "rules/tiktok.srs"),
+                rule_set(gitee_token, "YouTube", "rules/youtube.srs"),
                 *build_local_rule_sets(local),
             ],
             "final": "🐟 漏网之鱼",
@@ -607,6 +609,7 @@ def main(
     ] = None,
     output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
     local: Annotated[bool, typer.Option("--local", "-l")] = False,
+    gitee_token: Annotated[str, typer.Option("--gitee-token", "-t")] = None,
 ):
     config_files = [ConfigFile(f) for f in filenames] if filenames else []
     if configs:
@@ -616,7 +619,7 @@ def main(
     if not proxies:
         raise ValueError("No proxies found")
 
-    sing = to_sing(local, proxies)
+    sing = to_sing(proxies, local, gitee_token)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)
