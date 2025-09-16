@@ -329,11 +329,11 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     clean_keys(providers)
     group_tags = ["🍑 自由切换", *providers, *groups]
 
-    cheap_group = cheap_nodes and ["🛢️ 省流节点"] or []
-    expansive_group = expansive_nodes and ["👍 高级节点"] or []
+    cheap_tag = cheap_nodes and ["🛢️ 省流节点"] or []
+    expansive_tag = expansive_nodes and ["👍 高级节点"] or []
 
     outbounds.append(
-        selector("🔰 默认出口", [*cheap_group, *expansive_group, "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
+        selector("🔰 默认出口", [*cheap_tag, *expansive_tag, "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
     )
 
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
@@ -347,28 +347,28 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     if "🇺🇸 美国节点" in group_tags:
         us_tags = [tag for tag in group_tags if tag.startswith("🇺🇸 美国节点")]
         not_us_tags = [tag for tag in group_tags if not tag.startswith("🇺🇸 美国节点")]
-        ai_tags = [*us_tags, "🔰 默认出口", *expansive_group, *not_us_tags, "DIRECT"]
+        ai_tags = [*us_tags, "🔰 默认出口", *expansive_tag, *not_us_tags, "DIRECT"]
     else:
-        ai_tags = ["🔰 默认出口", *expansive_group, *group_tags, "DIRECT"]
+        ai_tags = ["🔰 默认出口", *expansive_tag, *group_tags, "DIRECT"]
 
     outbounds.append(selector("🤖 人工智能", ai_tags))
     outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]))
-    outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("⚙️ 软件开发", ["🔰 默认出口", "DIRECT", *expansive_group, *group_tags]))
-    outbounds.append(selector("📦 软件仓库", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 Nintendo", ["🔰 默认出口", "DIRECT", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 Nintendo@CN", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "DIRECT", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "DIRECT", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 Games", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", *expansive_group, *group_tags]))
-    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", *expansive_group, "DIRECT", *group_tags]))
-    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", *expansive_group, "DIRECT", *group_tags]))
-    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", *expansive_group, "DIRECT", *group_tags]))
-    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_group, "DIRECT", *group_tags]))
+    outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("⚙️ 软件开发", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
+    outbounds.append(selector("📦 软件仓库", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Nintendo", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Nintendo@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Games", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
