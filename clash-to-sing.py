@@ -13,8 +13,10 @@ from cattrs import structure
 
 from common import Object, SimpleObject, get_list, simplify_dict, yaml
 from common.io import open_path
+from common.outbound import safe_find_country
 
 __FLAG_MAP = {
+    "AR": "🇦🇷",
     "EU": "🇪🇺",
     "HK": "🇭🇰",
     "ID": "🇮🇩",
@@ -22,18 +24,11 @@ __FLAG_MAP = {
     "KR": "🇰🇷",
     "MY": "🇲🇾",
     "SG": "🇸🇬",
-    "TW": "🇨🇳",
+    "TW": ["🇨🇳", "🇹🇼"],
     "UK": "🇬🇧",
     "US": "🇺🇸",
     "VN": "🇻🇳",
-    # Alias
-    "BGP": "❇️",
-    "TWN": "🇹🇼",
-}
-
-__FLAG_ALIAS_MAP = {
-    # "BGP": "US",
-    "TWN": "TW",
+    "UN": "❇️",
 }
 
 __TAG_GROUP = [
@@ -51,6 +46,7 @@ __GROUP_ALIAS = {
 }
 
 __GROUP_MAP = {
+    "AR": "🇦🇷 阿根廷节点",
     "EU": "🇪🇺 欧洲节点",
     "HK": "🇭🇰 香港节点",
     "ID": "🇮🇩 印度尼西亚",
@@ -84,8 +80,12 @@ def find_group(tag: str) -> tuple[str, str]:
         if pattern.match(tag):
             return group, tag
     for group, flag in __FLAG_MAP.items():
-        if tag.startswith(flag):
-            return __FLAG_ALIAS_MAP.get(group, group), tag[len(flag) :].lstrip()
+        if isinstance(flag, list):
+            for f in flag:
+                if tag.startswith(f):
+                    return group, tag[len(flag) :].lstrip()
+        elif tag.startswith(flag):
+            return group, tag[len(flag) :].lstrip()
     for group, alias in __GROUP_ALIAS.items():
         if tag.startswith(alias):
             return group, __fix_tag(tag, len(alias))
@@ -97,11 +97,17 @@ def find_cost(tag: str, cost: float = 1) -> float:
     return float(match.group(1)) if match else cost
 
 
+def get_flag(group: str) -> str:
+    flag = __FLAG_MAP.get(group, "🏳️")
+    return isinstance(flag, list) and flag[0] or flag
+
+
 def proxy_to_outbound(proxy: Object) -> tuple[str, float, Object]:
     name = proxy["name"].strip()
     group, name = find_group(name)
     cost = find_cost(name, proxy.get("cost", 1))
-    tag = f"{__FLAG_MAP.get(group, "🏳️")} {name}"
+    tag = f"{get_flag(group)} {name}"
+
     outbound = {}
     match proxy["format"]:
         case "clash":
@@ -110,6 +116,13 @@ def proxy_to_outbound(proxy: Object) -> tuple[str, float, Object]:
             outbound = sing_box_proxy_to_outbound(proxy, tag)
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
+
+    if not group or group == "UN":
+        # noinspection PyBroadException
+        group = safe_find_country(outbound)
+        if group != "UN":
+            outbound["tag"] = f"{get_flag(group)} {name}"
+
     return group, cost, outbound
 
 
