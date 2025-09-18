@@ -4,7 +4,7 @@ import ipaddress
 import json
 import re
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Callable
 from urllib.parse import parse_qs, unquote, urlparse
 
 import typer
@@ -222,6 +222,13 @@ def is_expansive(cost):
     return cost < 0 or cost > 1
 
 
+def group_tag_adder(groups: dict[str, list[str]], tag: str, *, prepend: bool = False) -> Callable[[str], None]:
+    if prepend:
+        return lambda g: apply_to(groups, g, lambda l: l.insert(0, tag))
+    else:
+        return lambda g: get_list(groups, g).append(tag)
+
+
 def add_to_group(
     groups: dict[str, list[str]],
     group: str,
@@ -231,11 +238,7 @@ def add_to_group(
     cost: float = None,
     protocol: str = None,
 ):
-    def add_tag(_group):
-        if prepend:
-            apply_to(groups, _group, lambda l: l.insert(0, tag))
-        else:
-            get_list(groups, _group).append(tag)
+    add_tag = group_tag_adder(groups, tag, prepend=prepend)
 
     add_tag(group)
     if cost is not None:
