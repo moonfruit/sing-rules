@@ -37,10 +37,21 @@ def wait_for_port(port: int, timeout: float = 10.0) -> bool:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(0.1)
                 s.connect(("127.0.0.1", port))
+                time.sleep(0.1)
                 return True
         except (socket.timeout, ConnectionRefusedError):
             time.sleep(0.1)
     return False
+
+
+def get_country(port: int) -> str:
+    proxies = {"http": f"http://127.0.0.1:{port}", "https": f"http://127.0.0.1:{port}"}
+
+    response = requests.get("https://ipinfo.io", proxies=proxies, timeout=10, verify=True)
+    response.raise_for_status()
+
+    data = response.json()
+    return data.get("country")
 
 
 def find_country(outbound: dict, log_level: str = "warn") -> str:
@@ -99,18 +110,7 @@ def find_country(outbound: dict, log_level: str = "warn") -> str:
             raise TimeoutError(f"sing-box failed to start on port {port}")
 
         # 通过代理请求 ipinfo.io
-        proxies = {"http": f"http://127.0.0.1:{port}", "https": f"http://127.0.0.1:{port}"}
-
-        response = requests.get("https://ipinfo.io", proxies=proxies, timeout=10, verify=True)
-        response.raise_for_status()
-
-        data = response.json()
-        country = data.get("country")
-
-        if not country:
-            raise ValueError("No country code in response")
-
-        return country
+        return get_country(port)
 
     finally:
         if cleanup:
@@ -118,9 +118,10 @@ def find_country(outbound: dict, log_level: str = "warn") -> str:
             atexit.unregister(cleanup)
 
 
+# noinspection PyBroadException
 def safe_find_country(outbound: dict, log_level: str = "warn") -> str:
-    # noinspection PyBroadException
     try:
-        return find_country(outbound, log_level)
+        country = find_country(outbound, log_level)
     except Exception:
         return "UN"
+    return country if country else "UN"

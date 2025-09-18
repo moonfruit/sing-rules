@@ -1,4 +1,6 @@
+import functools
 import ipaddress
+import time
 from collections.abc import Callable, Collection, Iterable
 
 type Scalar = str | float | int
@@ -11,6 +13,24 @@ type RelaxedIterable[V] = V | Iterable[V]
 type RelaxedList[V] = V | list[V]
 type RelaxedStrings = RelaxedList[str]
 type Rule = dict[str, RelaxedStrings]
+
+
+def retry(max_attempts=3, delay=1):
+    def decorator(func):
+        # noinspection PyBroadException,PyInconsistentReturns
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    time.sleep(delay)
+
+        return wrapper
+
+    return decorator
 
 
 def simplify_dict(d: dict) -> dict:
@@ -30,6 +50,12 @@ def simplify_dict(d: dict) -> dict:
         else:
             result[key] = value
     return result
+
+
+def apply_to[V, R](d: dict[str, V], key: str, callback: Callable[[V], R]) -> R | None:
+    if key in d:
+        return callback(d[key])
+    return None
 
 
 def get_list[V](d: dict[str, list[V]], key: str) -> list[V]:

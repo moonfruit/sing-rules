@@ -1,7 +1,7 @@
 [
   {
     "name": "☁️ xipCloud",
-    "cost": 1.0,
+    "cost": -1.0,
     "path": "dat/xipcloud.yaml"
   },
   {

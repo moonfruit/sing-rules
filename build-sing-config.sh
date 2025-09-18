@@ -9,7 +9,7 @@ else
 fi
 
 cd "$BIN"
-"$BIN/clash-to-sing.py" -c config/config.json "${TOKEN[@]}" | sing-box format -c /dev/stdin >private/config.json
+"$BIN/clash-to-sing.py" -c config/config.json -r "${TOKEN[@]}" | sing-box format -c /dev/stdin >private/config.json
 
 TEMP="${RUNNER_TEMP:-/tmp}/config"
 mkdir -p "$TEMP"

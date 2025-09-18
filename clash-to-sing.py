@@ -11,7 +11,7 @@ import typer
 from attrs import define
 from cattrs import structure
 
-from common import Object, SimpleObject, get_list, simplify_dict, yaml
+from common import Object, SimpleObject, apply_to, get_list, simplify_dict, yaml
 from common.io import open_path
 from common.outbound import safe_find_country
 
@@ -102,7 +102,7 @@ def get_flag(group: str) -> str:
     return isinstance(flag, list) and flag[0] or flag
 
 
-def proxy_to_outbound(proxy: Object) -> tuple[str, float, Object]:
+def proxy_to_outbound(proxy: Object, resolve_country: bool | None) -> tuple[str, float, Object]:
     name = proxy["name"].strip()
     group, name = find_group(name)
     cost = find_cost(name, proxy.get("cost", 1))
@@ -117,7 +117,7 @@ def proxy_to_outbound(proxy: Object) -> tuple[str, float, Object]:
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
 
-    if not group or group == "UN":
+    if resolve_country and (not group or group == "UN"):
         # noinspection PyBroadException
         group = safe_find_country(outbound)
         if group != "UN":
@@ -222,23 +222,37 @@ def is_expansive(cost):
     return cost < 0 or cost > 1
 
 
-def add_to_group(groups: dict[str, list[str]], group: str, tag: str, *, cost: float = None, protocol: str = False):
-    get_list(groups, group).append(tag)
-    if cost:
+def add_to_group(
+    groups: dict[str, list[str]],
+    group: str,
+    tag: str,
+    *,
+    prepend: bool = False,
+    cost: float = None,
+    protocol: str = None,
+):
+    def add_tag(_group):
+        if prepend:
+            apply_to(groups, _group, lambda l: l.insert(0, tag))
+        else:
+            get_list(groups, _group).append(tag)
+
+    add_tag(group)
+    if cost is not None:
         if is_cheap(cost):
-            get_list(groups, f"{group} 🛢️").append(tag)
+            add_tag(f"{group} 🛢️")
         if is_expansive(cost):
-            get_list(groups, f"{group} 👍").append(tag)
+            add_tag(f"{group} 👍")
     if protocol:
         match protocol:
             case "hysteria2":
-                get_list(groups, f"{group} 🌪️").append(tag)
+                add_tag(f"{group} 🌪️")
             case "shadowsocks":
-                get_list(groups, f"{group} 🚀").append(tag)
+                add_tag(f"{group} 🚀")
             case "trojan":
-                get_list(groups, f"{group} 🐴").append(tag)
+                add_tag(f"{group} 🐴")
             case "vmess":
-                get_list(groups, f"{group} 🎯").append(tag)
+                add_tag(f"{group} 🎯")
 
 
 def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
@@ -265,7 +279,10 @@ def is_ipv4_address(hostname):
         return False
 
 
-def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[SimpleObject], set[str], set[str]]:
+def proxies_to_outbound(
+    local: bool, proxies: list[SimpleObject], resolve_country: bool | None
+) -> tuple[list[SimpleObject], set[str], set[str]]:
+
     outbounds = []
     domains = set()
     ips = set()
@@ -292,11 +309,6 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         ]
         costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
 
-        all_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-        cheap_nodes = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-        other_nodes = ["🧅 Tor Browser"]
-        add_to_group(groups, __GROUP_MAP["US"], "⛰️ Gingkoo", cost=-1)
-
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
 
@@ -306,7 +318,7 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
         server = proxy["server"]
         if server == "None":
             continue
-        group, cost, outbound = proxy_to_outbound(proxy)
+        group, cost, outbound = proxy_to_outbound(proxy, resolve_country)
         outbounds.append(outbound)
         if is_ipv4_address(server):
             ips.add(server + "/32")
@@ -342,8 +354,24 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     clean_keys(providers)
     group_tags = ["🍑 自由切换", *providers, *groups]
 
-    cheap_tag = cheap_nodes and ["🛢️ 省流节点"] or []
-    expansive_tag = expansive_nodes and ["👍 高级节点"] or []
+    if cheap_nodes and cheap_nodes != all_nodes:
+        cheap_tag = ["🛢️ 省流节点"]
+        if local:
+            cheap_nodes[0:0] = ["⛰️ Gingkoo", "🧅 Tor Browser"]
+    else:
+        cheap_tag = []
+
+    if expansive_nodes and expansive_nodes != all_nodes:
+        expansive_tag = ["👍 高级节点"]
+        if local:
+            expansive_nodes[0:0] = ["⛰️ Gingkoo"]
+    else:
+        expansive_tag = []
+
+    if local:
+        all_nodes[0:0] = ["⛰️ Gingkoo", "🧅 Tor Browser"]
+        other_nodes[0:0] = ["🧅 Tor Browser"]
+        add_to_group(groups, __GROUP_MAP["US"], "⛰️ Gingkoo", prepend=True, cost=-1)
 
     outbounds.append(
         selector("🔰 默认出口", [*cheap_tag, *expansive_tag, "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
@@ -352,10 +380,10 @@ def proxies_to_outbound(local: bool, proxies: list[SimpleObject]) -> tuple[list[
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
     outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(selector("🍑 自由切换", all_nodes))
-    if cheap_nodes:
-        outbounds.append(urltest("🛢️ 省流节点", costs, cheap_nodes))
-    if expansive_nodes:
-        outbounds.append(urltest("👍 高级节点", costs, expansive_nodes))
+    if cheap_tag:
+        outbounds.append(urltest(cheap_tag[0], costs, cheap_nodes))
+    if expansive_tag:
+        outbounds.append(urltest(expansive_tag[0], costs, expansive_nodes))
 
     if "🇺🇸 美国节点" in group_tags:
         us_tags = [tag for tag in group_tags if tag.startswith("🇺🇸 美国节点")]
@@ -459,8 +487,8 @@ def rule_set(gitee_token: str | None, tag: str, url: str):
     }
 
 
-def to_sing(proxies: list[SimpleObject], local: bool, gitee_token: str | None) -> Object:
-    outbounds, domains, ips = proxies_to_outbound(local, proxies)
+def to_sing(proxies: list[SimpleObject], local: bool, resolve_country: bool | None, gitee_token: str | None) -> Object:
+    outbounds, domains, ips = proxies_to_outbound(local, proxies, resolve_country)
     return {
         "outbounds": outbounds,
         "route": {
@@ -622,6 +650,7 @@ def main(
     ] = None,
     output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
     local: Annotated[bool, typer.Option("--local", "-l")] = False,
+    resolve_country: Annotated[bool, typer.Option("--resolve-country", "-r")] = False,
     gitee_token: Annotated[str, typer.Option("--gitee-token", "-t")] = None,
 ):
     config_files = [ConfigFile(f) for f in filenames] if filenames else []
@@ -632,7 +661,7 @@ def main(
     if not proxies:
         raise ValueError("No proxies found")
 
-    sing = to_sing(proxies, local, gitee_token)
+    sing = to_sing(proxies, local, resolve_country, gitee_token)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)

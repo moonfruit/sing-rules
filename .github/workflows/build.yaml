@@ -31,10 +31,8 @@ jobs:
 
       - name: Download clash config
         env:
-          XIPCLOUD_URL: ${{ secrets.XIPCLOUD_URL }}
           NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
         run: |
-          curl -fsSL "$XIPCLOUD_URL" >dat/xipcloud.yaml
           curl -fsSL -H "User-Agent: sing-box/*" "$NANOCLOUD_URL" >dat/nanocloud.json
 
       - name: Preflight
