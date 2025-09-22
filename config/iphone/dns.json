@@ -48,21 +48,12 @@
         "rewrite_ttl": 2592000
       },
       {
-        "domain_suffix": [
-          "arpa",
-          "local"
-        ],
+        "domain_suffix": ["arpa", "local"],
         "action": "predefined",
         "rcode": "NXDOMAIN"
       },
       {
-        "domain_suffix": [
-          "gingkoo.com",
-          "ip.sb",
-          "ipip.net",
-          "xipcloud.org",
-          "v2ray.in"
-        ],
+        "domain_suffix": ["gingkoo.com", "ip.sb", "ipip.net", "xipcloud.org", "v2ray.in"],
         "server": "dns-direct"
       },
       {
@@ -71,10 +62,7 @@
         "rewrite_ttl": 2592000
       },
       {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
+        "query_type": ["A", "AAAA"],
         "server": "dns-fakeip",
         "rewrite_ttl": 1
       },
@@ -132,20 +120,11 @@
         "action": "hijack-dns"
       },
       {
-        "protocol": [
-          "bittorrent",
-          "ntp",
-          "stun"
-        ],
+        "protocol": ["bittorrent", "ntp", "stun"],
         "outbound": "DIRECT"
       },
       {
-        "domain_suffix": [
-          "gingkoo.com",
-          "server.gingkoo",
-          "xipcloud.org",
-          "v2ray.in"
-        ],
+        "domain_suffix": ["gingkoo.com", "xipcloud.org", "v2ray.in"],
         "outbound": "DIRECT"
       }
     ],
