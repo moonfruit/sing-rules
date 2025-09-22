@@ -19,8 +19,11 @@
       },
       {
         "tag": "dns-gingkoo",
-        "type": "udp",
-        "server": "10.1.2.59"
+        "type": "https",
+        "server": "10.1.2.32",
+        "tls": {
+          "insecure": true
+        }
       },
       {
         "tag": "dns-hosts",
@@ -54,8 +57,7 @@
       },
       {
         "domain_suffix": [
-          "cdn.jsdelivr.net",
-          "fastly.jsdelivr.net",
+          "gingkoo.com",
           "ip.sb",
           "ipip.net",
           "xipcloud.org",
@@ -67,6 +69,14 @@
         "domain_suffix": "server.gingkoo",
         "server": "dns-gingkoo",
         "rewrite_ttl": 2592000
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip",
+        "rewrite_ttl": 1
       },
       {
         "clash_mode": "Direct",
@@ -93,20 +103,12 @@
           }
         ],
         "server": "dns-direct"
-      },
-      {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
-        "server": "dns-fakeip",
-        "rewrite_ttl": 1
       }
     ],
     "final": "dns-proxy",
     "independent_cache": true,
     "reverse_mapping": true,
-    "strategy": "prefer_ipv4"
+    "strategy": "prefer_ipv6"
   },
   "inbounds": [
     {
@@ -119,29 +121,28 @@
   "route": {
     "rules": [
       {
-        "action": "sniff"
-      },
-      {
         "network": "icmp",
         "outbound": "DIRECT"
+      },
+      {
+        "action": "sniff"
       },
       {
         "protocol": "dns",
         "action": "hijack-dns"
       },
       {
-        "protocol": "stun",
-        "action": "reject"
-      },
-      {
         "protocol": [
           "bittorrent",
-          "ntp"
+          "ntp",
+          "stun"
         ],
         "outbound": "DIRECT"
       },
       {
         "domain_suffix": [
+          "gingkoo.com",
+          "server.gingkoo",
           "xipcloud.org",
           "v2ray.in"
         ],
@@ -152,19 +153,19 @@
       {
         "type": "remote",
         "tag": "GeoIP@CN",
-        "url": "https://fastly.jsdelivr.net/npm/sing-rules/rules/geoip-cn.srs",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geoip-cn.srs?access_token=c1f6ba66dd5b8620b26ac68f2fad7a52&ref=main",
         "download_detour": "DIRECT"
       },
       {
         "type": "remote",
         "tag": "GeoSites@CN",
-        "url": "https://fastly.jsdelivr.net/npm/sing-rules/rules/geosites-cn.srs",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-cn.srs?access_token=c1f6ba66dd5b8620b26ac68f2fad7a52&ref=main",
         "download_detour": "DIRECT"
       },
       {
         "type": "remote",
         "tag": "GeoSites@!CN",
-        "url": "https://fastly.jsdelivr.net/npm/sing-rules/rules/geosites-not-cn.srs",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?access_token=c1f6ba66dd5b8620b26ac68f2fad7a52&ref=main",
         "download_detour": "DIRECT"
       }
     ],
