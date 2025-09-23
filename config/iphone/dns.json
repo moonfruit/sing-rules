@@ -48,12 +48,23 @@
         "rewrite_ttl": 2592000
       },
       {
-        "domain_suffix": ["arpa", "local"],
+        "domain_suffix": [
+          "arpa",
+          "local"
+        ],
         "action": "predefined",
         "rcode": "NXDOMAIN"
       },
       {
-        "domain_suffix": ["gingkoo.com", "ip.sb", "ipip.net", "xipcloud.org", "v2ray.in"],
+        "domain_suffix": [
+          "gingkoo.com",
+          "ip.sb",
+          "ipip.net",
+          "alicdn.win",
+          "demo-chat-airport.com",
+          "xipcloud.org",
+          "v2ray.in"
+        ],
         "server": "dns-direct"
       },
       {
@@ -120,11 +131,21 @@
         "action": "hijack-dns"
       },
       {
-        "protocol": ["bittorrent", "ntp", "stun"],
+        "protocol": [
+          "bittorrent",
+          "ntp",
+          "stun"
+        ],
         "outbound": "DIRECT"
       },
       {
-        "domain_suffix": ["gingkoo.com", "xipcloud.org", "v2ray.in"],
+        "domain_suffix": [
+          "gingkoo.com",
+          "alicdn.win",
+          "demo-chat-airport.com",
+          "xipcloud.org",
+          "v2ray.in"
+        ],
         "outbound": "DIRECT"
       }
     ],
