@@ -14,7 +14,7 @@
       },
       {
         "tag": "dns-proxy",
-        "type": "tls",
+        "type": "udp",
         "server": "1.1.1.1"
       },
       {
@@ -48,10 +48,7 @@
         "rewrite_ttl": 2592000
       },
       {
-        "domain_suffix": [
-          "arpa",
-          "local"
-        ],
+        "domain_suffix": ["arpa", "local"],
         "action": "predefined",
         "rcode": "NXDOMAIN"
       },
@@ -131,21 +128,11 @@
         "action": "hijack-dns"
       },
       {
-        "protocol": [
-          "bittorrent",
-          "ntp",
-          "stun"
-        ],
+        "protocol": ["bittorrent", "ntp", "stun"],
         "outbound": "DIRECT"
       },
       {
-        "domain_suffix": [
-          "gingkoo.com",
-          "alicdn.win",
-          "demo-chat-airport.com",
-          "xipcloud.org",
-          "v2ray.in"
-        ],
+        "domain_suffix": ["gingkoo.com", "alicdn.win", "demo-chat-airport.com", "xipcloud.org", "v2ray.in"],
         "outbound": "DIRECT"
       }
     ],
