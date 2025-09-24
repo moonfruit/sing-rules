@@ -2,3 +2,6 @@ DOMAIN,ai-proxy.chatwise.app
 DOMAIN,cn.bing.com
 DOMAIN-REGEX,(^|\.)speedtest(\.|$)
 DOMAIN-SUFFIX,miot-spec.com
+DOMAIN-SUFFIX,alicdn.win
+DOMAIN-SUFFIX,demo-chat-airport.com
+DOMAIN-SUFFIX,v2ray.in
