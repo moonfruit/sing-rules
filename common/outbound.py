@@ -45,9 +45,15 @@ def wait_for_port(port: int, timeout: float = 10.0) -> bool:
 
 
 def get_country(port: int) -> str:
-    proxies = {"http": f"http://127.0.0.1:{port}", "https": f"http://127.0.0.1:{port}"}
-
-    response = requests.get("https://ipinfo.io", proxies=proxies, timeout=10, verify=True)
+    response = requests.get(
+        "https://ipinfo.io",
+        proxies={
+            "http": f"http://127.0.0.1:{port}",
+            "https": f"http://127.0.0.1:{port}",
+        },
+        timeout=10,
+        verify=True,
+    )
     response.raise_for_status()
 
     data = response.json()
