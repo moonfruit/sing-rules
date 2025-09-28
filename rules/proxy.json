@@ -5,6 +5,7 @@
       "domain": [
         "brickset.com",
         "cloudfront.net",
+        "deepl.com",
         "f-droid.org",
         "fdroid.tetaneutral.net",
         "firefox.com",
@@ -25,6 +26,7 @@
       "domain_suffix": [
         ".brickset.com",
         ".cloudfront.net",
+        ".deepl.com",
         ".f-droid.org",
         ".firefox.com",
         ".firefoxusercontent.com",
