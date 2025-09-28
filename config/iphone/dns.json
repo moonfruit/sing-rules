@@ -15,7 +15,8 @@
       {
         "tag": "dns-proxy",
         "type": "udp",
-        "server": "1.1.1.1"
+        "server": "one.one.one.one",
+        "domain_resolver": "dns-resolver"
       },
       {
         "tag": "dns-gingkoo",
