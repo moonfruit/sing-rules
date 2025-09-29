@@ -55,7 +55,6 @@
       },
       {
         "domain_suffix": [
-          "apple.com",
           "gingkoo.com",
           "ip.sb",
           "ipip.net",
@@ -130,7 +129,11 @@
         "action": "hijack-dns"
       },
       {
-        "protocol": ["bittorrent", "ntp", "stun"],
+        "protocol": "stun",
+        "action": "reject"
+      },
+      {
+        "protocol": ["bittorrent", "ntp"],
         "outbound": "DIRECT"
       },
       {

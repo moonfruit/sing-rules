@@ -7,10 +7,6 @@
         "172.20.0.1/30",
         "fdfe:dcba:9876::1/126"
       ],
-      "route_address": [
-        "198.18.0.0/15",
-        "fc00::/18"
-      ],
       "auto_route": true,
       "strict_route": true,
       "platform": {
