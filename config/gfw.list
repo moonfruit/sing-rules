@@ -3,12 +3,10 @@ DOMAIN-SUFFIX,cryptocompare.com
 DOMAIN-SUFFIX,infura.io
 DOMAIN-SUFFIX,metamask.io
 # Development
-DOMAIN-SUFFIX,bitbucket.org
 DOMAIN-SUFFIX,mitmproxy.org
 DOMAIN-SUFFIX,jsfiddle.net
-# Maven
-DOMAIN-SUFFIX,maven.org
 # Proxy
+DOMAIN-SUFFIX,dustinwin.top
 DOMAIN-SUFFIX,gost.run
 DOMAIN-SUFFIX,openvpn.net
 DOMAIN-SUFFIX,sagernet.org
