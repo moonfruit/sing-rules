@@ -28,7 +28,7 @@ __FLAG_MAP = {
     "UK": "🇬🇧",
     "US": "🇺🇸",
     "VN": "🇻🇳",
-    "UN": "❇️",
+    "UN": ["🌏", "❇️"],
 }
 
 __TAG_GROUP = [
@@ -102,7 +102,7 @@ def get_flag(group: str) -> str:
     return isinstance(flag, list) and flag[0] or flag
 
 
-def proxy_to_outbound(proxy: Object, resolve_country: bool | None) -> tuple[str, float, Object]:
+def proxy_to_outbound(proxy: Object, saved_countries) -> tuple[str, float, Object]:
     name = proxy["name"].strip()
     group, name = find_group(name)
     cost = find_cost(name, proxy.get("cost", 1))
@@ -117,10 +117,14 @@ def proxy_to_outbound(proxy: Object, resolve_country: bool | None) -> tuple[str,
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
 
-    if resolve_country and (not group or group == "UN"):
+    if saved_countries is not None and (not group or group == "UN"):
         # noinspection PyBroadException
         group = safe_find_country(outbound)
-        if group != "UN":
+        if group and group != "UN":
+            saved_countries[name] = group
+            outbound["tag"] = f"{get_flag(group)} {name}"
+        elif name in saved_countries:
+            group = saved_countries[name]
             outbound["tag"] = f"{get_flag(group)} {name}"
 
     return group, cost, outbound
@@ -283,7 +287,7 @@ def is_ipv4_address(hostname):
 
 
 def proxies_to_outbound(
-    local: bool, proxies: list[SimpleObject], resolve_country: bool | None
+    local: bool, proxies: list[SimpleObject], saved_countries
 ) -> tuple[list[SimpleObject], set[str], set[str]]:
 
     outbounds = []
@@ -321,7 +325,7 @@ def proxies_to_outbound(
         server = proxy["server"]
         if server == "None":
             continue
-        group, cost, outbound = proxy_to_outbound(proxy, resolve_country)
+        group, cost, outbound = proxy_to_outbound(proxy, saved_countries)
         outbounds.append(outbound)
         if is_ipv4_address(server):
             ips.add(server + "/32")
@@ -490,8 +494,8 @@ def rule_set(gitee_token: str | None, tag: str, url: str):
     }
 
 
-def to_sing(proxies: list[SimpleObject], local: bool, resolve_country: bool | None, gitee_token: str | None) -> Object:
-    outbounds, domains, ips = proxies_to_outbound(local, proxies, resolve_country)
+def to_sing(proxies: list[SimpleObject], local: bool, saved_countries, gitee_token: str | None) -> Object:
+    outbounds, domains, ips = proxies_to_outbound(local, proxies, saved_countries)
     return {
         "outbounds": outbounds,
         "route": {
@@ -644,6 +648,19 @@ def load_proxies(config: ConfigFile) -> list[SimpleObject]:
     return proxies
 
 
+def load_countries(saved_country: Path | None) -> Any:
+    if saved_country and saved_country.exists():
+        with saved_country.open() as f:
+            return json.load(f)
+    return {}
+
+
+def save_countries(saved_country: Path | None, saved_countries):
+    if saved_country:
+        with saved_country.open("w") as f:
+            json.dump(saved_countries, f, ensure_ascii=False, indent=2)
+
+
 def main(
     filenames: Annotated[
         list[Path], typer.Argument(show_default=False, exists=True, dir_okay=False, readable=True)
@@ -654,6 +671,7 @@ def main(
     output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
     local: Annotated[bool, typer.Option("--local", "-l")] = False,
     resolve_country: Annotated[bool, typer.Option("--resolve-country", "-r")] = False,
+    saved_country: Annotated[Path, typer.Option("--saved-country", "-s")] = None,
     gitee_token: Annotated[str, typer.Option("--gitee-token", "-t")] = None,
 ):
     config_files = [ConfigFile(f) for f in filenames] if filenames else []
@@ -664,10 +682,15 @@ def main(
     if not proxies:
         raise ValueError("No proxies found")
 
-    sing = to_sing(proxies, local, resolve_country, gitee_token)
+    saved_countries = load_countries(saved_country) if resolve_country else None
+
+    sing = to_sing(proxies, local, saved_countries, gitee_token)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)
+
+    if resolve_country:
+        save_countries(saved_country, saved_countries)
 
 
 if __name__ == "__main__":
