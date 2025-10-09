@@ -125,9 +125,8 @@ def find_country(outbound: dict, log_level: str = "warn") -> str:
 
 
 # noinspection PyBroadException
-def safe_find_country(outbound: dict, log_level: str = "warn") -> str:
+def safe_find_country(outbound: dict, log_level: str = "warn") -> str | None:
     try:
-        country = find_country(outbound, log_level)
+        return find_country(outbound, log_level)
     except Exception:
-        return "UN"
-    return country if country else "UN"
+        return None
