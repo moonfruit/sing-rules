@@ -9,7 +9,7 @@ else
 fi
 
 cd "$BIN"
-"$BIN/clash-to-sing.py" -c config/config.json -r -s rules/saved-countries.json "${TOKEN[@]}" |
+"$BIN/clash-to-sing.py" -c config/config.json -r -s preflight/saved-countries.json "${TOKEN[@]}" |
     sing-box format -c /dev/stdin >private/config.json
 
 TEMP="${RUNNER_TEMP:-/tmp}/config"
