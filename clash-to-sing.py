@@ -102,7 +102,9 @@ def get_flag(group: str) -> str:
     return isinstance(flag, list) and flag[0] or flag
 
 
-def proxy_to_outbound(proxy: Object, saved_countries) -> tuple[str, float, Object]:
+def proxy_to_outbound(
+    proxy: Object, saved_countries: dict[str, str], overwrite_country: bool
+) -> tuple[str, float, Object]:
     name = proxy["name"].strip()
     group, name = find_group(name)
     cost = find_cost(name, proxy.get("cost", 1))
@@ -121,11 +123,14 @@ def proxy_to_outbound(proxy: Object, saved_countries) -> tuple[str, float, Objec
         # noinspection PyBroadException
         group = safe_find_country(outbound)
         if group and group != "UN":
-            saved_countries[name] = group
+            if overwrite_country or name not in saved_countries:
+                saved_countries[name] = group
             outbound["tag"] = f"{get_flag(group)} {name}"
         elif name in saved_countries:
             group = saved_countries[name]
             outbound["tag"] = f"{get_flag(group)} {name}"
+        elif group == "UN":
+            group = "UN"
 
     return group, cost, outbound
 
@@ -287,7 +292,7 @@ def is_ipv4_address(hostname):
 
 
 def proxies_to_outbound(
-    local: bool, proxies: list[SimpleObject], saved_countries
+    local: bool, proxies: list[SimpleObject], saved_countries: dict[str, str], overwrite_country: bool
 ) -> tuple[list[SimpleObject], set[str], set[str]]:
     outbounds = []
     domains = set()
@@ -324,7 +329,7 @@ def proxies_to_outbound(
         server = proxy["server"]
         if server == "None":
             continue
-        group, cost, outbound = proxy_to_outbound(proxy, saved_countries)
+        group, cost, outbound = proxy_to_outbound(proxy, saved_countries, overwrite_country)
         outbounds.append(outbound)
         if is_ipv4_address(server):
             ips.add(server + "/32")
@@ -493,8 +498,14 @@ def rule_set(gitee_token: str | None, tag: str, url: str):
     }
 
 
-def to_sing(proxies: list[SimpleObject], local: bool, saved_countries, gitee_token: str | None) -> Object:
-    outbounds, domains, ips = proxies_to_outbound(local, proxies, saved_countries)
+def to_sing(
+    proxies: list[SimpleObject],
+    local: bool,
+    saved_countries: dict[str, str],
+    overwrite_country: bool,
+    gitee_token: str | None,
+) -> Object:
+    outbounds, domains, ips = proxies_to_outbound(local, proxies, saved_countries, overwrite_country)
     return {
         "outbounds": outbounds,
         "route": {
@@ -671,6 +682,7 @@ def main(
     local: Annotated[bool, typer.Option("--local", "-l")] = False,
     resolve_country: Annotated[bool, typer.Option("--resolve-country", "-r")] = False,
     saved_country: Annotated[Path, typer.Option("--saved-country", "-s")] = None,
+    overwrite_country: Annotated[bool, typer.Option("--overwrite-country", "-w")] = False,
     gitee_token: Annotated[str, typer.Option("--gitee-token", "-t")] = None,
 ):
     config_files = [ConfigFile(f) for f in filenames] if filenames else []
@@ -683,7 +695,7 @@ def main(
 
     saved_countries = load_countries(saved_country) if resolve_country else None
 
-    sing = to_sing(proxies, local, saved_countries, gitee_token)
+    sing = to_sing(proxies, local, saved_countries, overwrite_country, gitee_token)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)

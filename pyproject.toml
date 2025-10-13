@@ -1,3 +1,2 @@
 [tool.pyright]
-reportAny = "none"
-reportExplicitAny = "none"
+typeCheckingMode = "standard"
