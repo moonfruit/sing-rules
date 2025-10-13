@@ -289,7 +289,6 @@ def is_ipv4_address(hostname):
 def proxies_to_outbound(
     local: bool, proxies: list[SimpleObject], saved_countries
 ) -> tuple[list[SimpleObject], set[str], set[str]]:
-
     outbounds = []
     domains = set()
     ips = set()
@@ -658,7 +657,7 @@ def load_countries(saved_country: Path | None) -> Any:
 def save_countries(saved_country: Path | None, saved_countries):
     if saved_country:
         with saved_country.open("w") as f:
-            json.dump(saved_countries, f, ensure_ascii=False, indent=2)
+            json.dump(saved_countries, f, ensure_ascii=False, indent=2, sort_keys=True)
 
 
 def main(
