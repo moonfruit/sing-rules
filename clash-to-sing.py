@@ -303,7 +303,7 @@ def proxies_to_outbound(
     cheap_nodes = []
     expansive_nodes = []
     other_nodes = []
-    groups = {
+    groups: dict[str, list[str]] = {
         "🇺🇸 美国节点": [],
         "🇺🇸 美国节点 🛢️": [],
         "🇺🇸 美国节点 👍": [],
@@ -363,6 +363,7 @@ def proxies_to_outbound(
         groups["🏳️ 其它节点"] = other_nodes
     clean_keys(groups)
     clean_keys(providers)
+    groups = reorder(groups)
     group_tags = ["🍑 自由切换", *providers, *groups]
 
     if cheap_nodes and cheap_nodes != all_nodes:
@@ -436,6 +437,21 @@ def proxies_to_outbound(
     outbounds.append(selector("GLOBAL", [*all_nodes]))
 
     return outbounds, domains, ips
+
+
+def reorder(groups: dict[str, list[str]]) -> dict[str, list[str]]:
+    result_groups = {}
+    other_tags = []
+    other_groups = {}
+    for k, v in groups.items():
+        if k.startswith("🇺🇸 美国节点"):
+            result_groups[k] = v
+        else:
+            other_tags.append(k)
+            other_groups[k] = v
+    for k in sorted(other_tags):
+        result_groups[k] = other_groups[k]
+    return result_groups
 
 
 def as_tuple(ip):
