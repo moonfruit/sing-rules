@@ -15,10 +15,7 @@
       ]
     },
     {
-      "process_path_regex": [
-        "/Applications/ChatGPT\\.app/.*",
-        "/Applications/Claude\\.app/.*"
-      ]
+      "process_path_regex": "/Applications/(ChatGPT|Claude)\\.app/.*"
     }
   ]
 }
