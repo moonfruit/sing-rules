@@ -7,5 +7,4 @@ PROCESS-NAME,Claude Helper (Renderer)
 PROCESS-NAME,claude
 PROCESS-NAME,codex
 PROCESS-NAME,gemini
-PROCESS-PATH-REGEX,/Applications/ChatGPT\.app/.*
-PROCESS-PATH-REGEX,/Applications/Claude\.app/.*
+PROCESS-PATH-REGEX,/Applications/(ChatGPT|Claude)\.app/.*

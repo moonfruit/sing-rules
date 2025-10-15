@@ -527,7 +527,20 @@ def to_sing(
         "route": {
             "rules": [
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
-                {"domain": ["api.ip.sb", "api.ipapi.is"], "outbound": "🔰 默认出口"},
+                {"domain": ["4.ipcheck.ing", "6.ipcheck.ing"], "outbound": "DIRECT"},
+                {
+                    "domain": ["api.ip.sb", "api.ipapi.is"],
+                    "ip_cidr": ["1.0.0.1/32", "2606:4700:4700::1111/128"],
+                    "outbound": "🔰 默认出口",
+                },
+                {"domain": "ptest-1.ipcheck.ing", "outbound": "🤖 人工智能"},
+                {"domain": "ptest-2.ipcheck.ing", "outbound": "👻 透明代理"},
+                {"domain": "ptest-3.ipcheck.ing", "outbound": "🐟 漏网之鱼"},
+                {"domain": "ptest-4.ipcheck.ing", "outbound": "🇺🇸 美国节点"},
+                {"domain": "ptest-5.ipcheck.ing", "outbound": "♻️ 自动选择"},
+                {"domain": "ptest-6.ipcheck.ing", "outbound": "🚀 手动切换"},
+                {"domain": "ptest-7.ipcheck.ing", "outbound": "🍑 自由切换"},
+                {"domain": "ptest-8.ipcheck.ing", "outbound": "🎯 全球直连"},
                 {"domain_suffix": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
                 *build_direct_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
