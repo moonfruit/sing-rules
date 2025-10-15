@@ -54,10 +54,22 @@
         "rcode": "NXDOMAIN"
       },
       {
+        "domain": [
+          "dns.alidns.com",
+          "doh.pub",
+          "dns.google",
+          "one.one.one.one",
+          "cloudflare-dns.com"
+        ],
+        "server": "dns-resolver"
+      },
+      {
         "domain_suffix": [
+          "apple.com",
           "gingkoo.com",
           "ip.sb",
           "ipip.net",
+          "lazycat.cloud",
           "alicdn.win",
           "demo-chat-airport.com",
           "xipcloud.org",
@@ -133,11 +145,7 @@
         "action": "reject"
       },
       {
-        "protocol": ["bittorrent", "ntp"],
-        "outbound": "DIRECT"
-      },
-      {
-        "domain_suffix": ["gingkoo.com", "alicdn.win", "demo-chat-airport.com", "xipcloud.org", "v2ray.in"],
+        "protocol": ["bittorrent", "ntp", "stun"],
         "outbound": "DIRECT"
       }
     ],
