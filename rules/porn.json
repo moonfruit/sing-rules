@@ -2818,6 +2818,7 @@
         "japteenx.com",
         "japxtube.com",
         "jasmin.com",
+        "jav.app",
         "jav.dog",
         "jav.gallery",
         "jav.guru",
@@ -9208,6 +9209,7 @@
         ".japteenx.com",
         ".japxtube.com",
         ".jasmin.com",
+        ".jav.app",
         ".jav.dog",
         ".jav.gallery",
         ".jav.guru",
@@ -12917,7 +12919,8 @@
         "(^|\\.)zh9[0-7]\\.net$",
         "(^|\\.)zy[0-9]{4}\\.top$",
         "(^|\\.)zztt[1-6][0-9]\\.com$",
-        "(^|\\.)zzz[1-9][0-9]\\.top$"
+        "(^|\\.)zzz[1-9][0-9]\\.top$",
+        "javdb\\d+\\.com$"
       ]
     }
   ]
