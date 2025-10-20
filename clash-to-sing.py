@@ -527,7 +527,6 @@ def to_sing(
         "route": {
             "rules": [
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
-                {"domain_suffix": "gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["4.ipcheck.ing", "6.ipcheck.ing"], "outbound": "DIRECT"},
                 {
                     "domain": ["api.ip.sb", "api.ipapi.is"],
