@@ -220,7 +220,7 @@ def selector(tag: str, nodes: list[str]) -> Object:
 
 def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
-    return {"type": "urltest", "tag": tag, "outbounds": nodes, "interval": "10m0s"}
+    return {"type": "urltest", "tag": tag, "outbounds": nodes}
 
 
 def is_cheap(cost):
@@ -527,6 +527,7 @@ def to_sing(
         "route": {
             "rules": [
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
+                {"domain_suffix": "gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["4.ipcheck.ing", "6.ipcheck.ing"], "outbound": "DIRECT"},
                 {
                     "domain": ["api.ip.sb", "api.ipapi.is"],
