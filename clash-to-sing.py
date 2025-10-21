@@ -28,7 +28,8 @@ __FLAG_MAP = {
     "UK": "🇬🇧",
     "US": "🇺🇸",
     "VN": "🇻🇳",
-    "UN": ["🌏", "❇️"],
+    "GP": ["🌐", "❇️"],
+    "UN": "🌏",
 }
 
 __TAG_GROUP = [
@@ -46,13 +47,14 @@ __GROUP_ALIAS = {
 }
 
 __GROUP_MAP = {
+    "GP": "🌐 动态节点",
     "AR": "🇦🇷 阿根廷节点",
     "EU": "🇪🇺 欧洲节点",
     "HK": "🇭🇰 香港节点",
-    "ID": "🇮🇩 印度尼西亚",
+    "ID": "🇮🇩 印度尼西亚节点",
     "JP": "🇯🇵 日本节点",
     "KR": "🇰🇷 韩国节点",
-    "MY": "🇲🇾 马来西亚",
+    "MY": "🇲🇾 马来西亚节点",
     "SG": "🇸🇬 新加坡节点",
     "TW": "🇨🇳 台湾节点",
     "UK": "🇬🇧 英国节点",
@@ -119,18 +121,17 @@ def proxy_to_outbound(
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
 
-    if saved_countries is not None and (not group or group == "UN"):
-        # noinspection PyBroadException
-        group = safe_find_country(outbound)
-        if group and group != "UN":
+    if saved_countries is not None and (not group or group == "GP" or group == "UN"):
+        detected: str = safe_find_country(outbound)
+        if detected and detected != "UN":
             if overwrite_country or name not in saved_countries:
-                saved_countries[name] = group
-            outbound["tag"] = f"{get_flag(group)} {name}"
+                saved_countries[name] = detected
+            outbound["tag"] = f"{get_flag(detected)} {name}"
         elif name in saved_countries:
-            group = saved_countries[name]
-            outbound["tag"] = f"{get_flag(group)} {name}"
-        elif group == "UN":
-            group = "UN"
+            detected = saved_countries[name]
+            outbound["tag"] = f"{get_flag(detected)} {name}"
+        if group != "GP":
+            group = detected
 
     return group, cost, outbound
 
@@ -359,6 +360,8 @@ def proxies_to_outbound(
             provider = proxy["provider"]
             add_to_group(providers, provider, tag, cost=cost)
 
+    if local:
+        other_nodes[0:0] = ["🧅 Tor Browser"]
     if other_nodes:
         groups["🏳️ 其它节点"] = other_nodes
     clean_keys(groups)
@@ -382,7 +385,6 @@ def proxies_to_outbound(
 
     if local:
         all_nodes[0:0] = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-        other_nodes[0:0] = ["🧅 Tor Browser"]
         add_to_group(groups, __GROUP_MAP["US"], "⛰️ Gingkoo", prepend=True, cost=-1)
 
     outbounds.append(
