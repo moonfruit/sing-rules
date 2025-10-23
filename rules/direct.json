@@ -236990,7 +236990,6 @@
         ".zzzzzz.me"
       ],
       "domain_regex": [
-        "(^|\\.)speedtest(\\.|$)",
         ".+\\.awsdns-cn-[0-9][0-9]\\.(biz|com|net|top)$",
         ".+\\.awsdns-cn-[0-9][a-e0-9]\\.cn$",
         "\\.(.+-)?ap-beijing(-.+)?\\.myqcloud\\.com$",
@@ -237007,6 +237006,7 @@
         "\\.(.+-)?ap-shanghai(-.+)?\\.tencentcos\\.(cn|com(\\.cn)?)$",
         "\\.(.+-)?ap-shenzhen(-.+)?\\.myqcloud\\.com$",
         "\\.(.+-)?ap-shenzhen(-.+)?\\.tencentcos\\.(cn|com(\\.cn)?)$",
+        "\\bspeedtest\\b",
         "^(.+\\.)*zh\\.okaapps\\.com$",
         "^.+-mihayo\\.akamaized\\.net$",
         "^cdn-akamai-.+\\.gog-services\\.com$",

@@ -3597,6 +3597,7 @@
         "jizzthis.com",
         "jjgirls.com",
         "jjmh.top",
+        "jjmhw1.top",
         "jkb.cc",
         "jkforum.net",
         "jkub.com",
@@ -10992,6 +10993,7 @@
         ".jizzthis.com",
         ".jjgirls.com",
         ".jjmh.top",
+        ".jjmhw1.top",
         ".jkb.cc",
         ".jkforum.net",
         ".jkub.com",
@@ -14865,6 +14867,7 @@
         "whatsapp",
         "youtube"
       ],
+      "domain_regex": "\\bjjmh[^.]*\\.top\\b",
       "ip_cidr": [
         "1.201.0.0/24",
         "8.41.4.0/24",
