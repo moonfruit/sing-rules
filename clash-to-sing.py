@@ -420,7 +420,7 @@ def proxies_to_outbound(
     outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Xbox", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Xbox@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Games", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Games", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
