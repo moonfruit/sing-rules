@@ -418,6 +418,8 @@ def proxies_to_outbound(
     outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Xbox", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
+    outbounds.append(selector("🎮 Xbox@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Games", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
@@ -560,6 +562,8 @@ def to_sing(
                 {"rule_set": "PlayStation", "outbound": "🎮 PlayStation"},
                 {"rule_set": "Steam@CN", "outbound": "🎮 Steam@CN"},
                 {"rule_set": "Steam", "outbound": "🎮 Steam"},
+                {"rule_set": "Xbox@CN", "outbound": "🎮 Xbox@CN"},
+                {"rule_set": "Xbox", "outbound": "🎮 Xbox"},
                 {"rule_set": "Games@CN", "outbound": "🎮 Games@CN"},
                 {"rule_set": "Games", "outbound": "🎮 Games"},
                 {"rule_set": "Minecraft", "outbound": "🎮 Steam"},
@@ -596,6 +600,8 @@ def to_sing(
                 rule_set(gitee_token, "Sources", "rules/sources.srs"),
                 rule_set(gitee_token, "Steam", "rules/steam.srs"),
                 rule_set(gitee_token, "Steam@CN", "rules/steam-cn.srs"),
+                rule_set(gitee_token, "Xbox", "rules/xbox.srs"),
+                rule_set(gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
                 rule_set(gitee_token, "TikTok", "rules/tiktok.srs"),
                 rule_set(gitee_token, "YouTube", "rules/youtube.srs"),
                 *build_local_rule_sets(local, gitee_token),
