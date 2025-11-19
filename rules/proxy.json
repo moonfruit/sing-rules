@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "asuswrt-merlin.net",
         "brickset.com",
         "cloudfront.net",
         "deepl.com",
@@ -24,6 +25,7 @@
         "one.one.one.one"
       ],
       "domain_suffix": [
+        ".asuswrt-merlin.net",
         ".brickset.com",
         ".cloudfront.net",
         ".deepl.com",
