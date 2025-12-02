@@ -121,7 +121,7 @@ def proxy_to_outbound(
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
 
-    if saved_countries is not None and (not group or group == "GP" or group == "UN"):
+    if saved_countries is not None and (not group or group == "UN"):
         detected: str = safe_find_country(outbound)
         if detected and detected != "UN":
             if overwrite_country or name not in saved_countries:
@@ -130,8 +130,6 @@ def proxy_to_outbound(
         elif name in saved_countries:
             detected = saved_countries[name]
             outbound["tag"] = f"{get_flag(detected)} {name}"
-        if group != "GP":
-            group = detected
 
     return group, cost, outbound
 
