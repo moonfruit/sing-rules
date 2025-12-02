@@ -107,7 +107,7 @@ def get_flag(group: str) -> str:
 def proxy_to_outbound(
     proxy: Object, saved_countries: dict[str, str], overwrite_country: bool
 ) -> tuple[str, float, Object]:
-    name = proxy["name"].strip()
+    name = proxy["name"].strip().lstrip("🔴")
     group, name = find_group(name)
     cost = find_cost(name, proxy.get("cost", 1))
     tag = f"{get_flag(group)} {name}"
@@ -131,7 +131,18 @@ def proxy_to_outbound(
             detected = saved_countries[name]
             outbound["tag"] = f"{get_flag(detected)} {name}"
 
+    patch_outbound(outbound)
     return group, cost, outbound
+
+
+def patch_outbound(outbound: Object):
+    if "tls" in outbound:
+        tls = outbound["tls"]
+        if "utls" in tls:
+            utls = tls["utls"]
+            if "fingerprint" in utls:
+                # utls["fingerprint"] = "random"
+                utls["fingerprint"] = "randomized"
 
 
 def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
