@@ -273,6 +273,10 @@ def add_to_group(
                 add_tag(f"{group} 🚀")
             case "trojan":
                 add_tag(f"{group} 🐴")
+            case "tuic":
+                add_tag(f"{group} 🦬")
+            case "vless":
+                add_tag(f"{group} 🪶")
             case "vmess":
                 add_tag(f"{group} 🎯")
 
@@ -282,7 +286,7 @@ def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
     for key, value in d.items():
         if not value:
             keys_to_remove.append(key)
-        for icon in (" 🛢️", " 👍", " 🌪️", " 🚀", " 🐴", " 🎯"):
+        for icon in (" 🛢️", " 👍", " 🌪️", " 🚀", " 🐴", " 🦬", " 🪶", " 🎯"):
             if key.endswith(icon):
                 break
             new_key = key + icon
@@ -320,6 +324,8 @@ def proxies_to_outbound(
         "🇺🇸 美国节点 🌪️": [],
         "🇺🇸 美国节点 🚀": [],
         "🇺🇸 美国节点 🐴": [],
+        "🇺🇸 美国节点 🦬": [],
+        "🇺🇸 美国节点 🪶": [],
         "🇺🇸 美国节点 🎯": [],
     }
 
