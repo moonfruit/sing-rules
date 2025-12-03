@@ -10,6 +10,7 @@
         "Claude Helper (GPU)",
         "Claude Helper (Renderer)",
         "claude",
+        "cloudcode_cli",
         "codex",
         "gemini"
       ]
