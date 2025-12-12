@@ -4,6 +4,7 @@
     {
       "domain": [
         "bytedance.map.fastly.net",
+        "bytedapm.com",
         "byteglb.com",
         "byteoversea.com",
         "byteoversea.net",
@@ -12,8 +13,13 @@
         "muscdn.com",
         "musical.ly",
         "p16-tiktokcdn-com.akamaized.net",
+        "roovza.inapps.appsflyersdk.com",
+        "roovza.launches.appsflyersdk.com",
+        "roovza.skadsdk.appsflyersdk.com",
+        "roovza-launches.appsflyersdk.com",
         "tik-tokapi.com",
         "tiktok.com",
+        "tiktok-minis.com",
         "tiktok-row.net",
         "tiktokcdn.com",
         "tiktokcdn-eu.com",
@@ -34,6 +40,7 @@
         "ttwstatic.com"
       ],
       "domain_suffix": [
+        ".bytedapm.com",
         ".byteglb.com",
         ".byteoversea.com",
         ".byteoversea.net",
@@ -43,6 +50,7 @@
         ".musical.ly",
         ".tik-tokapi.com",
         ".tiktok.com",
+        ".tiktok-minis.com",
         ".tiktok-row.net",
         ".tiktokcdn.com",
         ".tiktokcdn-eu.com",
