@@ -24,3 +24,5 @@ DOMAIN-SUFFIX,hearthstonejson.com
 DOMAIN-SUFFIX,hsreplay.net
 # Lego
 DOMAIN-SUFFIX,brickset.com
+# HuggingFace
+DOMAIN-SUFFIX,huggingface.co
