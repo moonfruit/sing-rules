@@ -58,3 +58,5 @@ DOMAIN-SUFFIX,registry.jetbrains.team
 DOMAIN-SUFFIX,registry.k8s.io
 # Helm
 DOMAIN-SUFFIX,artifacthub.io
+# HuggingFace
+DOMAIN-SUFFIX,huggingface.co
