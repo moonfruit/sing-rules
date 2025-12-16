@@ -1488,6 +1488,7 @@
         "discountporn.club",
         "disneyhentai.com",
         "divas.com.uy",
+        "diwodiwo.xyz",
         "diyarbakirescort.com",
         "diyuser.buzz",
         "djkav.mom",
@@ -7951,6 +7952,7 @@
         ".discountporn.club",
         ".disneyhentai.com",
         ".divas.com.uy",
+        ".diwodiwo.xyz",
         ".diyarbakirescort.com",
         ".diyuser.buzz",
         ".djkav.mom",
@@ -13066,7 +13068,6 @@
         "(^|\\.)zy[0-9]{4}\\.top$",
         "(^|\\.)zztt[1-6][0-9]\\.com$",
         "(^|\\.)zzz[1-9][0-9]\\.top$",
-        "^([a-z0-9-]+\\.)*(?!ad-display\\.|ad-channel\\.)[a-z0-9-]+\\.diwodiwo\\.xyz$",
         "javdb\\d+\\.com$"
       ]
     }
