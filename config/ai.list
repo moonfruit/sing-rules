@@ -1,14 +1,18 @@
 DOMAIN-SUFFIX,chatgpt.livekit.cloud
 DOMAIN-SUFFIX,chatkit.app
 DOMAIN-SUFFIX,coze.com
+DOMAIN-SUFFIX,poe.com
+# Microsoft
 DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN-SUFFIX,designer.microsoft.com
+DOMAIN-SUFFIX,githubcopilot.com
+# Google
 DOMAIN-SUFFIX,aistudio.google.com
 DOMAIN-SUFFIX,cloudcode-pa.googleapis.com
 DOMAIN-SUFFIX,generativelanguage.googleapis.com
-DOMAIN-SUFFIX,githubcopilot.com
-DOMAIN-SUFFIX,groq.com
-DOMAIN-SUFFIX,hanime1.me
-DOMAIN-SUFFIX,poe.com
-DOMAIN-SUFFIX,x.ai
+# X
 DOMAIN-SUFFIX,grok.com
+DOMAIN-SUFFIX,grokipedia.com
+DOMAIN-SUFFIX,x.ai
+# H
+DOMAIN-SUFFIX,hanime1.me
