@@ -479,7 +479,11 @@ def as_tuple(ip):
 
 
 def build_direct_rules(domains, ips):
-    rules = [{"ip_is_private": True, "outbound": "DIRECT"}]
+    rules = [
+        {"ip_is_private": True, "outbound": "DIRECT"},
+        {"network": "icmp", "outbound": "DIRECT"},
+        {"protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT"},
+    ]
     if domains or ips:
         direct: Object = {
             "outbound": "DIRECT",
