@@ -2,6 +2,7 @@
 DOMAIN-SUFFIX,bitbucket.org
 # Software
 DOMAIN-SUFFIX,brew.sh
+DOMAIN-SUFFIX,cloudsmith.io
 DOMAIN-SUFFIX,fury.io
 DOMAIN-SUFFIX,gemfury.com
 DOMAIN-SUFFIX,packagecloud.io
