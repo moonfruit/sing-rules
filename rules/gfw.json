@@ -3623,8 +3623,6 @@
         "jitpack.io",
         "jizzthis.com",
         "jjgirls.com",
-        "jjmh.top",
-        "jjmhw1.top",
         "jkb.cc",
         "jkforum.net",
         "jkub.com",
@@ -11075,8 +11073,6 @@
         ".jitpack.io",
         ".jizzthis.com",
         ".jjgirls.com",
-        ".jjmh.top",
-        ".jjmhw1.top",
         ".jkb.cc",
         ".jkforum.net",
         ".jkub.com",
@@ -14978,7 +14974,10 @@
         "whatsapp",
         "youtube"
       ],
-      "domain_regex": "\\bjjmh[^.]*\\.top\\b",
+      "domain_regex": [
+        "\\bjjmh[^.]*\\.top$",
+        "\\bmxs\\d+\\.cc$"
+      ],
       "ip_cidr": [
         "1.201.0.0/24",
         "8.41.4.0/24",
