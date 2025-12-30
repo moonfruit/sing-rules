@@ -11,6 +11,5 @@ DOMAIN-SUFFIX,gost.run
 DOMAIN-SUFFIX,openvpn.net
 DOMAIN-SUFFIX,sagernet.org
 # Other
-DOMAIN-SUFFIX,jjmh.top
-DOMAIN-SUFFIX,jjmhw1.top
-DOMAIN-REGEX,\bjjmh[^.]*\.top\b
+DOMAIN-REGEX,\bjjmh[^.]*\.top$
+DOMAIN-REGEX,\bmxs\d+\.cc$
