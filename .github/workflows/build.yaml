@@ -97,15 +97,15 @@ jobs:
       - name: Commit and Push
         run: ./commit-and-push.sh "Update rules" "${{ env.TAG }}"
 
+      - name: Cleanup old tags
+        run: ./cleanup-old-tags.sh
+
       - name: Release
         if: env.BUILD_RULES == 1
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
           files: rules/*
-
-      - name: Cleanup old tags
-        run: ./cleanup-old-tags.sh
 
       - name: Setup Node
         if: env.BUILD_RULES == 1
