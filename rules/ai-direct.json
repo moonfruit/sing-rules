@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": [
+        "bianxie.ai",
+        "bigmodel.cn"
+      ],
+      "domain_suffix": [
+        ".bianxie.ai",
+        ".bigmodel.cn"
+      ]
+    }
+  ]
+}
