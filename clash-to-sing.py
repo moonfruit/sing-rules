@@ -499,13 +499,19 @@ def build_direct_rules(domains, ips):
 def build_local_rules(local: bool):
     if not local:
         return []
-    return [{"rule_set": "AI:Process", "outbound": "🤖 人工智能"}]
+    return [
+        {"rule_set": "AI:Direct", "outbound": "DIRECT"},
+        {"rule_set": "AI:Process", "outbound": "🤖 人工智能"},
+    ]
 
 
 def build_local_rule_sets(local: bool, gitee_token: str | None):
     if not local:
         return []
-    return [rule_set(gitee_token, "AI:Process", "rules/ai-proc.srs")]
+    return [
+        rule_set(gitee_token, "AI:Direct", "rules/ai-direct.srs"),
+        rule_set(gitee_token, "AI:Process", "rules/ai-proc.srs"),
+    ]
 
 
 # __CDN = "cdn.jsdelivr.net"
