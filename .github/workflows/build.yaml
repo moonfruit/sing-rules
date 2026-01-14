@@ -104,6 +104,9 @@ jobs:
           tag_name: ${{ env.TAG }}
           files: rules/*
 
+      - name: Cleanup old tags
+        run: ./cleanup-old-tags.sh
+
       - name: Setup Node
         if: env.BUILD_RULES == 1
         uses: actions/setup-node@v4
