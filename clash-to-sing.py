@@ -439,7 +439,7 @@ def proxies_to_outbound(
     outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
     outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
-    outbounds.append(selector("🎥 TikTok", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 TikTok", ai_tags))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
