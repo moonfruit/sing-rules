@@ -39,7 +39,7 @@
         "tag": "dns-fakeip",
         "type": "fakeip",
         "inet4_range": "198.18.0.0/15",
-        "inet6_range": "fc00::/18"
+        "inet6_range": "fc00::/64"
       }
     ],
     "rules": [
@@ -54,14 +54,7 @@
         "rcode": "NXDOMAIN"
       },
       {
-        "domain": [
-          "dns.alidns.com",
-          "doh.pub",
-          "dot.pub",
-          "dns.google",
-          "one.one.one.one",
-          "cloudflare-dns.com"
-        ],
+        "domain": ["dns.alidns.com", "doh.pub", "dot.pub", "dns.google", "one.one.one.one", "cloudflare-dns.com"],
         "server": "dns-resolver"
       },
       {
@@ -165,3 +158,4 @@
     "default_domain_resolver": "dns-direct"
   }
 }
+// vim: ft=jsonc
