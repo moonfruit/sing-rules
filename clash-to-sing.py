@@ -17,12 +17,17 @@ from common.outbound import safe_find_country
 
 __FLAG_MAP = {
     "AR": "🇦🇷",
+    "DE": "🇩🇪",
     "EU": "🇪🇺",
+    "FR": "🇫🇷",
     "HK": "🇭🇰",
     "ID": "🇮🇩",
+    "IN": "🇮🇳",
     "JP": "🇯🇵",
     "KR": "🇰🇷",
+    "LT": "🇱🇹",
     "MY": "🇲🇾",
+    "NL": "🇳🇱",
     "SG": "🇸🇬",
     "TW": ["🇨🇳", "🇹🇼"],
     "UK": "🇬🇧",
@@ -47,19 +52,24 @@ __GROUP_ALIAS = {
 }
 
 __GROUP_MAP = {
-    "GP": "🌐 动态节点",
     "AR": "🇦🇷 阿根廷节点",
+    "DE": "🇩🇪 德国节点",
     "EU": "🇪🇺 欧洲节点",
+    "FR": "🇫🇷 法国节点",
     "HK": "🇭🇰 香港节点",
     "ID": "🇮🇩 印度尼西亚节点",
+    "IN": "🇮🇳 印度节点",
     "JP": "🇯🇵 日本节点",
     "KR": "🇰🇷 韩国节点",
+    "LT": "🇱🇹 立陶宛节点",
     "MY": "🇲🇾 马来西亚节点",
+    "NL": "🇳🇱 荷兰节点",
     "SG": "🇸🇬 新加坡节点",
     "TW": "🇨🇳 台湾节点",
     "UK": "🇬🇧 英国节点",
     "US": "🇺🇸 美国节点",
     "VN": "🇻🇳 越南节点",
+    "GP": "🌐 动态节点",
 }
 
 
@@ -78,9 +88,9 @@ def __fix_tag(tag: str, length: int) -> str:
 
 
 def find_group(tag: str) -> tuple[str, str]:
-    for group, pattern in __TAG_GROUP:
-        if pattern.match(tag):
-            return group, tag
+    # for group, pattern in __TAG_GROUP:
+    #     if pattern.match(tag):
+    #         return group, tag
     for group, flag in __FLAG_MAP.items():
         if isinstance(flag, list):
             for f in flag:
@@ -124,12 +134,14 @@ def proxy_to_outbound(
     if saved_countries is not None and (not group or group == "UN"):
         detected: str = safe_find_country(outbound)
         if detected and detected != "UN":
+            group = detected
             if overwrite_country or name not in saved_countries:
-                saved_countries[name] = detected
-            outbound["tag"] = f"{get_flag(detected)} {name}"
+                if not (name.startswith("剩余流量") or name.startswith("套餐到期")):
+                    saved_countries[name] = group
+            outbound["tag"] = f"{get_flag(group)} {name}"
         elif name in saved_countries:
-            detected = saved_countries[name]
-            outbound["tag"] = f"{get_flag(detected)} {name}"
+            group = saved_countries[name]
+            outbound["tag"] = f"{get_flag(group)} {name}"
 
     patch_outbound(outbound)
     return group, cost, outbound
@@ -365,7 +377,7 @@ def proxies_to_outbound(
             if group == "US":
                 add_to_group(groups, __GROUP_MAP[group], tag, cost=cost, protocol=outbound["type"])
             else:
-                if group == "UK":
+                if group in ("DE", "FR", "LT", "NL", "UK"):
                     add_to_group(groups, __GROUP_MAP["EU"], tag)
                 add_to_group(groups, __GROUP_MAP[group], tag)
         else:

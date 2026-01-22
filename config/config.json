@@ -1,13 +1,19 @@
 [
   {
-    "name": "☁️ xipCloud",
-    "cost": -1.0,
-    "path": "dat/xipcloud.yaml"
+    "name": "👻 ash",
+    "cost": 1.0,
+    "path": "dat/ash.json",
+    "format": "sing-box"
   },
   {
     "name": "🌸 nanoCloud",
     "cost": 1.0,
     "path": "dat/nanocloud.json",
     "format": "sing-box"
+  },
+  {
+    "name": "☁️ xipCloud",
+    "cost": -1.0,
+    "path": "dat/xipcloud.yaml"
   }
 ]
