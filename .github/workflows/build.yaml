@@ -40,7 +40,7 @@ jobs:
       - name: Preflight
         run: |
           set -o pipefail
-          ./preflight.sh nanocloud.json | tee -a "$GITHUB_ENV"
+          ./preflight.sh ash.json nanocloud.json | tee -a "$GITHUB_ENV"
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
