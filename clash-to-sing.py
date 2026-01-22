@@ -563,7 +563,7 @@ def to_sing(
         "outbounds": outbounds,
         "route": {
             "rules": [
-                *build_direct_rules(direct or not local),
+                *build_direct_rules(direct),
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["4.ipcheck.ing", "6.ipcheck.ing"], "outbound": "DIRECT"},
                 {
@@ -770,6 +770,8 @@ def main(
 
     saved_countries = load_countries(saved_country) if resolve_country else None
 
+    if local:
+        direct = False
     sing = to_sing(proxies, local, direct, saved_countries, overwrite_country, gitee_token)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
