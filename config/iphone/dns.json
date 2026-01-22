@@ -136,7 +136,7 @@
       },
       {
         "protocol": ["bittorrent", "ntp", "stun"],
-        "action": "hijack-dns"
+        "outbound": "DIRECT"
       },
       {
         "ip_is_private": true,
