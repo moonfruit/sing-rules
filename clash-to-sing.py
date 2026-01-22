@@ -478,12 +478,19 @@ def as_tuple(ip):
     return *(int(n) for n in parts[0].split(".")), int(parts[1])
 
 
-def build_direct_rules(domains, ips):
-    rules = [
-        {"ip_is_private": True, "outbound": "DIRECT"},
-        {"network": "icmp", "outbound": "DIRECT"},
-        {"protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT"},
-    ]
+def build_direct_rules(direct: bool):
+    if direct:
+        return [
+            {"network": "icmp", "outbound": "DIRECT"},
+            {"protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT"},
+            {"ip_is_private": True, "outbound": "DIRECT"},
+        ]
+    else:
+        return []
+
+
+def build_proxies_rules(domains, ips):
+    rules = []
     if domains or ips:
         direct: Object = {
             "outbound": "DIRECT",
@@ -546,6 +553,7 @@ def rule_set(gitee_token: str | None, tag: str, url: str):
 def to_sing(
     proxies: list[SimpleObject],
     local: bool,
+    direct: bool,
     saved_countries: dict[str, str],
     overwrite_country: bool,
     gitee_token: str | None,
@@ -555,6 +563,7 @@ def to_sing(
         "outbounds": outbounds,
         "route": {
             "rules": [
+                *build_direct_rules(direct or not local),
                 {"domain": "connectivitycheck.gstatic.com", "outbound": "🐟 漏网之鱼"},
                 {"domain": ["4.ipcheck.ing", "6.ipcheck.ing"], "outbound": "DIRECT"},
                 {
@@ -571,7 +580,7 @@ def to_sing(
                 {"domain": "ptest-7.ipcheck.ing", "outbound": "🍑 自由切换"},
                 {"domain": "ptest-8.ipcheck.ing", "outbound": "🎯 全球直连"},
                 {"domain_suffix": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
-                *build_direct_rules(domains, ips),
+                *build_proxies_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
                 *build_local_rules(local),
@@ -745,6 +754,7 @@ def main(
     ] = None,
     output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
     local: Annotated[bool, typer.Option("--local", "-l")] = False,
+    direct: Annotated[bool, typer.Option("--direct", "-d")] = False,
     resolve_country: Annotated[bool, typer.Option("--resolve-country", "-r")] = False,
     saved_country: Annotated[Path, typer.Option("--saved-country", "-s")] = None,
     overwrite_country: Annotated[bool, typer.Option("--overwrite-country", "-w")] = False,
@@ -760,7 +770,7 @@ def main(
 
     saved_countries = load_countries(saved_country) if resolve_country else None
 
-    sing = to_sing(proxies, local, saved_countries, overwrite_country, gitee_token)
+    sing = to_sing(proxies, local, direct, saved_countries, overwrite_country, gitee_token)
     with open_path(output, "w") as f:
         # noinspection PyTypeChecker
         json.dump(sing, f, ensure_ascii=False, indent=2)
