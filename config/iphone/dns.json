@@ -133,6 +133,14 @@
       {
         "protocol": "dns",
         "action": "hijack-dns"
+      },
+      {
+        "protocol": ["bittorrent", "ntp", "stun"],
+        "action": "hijack-dns"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "DIRECT"
       }
     ],
     "rule_set": [
@@ -158,4 +166,3 @@
     "default_domain_resolver": "dns-direct"
   }
 }
-// vim: ft=jsonc

@@ -9,11 +9,12 @@ else
 fi
 
 cd "$BIN"
-"$BIN/clash-to-sing.py" -c config/config.json -rw -s preflight/saved-countries.json "${TOKEN[@]}" |
+./clash-to-sing.py -c config/config.json -drw -s preflight/saved-countries.json "${TOKEN[@]}" |
     sing-box format -c /dev/stdin >private/config.json
 
 TEMP="${RUNNER_TEMP:-/tmp}/config"
 mkdir -p "$TEMP"
 cp config/iphone/* "$TEMP"
-cp private/config.json "$TEMP/zoo.json"
+./clash-to-sing.py -c config/config.json -r -s preflight/saved-countries.json "${TOKEN[@]}" |
+    sing-box format -c /dev/stdin >"$TEMP/zoo.json"
 sing-box merge -C "$TEMP" private/config-iphone.json
