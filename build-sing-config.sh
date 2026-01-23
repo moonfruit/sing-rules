@@ -15,6 +15,5 @@ cd "$BIN"
 TEMP="${RUNNER_TEMP:-/tmp}/config"
 mkdir -p "$TEMP"
 cp config/iphone/* "$TEMP"
-./clash-to-sing.py -c config/config.json -r -s preflight/saved-countries.json "${TOKEN[@]}" |
-    sing-box format -c /dev/stdin >"$TEMP/zoo.json"
+cat private/config.json | ./copy-config.py >"$TEMP/zoo.json"
 sing-box merge -C "$TEMP" private/config-iphone.json
