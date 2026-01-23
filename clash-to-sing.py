@@ -72,6 +72,19 @@ __GROUP_MAP = {
     "GP": "🌐 动态节点",
 }
 
+__EXCLUDED_TAG = {
+    "剩余流量",
+    "距离下次重置剩余",
+    "套餐到期",
+}
+
+
+def __is_excluded_tag(tag: str) -> bool:
+    for excluded in __EXCLUDED_TAG:
+        if tag.startswith(excluded):
+            return True
+    return False
+
 
 def __find_group(tag: str) -> str | None:
     match = re.match(r"(?:IPLC)?([A-Z]{2})\w*(?:-([A-Z]{2}))?\b", tag)
@@ -135,9 +148,8 @@ def proxy_to_outbound(
         detected: str = safe_find_country(outbound)
         if detected and detected != "UN":
             group = detected
-            if overwrite_country or name not in saved_countries:
-                if not (name.startswith("剩余流量") or name.startswith("套餐到期")):
-                    saved_countries[name] = group
+            if (overwrite_country or name not in saved_countries) and __is_excluded_tag(name):
+                saved_countries[name] = group
             outbound["tag"] = f"{get_flag(group)} {name}"
         elif name in saved_countries:
             group = saved_countries[name]
