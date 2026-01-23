@@ -330,8 +330,8 @@ def is_ipv4_address(hostname):
 
 
 def proxies_to_outbound(
-    local: bool, proxies: list[SimpleObject], saved_countries: dict[str, str], overwrite_country: bool
-) -> tuple[list[SimpleObject], set[str], set[str]]:
+    local: bool, proxies: list[Object], saved_countries: dict[str, str], overwrite_country: bool
+) -> tuple[list[SimpleObject], set[str], set[str], Object]:
     outbounds = []
     domains = set()
     ips = set()
@@ -364,6 +364,7 @@ def proxies_to_outbound(
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
 
     providers = {}
+    embies = {}
 
     for proxy in proxies:
         server = proxy["server"]
@@ -397,7 +398,12 @@ def proxies_to_outbound(
 
         if "provider" in proxy:
             provider = proxy["provider"]
-            add_to_group(providers, provider, tag, cost=cost)
+            provider_name = provider["name"]
+            add_to_group(providers, provider_name, tag, cost=cost)
+
+            provider_emby = provider["emby"]
+            if provider_emby and provider_name not in embies:
+                embies[provider_name] = {"name": emby_name(provider_name), "config": provider_emby}
 
     if local:
         other_nodes[0:0] = ["🧅 Tor Browser"]
@@ -466,6 +472,13 @@ def proxies_to_outbound(
     outbounds.append(selector("🎥 TikTok", ai_tags))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
 
+    for name, emby in embies.items():
+        outbounds.append(
+            selector(
+                emby["name"], [name, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(name, emby, group_tags)]
+            )
+        )
+
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
@@ -479,7 +492,17 @@ def proxies_to_outbound(
 
     outbounds.append(selector("GLOBAL", [*all_nodes]))
 
-    return outbounds, domains, ips
+    return outbounds, domains, ips, embies
+
+
+def emby_name(name):
+    if len(name) > 2 and name[0] != " " and name[1] == " ":
+        return "🎥 Emby " + name[2:]
+    return "🎥 Emby " + name
+
+
+def emby_filter(name, emby, tags):
+    return [tag for tag in tags if tag != name and all(e not in tag for e in emby["config"].exclude)]
 
 
 def reorder(groups: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -536,6 +559,13 @@ def build_local_rules(local: bool):
     ]
 
 
+def build_emby_rules(embies):
+    rules = []
+    for name, emby in embies.items():
+        rules.append({"domain": emby["config"].domain, "outbound": emby["name"]})
+    return rules
+
+
 def build_local_rule_sets(local: bool, gitee_token: str | None):
     if not local:
         return []
@@ -582,7 +612,7 @@ def to_sing(
     overwrite_country: bool,
     gitee_token: str | None,
 ) -> Object:
-    outbounds, domains, ips = proxies_to_outbound(local, proxies, saved_countries, overwrite_country)
+    outbounds, domains, ips, embies = proxies_to_outbound(local, proxies, saved_countries, overwrite_country)
     return {
         "outbounds": outbounds,
         "route": {
@@ -633,6 +663,7 @@ def to_sing(
                 {"rule_set": "Netflix", "outbound": "🎥 Netflix"},
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
+                *build_emby_rules(embies),
                 {"rule_set": ["GFW", "Porn"], "outbound": "🔰 默认出口"},
                 {"rule_set": "Direct", "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
@@ -673,11 +704,18 @@ def to_sing(
 
 
 @define
+class ConfigEmby:
+    domain: list[str] = []
+    exclude: list[str] = []
+
+
+@define
 class ConfigFile:
     path: Path
     name: str = None
     cost: float = 1
     format: str = "clash"
+    emby: ConfigEmby = None
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
@@ -723,7 +761,7 @@ def load_shadow_rocket_proxies(path: Path) -> list[SimpleObject]:
     return proxies
 
 
-def load_sing_box_proxies(path: Path) -> list[SimpleObject]:
+def load_sing_box_proxies(path: Path) -> list[Object]:
     with open_path(path) as f:
         config = json.load(f)
     if "outbounds" not in config:
@@ -735,10 +773,10 @@ def load_sing_box_proxies(path: Path) -> list[SimpleObject]:
     ]
 
 
-def load_proxies(config: ConfigFile) -> list[SimpleObject]:
+def load_proxies(config: ConfigFile) -> list[Object]:
     if config.cost <= 0:
         return []
-    proxies = []
+    proxies: list[Object] = []
     match config.format:
         case "clash":
             proxies = load_clash_proxies(config.path)
@@ -750,7 +788,10 @@ def load_proxies(config: ConfigFile) -> list[SimpleObject]:
             raise ValueError(f"Unknown format: {config.format}")
     for proxy in proxies:
         if config.name:
-            proxy["provider"] = config.name
+            proxy["provider"] = {
+                "name": config.name,
+                "emby": config.emby,
+            }
         proxy["cost"] = config.cost
         proxy["format"] = config.format
     return proxies
