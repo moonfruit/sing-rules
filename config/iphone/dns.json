@@ -66,8 +66,9 @@
           "lazycat.cloud",
           "alicdn.win",
           "demo-chat-airport.com",
-          "xipcloud.org",
-          "v2ray.in"
+          "edg3.org",
+          "v2ray.in",
+          "xipcloud.org"
         ],
         "server": "dns-direct"
       },
