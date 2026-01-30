@@ -15,6 +15,10 @@ type RelaxedStrings = RelaxedList[str]
 type Rule = dict[str, RelaxedStrings]
 
 
+def reverse_domain_key(domain):
+    return tuple(reversed(domain.lower().split(".")))
+
+
 def re_match(pattern: str, string: str) -> str | None:
     import re
 
