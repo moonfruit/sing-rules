@@ -34,8 +34,8 @@ jobs:
           ASH_URL: ${{ secrets.ASH_URL }}
           NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
         run: |
-          ./subsribe.sh "$ASH_URL" dat/ash.json
-          ./subsribe.sh "$NANOCLOUD_URL" dat/nanocloud.json
+          ./subscribe.sh "$ASH_URL" dat/ash.json
+          ./subscribe.sh "$NANOCLOUD_URL" dat/nanocloud.json
 
       - name: Preflight
         run: |
