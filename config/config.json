@@ -1,24 +1,19 @@
 [
   {
+    "name": "🌸 NanoCloud",
+    "cost": 1.0,
+    "path": "dat/nanocloud.json",
+    "format": "sing-box"
+  },
+  {
     "name": "👻 Ash",
     "cost": 1.0,
     "path": "dat/ash.json",
     "format": "sing-box",
     "emby": {
-      "domain": [
-        "tv.ash.yt"
-      ],
-      "exclude": [
-        "美国",
-        "日本"
-      ]
+      "domain": ["tv.ash.yt"],
+      "exclude": ["美国", "日本"]
     }
-  },
-  {
-    "name": "🌸 NanoCloud",
-    "cost": 1.0,
-    "path": "dat/nanocloud.json",
-    "format": "sing-box"
   },
   {
     "name": "☁️ XipCloud",
