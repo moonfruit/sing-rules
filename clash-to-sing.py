@@ -499,7 +499,9 @@ def proxies_to_outbound(
     else:
         expansive_tag = []
 
+    auto_nodes = all_nodes
     if local:
+        auto_nodes = ["⛰️ Gingkoo", *auto_nodes]
         all_nodes[0:0] = ["⛰️ Gingkoo", "🧅 Tor Browser"]
         add_to_group(groups, __GROUP_MAP["US"], "⛰️ Gingkoo", prepend=True, cost=-1)
 
@@ -507,7 +509,7 @@ def proxies_to_outbound(
         selector("🔰 默认出口", [*cheap_tag, *expansive_tag, "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
     )
 
-    outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
+    outbounds.append(urltest("♻️ 自动选择", costs, auto_nodes))
     outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(selector("🍑 自由切换", all_nodes))
     count = 0
