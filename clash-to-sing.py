@@ -12,7 +12,17 @@ import typer
 from attrs import define
 from cattrs import structure
 
-from common import Object, SimpleObject, apply_to, compute_if_absent, get_list, re_match, simplify_dict, yaml
+from common import (
+    Object,
+    SimpleObject,
+    apply_to,
+    compute_if_absent,
+    get_list,
+    re_match,
+    reverse_domain_key,
+    simplify_dict,
+    yaml,
+)
 from common.io import open_path
 from common.object import as_hashable, copy_without_tag
 from common.outbound import safe_find_country
@@ -617,7 +627,7 @@ def build_proxies_rules(domains, ips):
             "outbound": "DIRECT",
         }
         if domains:
-            direct["domain"] = sorted(domains)
+            direct["domain"] = sorted(domains, key=reverse_domain_key)
         if ips:
             direct["ip_cidr"] = sorted(ips, key=as_tuple)
         rules.append(direct)
