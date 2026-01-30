@@ -34,8 +34,8 @@ jobs:
           ASH_URL: ${{ secrets.ASH_URL }}
           NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
         run: |
-          curl -fsSL -H "User-Agent: sing-box/*" "$ASH_URL" >dat/ash.json
-          curl -fsSL -H "User-Agent: sing-box/*" "$NANOCLOUD_URL" >dat/nanocloud.json
+          ./subsribe.sh "$ASH_URL" dat/ash.json
+          ./subsribe.sh "$NANOCLOUD_URL" dat/nanocloud.json
 
       - name: Preflight
         run: |

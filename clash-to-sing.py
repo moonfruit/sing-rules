@@ -3,6 +3,7 @@ import base64
 import ipaddress
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Annotated, Any, Callable
 from urllib.parse import parse_qs, unquote, urlparse
@@ -11,8 +12,9 @@ import typer
 from attrs import define
 from cattrs import structure
 
-from common import Object, SimpleObject, apply_to, get_list, simplify_dict, yaml
+from common import Object, SimpleObject, apply_to, compute_if_absent, get_list, re_match, simplify_dict, yaml
 from common.io import open_path
+from common.object import as_hashable, copy_without_tag
 from common.outbound import safe_find_country
 
 __FLAG_MAP = {
@@ -72,19 +74,6 @@ __GROUP_MAP = {
     "GP": "🌐 动态节点",
 }
 
-__EXCLUDED_TAG = {
-    "剩余流量",
-    "距离下次重置剩余",
-    "套餐到期",
-}
-
-
-def __is_excluded_tag(tag: str) -> bool:
-    for excluded in __EXCLUDED_TAG:
-        if tag.startswith(excluded):
-            return True
-    return False
-
 
 def __find_group(tag: str) -> str | None:
     match = re.match(r"(?:IPLC)?([A-Z]{2})\w*(?:-([A-Z]{2}))?\b", tag)
@@ -128,8 +117,8 @@ def get_flag(group: str) -> str:
 
 
 def proxy_to_outbound(
-    proxy: Object, saved_countries: dict[str, str], overwrite_country: bool
-) -> tuple[str, float, Object]:
+    proxy: Object, seen: set, saved_countries: dict[str, str], overwrite_country: bool
+) -> tuple[bool, str, float, Object]:
     name = proxy["name"].strip().lstrip("🔴")
     group, name = find_group(name)
     cost = find_cost(name, proxy.get("cost", 1))
@@ -143,20 +132,26 @@ def proxy_to_outbound(
             outbound = sing_box_proxy_to_outbound(proxy, tag)
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
+    patch_outbound(outbound)
+
+    seen_key = as_hashable(copy_without_tag(outbound))
+    dup = seen_key in seen
+    if dup:
+        return dup, group, cost, outbound
+    seen.add(seen_key)
 
     if saved_countries is not None and (not group or group == "UN"):
         detected: str = safe_find_country(outbound)
         if detected and detected != "UN":
             group = detected
-            if (overwrite_country or name not in saved_countries) and __is_excluded_tag(name):
+            if overwrite_country or name not in saved_countries:
                 saved_countries[name] = group
             outbound["tag"] = f"{get_flag(group)} {name}"
         elif name in saved_countries:
             group = saved_countries[name]
             outbound["tag"] = f"{get_flag(group)} {name}"
 
-    patch_outbound(outbound)
-    return group, cost, outbound
+    return dup, group, cost, outbound
 
 
 def patch_outbound(outbound: Object):
@@ -246,6 +241,51 @@ def sing_box_proxy_to_outbound(sing: Object, tag: str) -> Object:
     outbound = sing["outbound"]
     outbound["tag"] = tag
     return outbound
+
+
+def extract_provider_info(name: str) -> dict[str, Any] | None:
+    # region ---- Ash ----
+    remaining = re_match(r"剩余流量：(\d+(?:\.\d+)?)", name)
+    if remaining:
+        return {"remaining": float(remaining)}
+    reset = re_match(r"距离下次重置剩余：(\d+)", name)
+    if reset:
+        return {"reset": int(reset)}
+    expired = re_match(r"套餐到期：(\d{4}-\d{2}-\d{2})", name)
+    if expired:
+        return {"expired": datetime.fromisoformat(expired)}
+    # endregion
+    return None
+
+
+def format_provider_info(info: dict[str, Any]) -> str:
+    result = []
+    flag = "🟢"
+
+    if "reset" in info:
+        reset = info["reset"]
+    else:
+        reset = 0
+
+    if "remaining" in info:
+        remaining = info["remaining"]
+        if remaining < 1:
+            flag = "🔴"
+        elif remaining < (reset and 2 * reset or 10):
+            flag = "🟡"
+        result.append(f"{remaining:.1f}G")
+    if reset:
+        result.append(f"{reset}d")
+    if "expired" in info:
+        expired = info["expired"]
+        diff = (expired - datetime.now()).days
+        if diff <= 0:
+            flag = "🔴"
+        elif diff <= 7:
+            flag = "🟡"
+        result.append(expired.date().isoformat())
+
+    return f"{flag} ({", ".join(result)})"
 
 
 def selector(tag: str, nodes: list[str]) -> Object:
@@ -363,14 +403,37 @@ def proxies_to_outbound(
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
 
+    seen = set()
     providers = {}
+    provider_info_dict = {}
     embies = {}
 
     for proxy in proxies:
         server = proxy["server"]
         if server == "None":
             continue
-        group, cost, outbound = proxy_to_outbound(proxy, saved_countries, overwrite_country)
+
+        if "provider" in proxy:
+            provider = proxy["provider"]
+            provider_name = provider["name"]
+
+            info = provider["info"]
+            if info and provider_name not in provider_info_dict:
+                provider_info_dict[provider_name] = info.as_provider_info()
+
+            extracted = extract_provider_info(proxy["name"])
+            if extracted:
+                provider_info = compute_if_absent(provider_info_dict, provider_name, lambda k: {})
+                provider_info.update(extracted)
+                continue
+        else:
+            provider = None
+            provider_name = None
+
+        dup, group, cost, outbound = proxy_to_outbound(proxy, seen, saved_countries, overwrite_country)
+        if dup:
+            continue
+
         outbounds.append(outbound)
         if is_ipv4_address(server):
             ips.add(server + "/32")
@@ -396,14 +459,12 @@ def proxies_to_outbound(
         else:
             other_nodes.append(tag)
 
-        if "provider" in proxy:
-            provider = proxy["provider"]
-            provider_name = provider["name"]
+        if provider:
             add_to_group(providers, provider_name, tag, cost=cost)
 
-            provider_emby = provider["emby"]
-            if provider_emby and provider_name not in embies:
-                embies[provider_name] = {"name": emby_name(provider_name), "config": provider_emby}
+            emby = provider["emby"]
+            if emby and provider_name not in embies:
+                embies[provider_name] = {"name": emby_name(provider_name), "config": emby}
 
     if local:
         other_nodes[0:0] = ["🧅 Tor Browser"]
@@ -439,10 +500,20 @@ def proxies_to_outbound(
     outbounds.append(urltest("♻️ 自动选择", costs, all_nodes))
     outbounds.append(selector("🚀 手动切换", all_nodes))
     outbounds.append(selector("🍑 自由切换", all_nodes))
+    count = 0
     if cheap_tag:
         outbounds.append(urltest(cheap_tag[0], costs, cheap_nodes))
+        count += 1
     if expansive_tag:
         outbounds.append(urltest(expansive_tag[0], costs, expansive_nodes))
+        count += 1
+
+    for tag, provider_info in provider_info_dict.items():
+        outbounds.append(selector(f"{tag} {format_provider_info(provider_info)}", [tag]))
+    count += len(provider_info_dict)
+
+    if count % 2 == 1:
+        outbounds.append(selector("⬜ --------", ["🔰 默认出口"]))
 
     if "🇺🇸 美国节点" in group_tags:
         us_tags = [tag for tag in group_tags if tag.startswith("🇺🇸 美国节点")]
@@ -472,12 +543,15 @@ def proxies_to_outbound(
     outbounds.append(selector("🎥 TikTok", ai_tags))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
 
-    for name, emby in embies.items():
+    for provider_name, emby in embies.items():
         outbounds.append(
             selector(
-                emby["name"], [name, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(name, emby, group_tags)]
+                emby["name"],
+                [provider_name, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(provider_name, emby, group_tags)],
             )
         )
+    if len(embies) % 2 == 1:
+        outbounds.append(selector("⬛ --------", ["🔰 默认出口"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -703,10 +777,26 @@ def to_sing(
     }
 
 
-@define
+@define(frozen=True)
 class ConfigEmby:
-    domain: list[str] = []
-    exclude: list[str] = []
+    domain: tuple[str, ...] = ()
+    exclude: tuple[str, ...] = ()
+
+
+@define(frozen=True)
+class ConfigInfo:
+    upload: int
+    download: int
+    total: int
+    expire: int
+
+    def as_provider_info(self):
+        result = {}
+        if self.total > 0:
+            result["remaining"] = (self.total - self.upload - self.download) / 1024 / 1024 / 1024
+        if self.expire > 0:
+            result["expired"] = datetime.fromtimestamp(self.expire)
+        return result
 
 
 @define
@@ -715,13 +805,38 @@ class ConfigFile:
     name: str = None
     cost: float = 1
     format: str = "clash"
+    info: ConfigInfo = None
     emby: ConfigEmby = None
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
     with open_path(path) as f:
         configs = json.load(f)
-    return structure(configs, list[ConfigFile])
+    result = structure(configs, list[ConfigFile])
+    for config in result:
+        if config.info is None:
+            config.info = load_config_info(config.path)
+    return result
+
+
+def load_config_info(path: Path) -> ConfigInfo | None:
+    info_path = path.with_name(f"{path.name}.info")
+    if not info_path.is_file():
+        return None
+    with open(info_path) as f:
+        text = f.read().strip()
+    data = {}
+    for part in text.split(";"):
+        part = part.strip()
+        if "=" in part:
+            key, value = part.split("=", 1)
+            data[key.strip()] = int(value.strip())
+    return ConfigInfo(
+        upload=data.get("upload", 0),
+        download=data.get("download", 0),
+        total=data.get("total", 0),
+        expire=data.get("expire", 0),
+    )
 
 
 def load_clash_proxies(path: Path) -> list[SimpleObject]:
@@ -790,6 +905,7 @@ def load_proxies(config: ConfigFile) -> list[Object]:
         if config.name:
             proxy["provider"] = {
                 "name": config.name,
+                "info": config.info,
                 "emby": config.emby,
             }
         proxy["cost"] = config.cost
