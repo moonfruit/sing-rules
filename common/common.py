@@ -15,6 +15,15 @@ type RelaxedStrings = RelaxedList[str]
 type Rule = dict[str, RelaxedStrings]
 
 
+def re_match(pattern: str, string: str) -> str | None:
+    import re
+
+    match = re.match(pattern, string)
+    if match:
+        return match.group(1)
+    return None
+
+
 def retry(max_attempts=3, delay=1):
     def decorator(func):
         # noinspection PyBroadException,PyInconsistentReturns
