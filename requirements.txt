@@ -1,6 +1,5 @@
 attrs
 cattrs
-humanize
 pyyaml
 requests
 typer
