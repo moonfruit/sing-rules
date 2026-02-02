@@ -3,6 +3,8 @@ import ipaddress
 import time
 from collections.abc import Callable, Collection, Iterable
 
+import tldextract
+
 type Scalar = str | float | int
 type ScalarCollections = list[Scalar] | set[Scalar] | dict[str, Scalar]
 type Object = dict[str, Scalar | ScalarCollections | Object | ObjectCollections]
@@ -15,8 +17,9 @@ type RelaxedStrings = RelaxedList[str]
 type Rule = dict[str, RelaxedStrings]
 
 
-def reverse_domain_key(domain):
-    return tuple(reversed(domain.lower().split(".")))
+def domain_sort_key(domain):
+    ext = tldextract.extract(domain)
+    return ext.suffix, ext.domain, ext.subdomain
 
 
 def re_match(pattern: str, string: str) -> str | None:

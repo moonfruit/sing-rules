@@ -17,9 +17,9 @@ from common import (
     SimpleObject,
     apply_to,
     compute_if_absent,
+    domain_sort_key,
     get_list,
     re_match,
-    reverse_domain_key,
     simplify_dict,
     yaml,
 )
@@ -629,7 +629,7 @@ def build_proxies_rules(domains, ips):
             "outbound": "DIRECT",
         }
         if domains:
-            direct["domain"] = sorted(domains, key=reverse_domain_key)
+            direct["domain"] = sorted(domains, key=domain_sort_key)
         if ips:
             direct["ip_cidr"] = sorted(ips, key=as_tuple)
         rules.append(direct)
