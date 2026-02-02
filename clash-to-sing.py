@@ -524,8 +524,18 @@ def proxies_to_outbound(
         outbounds.append(selector(f"{tag} {format_provider_info(provider_info)}", [tag]))
     count += len(provider_info_dict)
 
+    for provider_name, emby in embies.items():
+        outbounds.append(
+            selector(
+                emby["name"],
+                [provider_name, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(provider_name, emby, group_tags)],
+            )
+        )
+    count += len(embies)
+
     if count % 2 == 1:
-        outbounds.append(selector("⬜ --------", ["🔰 默认出口"]))
+        outbounds.append(selector("⬛ --------", ["🔰 默认出口"]))
+        # outbounds.append(selector("⬜ --------", ["🔰 默认出口"]))
 
     if "🇺🇸 美国节点" in group_tags:
         us_tags = [tag for tag in group_tags if tag.startswith("🇺🇸 美国节点")]
@@ -554,16 +564,6 @@ def proxies_to_outbound(
     outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
     outbounds.append(selector("🎥 TikTok", ai_tags))
     outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
-
-    for provider_name, emby in embies.items():
-        outbounds.append(
-            selector(
-                emby["name"],
-                [provider_name, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(provider_name, emby, group_tags)],
-            )
-        )
-    if len(embies) % 2 == 1:
-        outbounds.append(selector("⬛ --------", ["🔰 默认出口"]))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))

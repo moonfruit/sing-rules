@@ -11,7 +11,7 @@
     "path": "dat/ash.json",
     "format": "sing-box",
     "emby": {
-      "domain": ["tv.ash.yt"],
+      "domain": ["ask.ash.yt", "tv.ash.yt"],
       "exclude": ["美国", "日本"]
     }
   },
