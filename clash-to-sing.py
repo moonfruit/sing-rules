@@ -277,21 +277,28 @@ def format_provider_info(info: dict[str, Any]) -> str:
     else:
         reset = 0
 
-    if "remaining" in info:
-        remaining = info["remaining"]
-        if remaining < 1:
-            flag = "🔴"
-        elif remaining < (reset and 2 * reset or 10):
-            flag = "🟡"
-        result.append(f"{remaining:.1f}G")
-    if reset:
-        result.append(f"{reset}d")
     if "expired" in info:
         expired = info["expired"]
-        diff = (expired - datetime.now()).days
-        if diff <= 0:
+        countdown = (expired - datetime.now()).days
+    else:
+        expired = None
+        countdown = 0
+
+    if "remaining" in info:
+        remaining = info["remaining"]
+        if remaining <= 3:
             flag = "🔴"
-        elif diff <= 7:
+        elif remaining <= (2 * reset if reset else (2 * countdown if countdown and countdown <= 30 else 10)):
+            flag = "🟡"
+        result.append(f"{remaining:.1f}G")
+
+    if reset:
+        result.append(f"{reset}d")
+
+    if expired:
+        if countdown <= 3:
+            flag = "🔴"
+        elif countdown <= 7:
             flag = "🟡"
         result.append(expired.date().isoformat())
 
