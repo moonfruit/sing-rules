@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "aardio.com",
         "ads.unitychina.cn",
         "aixcoder.com",
         "apifox.cn",
@@ -135,6 +136,7 @@
         "xitu.io"
       ],
       "domain_suffix": [
+        ".aardio.com",
         ".ads.unitychina.cn",
         ".aixcoder.com",
         ".apifox.cn",
