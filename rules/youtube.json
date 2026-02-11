@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "ads.youtube.com",
         "ggpht.cn",
         "ggpht.com",
         "googlevideo.com",
@@ -183,6 +184,7 @@
         "ytimg.com"
       ],
       "domain_suffix": [
+        ".ads.youtube.com",
         ".ggpht.cn",
         ".ggpht.com",
         ".googlevideo.com",
