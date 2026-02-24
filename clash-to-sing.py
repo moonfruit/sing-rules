@@ -38,6 +38,7 @@ __FLAG_MAP = {
     "JP": "🇯🇵",
     "KR": "🇰🇷",
     "LT": "🇱🇹",
+    "MO": "🇲🇴",
     "MY": "🇲🇾",
     "NL": "🇳🇱",
     "SG": "🇸🇬",
@@ -74,6 +75,7 @@ __GROUP_MAP = {
     "JP": "🇯🇵 日本节点",
     "KR": "🇰🇷 韩国节点",
     "LT": "🇱🇹 立陶宛节点",
+    "MO": "🇲🇴 澳门节点",
     "MY": "🇲🇾 马来西亚节点",
     "NL": "🇳🇱 荷兰节点",
     "SG": "🇸🇬 新加坡节点",
@@ -302,7 +304,7 @@ def format_provider_info(info: dict[str, Any]) -> str:
             flag = "🟡"
         result.append(expired.date().isoformat())
 
-    return f"{flag} ({", ".join(result)})"
+    return f"{flag} ({', '.join(result)})"
 
 
 def selector(tag: str, nodes: list[str]) -> Object:
@@ -881,17 +883,15 @@ def load_shadow_rocket_proxies(path: Path) -> list[SimpleObject]:
             url = line
             name = "Line#{}".format(index)
         parsed = urlparse(url)
-        proxies.append(
-            {
-                "url": line,
-                "name": name,
-                "type": parsed.scheme,
-                "server": parsed.hostname,
-                "port": parsed.port,
-                "query": simplify_dict(parse_qs(parsed.query)),
-                "struct": parsed,
-            }
-        )
+        proxies.append({
+            "url": line,
+            "name": name,
+            "type": parsed.scheme,
+            "server": parsed.hostname,
+            "port": parsed.port,
+            "query": simplify_dict(parse_qs(parsed.query)),
+            "struct": parsed,
+        })
     return proxies
 
 
