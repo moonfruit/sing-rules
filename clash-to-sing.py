@@ -55,6 +55,7 @@ __TAG_GROUP = [
 ]
 
 __GROUP_ALIAS = {
+    "HK": "香港",
     "ID": "印尼",
     "JP": "日本",
     "KR": "韩国",
@@ -883,15 +884,17 @@ def load_shadow_rocket_proxies(path: Path) -> list[SimpleObject]:
             url = line
             name = "Line#{}".format(index)
         parsed = urlparse(url)
-        proxies.append({
-            "url": line,
-            "name": name,
-            "type": parsed.scheme,
-            "server": parsed.hostname,
-            "port": parsed.port,
-            "query": simplify_dict(parse_qs(parsed.query)),
-            "struct": parsed,
-        })
+        proxies.append(
+            {
+                "url": line,
+                "name": name,
+                "type": parsed.scheme,
+                "server": parsed.hostname,
+                "port": parsed.port,
+                "query": simplify_dict(parse_qs(parsed.query)),
+                "struct": parsed,
+            }
+        )
     return proxies
 
 
