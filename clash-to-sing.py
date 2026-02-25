@@ -314,15 +314,13 @@ def selector(tag: str, nodes: list[str]) -> Object:
     return {"type": "selector", "tag": tag, "outbounds": nodes}
 
 
-# noinspection HttpUrlsUsage
-__TEST_URL = "http://cp.cloudflare.com/generate_204"
-# noinspection HttpUrlsUsage
-# __TEST_URL = "http://www.apple.com/library/test/success.html"
+# __TEST_URL = "https://cp.cloudflare.com/generate_204"
+# __TEST_URL = "https://www.apple.com/library/test/success.html"
 
 
 def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
-    return {"type": "urltest", "tag": tag, "outbounds": nodes, "url": __TEST_URL}
+    return {"type": "urltest", "tag": tag, "outbounds": nodes}
 
 
 def is_cheap(cost):
