@@ -10,7 +10,13 @@ if [[ -z $URL || -z $OUTPUT ]]; then
     exit 1
 fi
 
-OPTS=(-fL -H "User-Agent: $CLIENT/*" -w '%header{subscription-userinfo}' -o "$OUTPUT")
+if [[ $CLIENT == 'sing-box' ]]; then
+    AGENT="SFA/1.12.22 (sing-box 1.12.22)"
+else
+    AGENT="$CLIENT/*"
+fi
+
+OPTS=(-fL -H "User-Agent: $AGENT" -w '%header{subscription-userinfo}' -o "$OUTPUT")
 
 USERINFO=$(curl "${OPTS[@]}" "$URL") || exit
 if [[ -n "$USERINFO" ]]; then

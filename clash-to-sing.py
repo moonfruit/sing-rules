@@ -168,6 +168,8 @@ def proxy_to_outbound(
 
 
 def patch_outbound(outbound: Object):
+    if "domain_resolver" in outbound:
+        del outbound["domain_resolver"]
     if "tls" in outbound:
         tls = outbound["tls"]
         if "utls" in tls:
@@ -312,9 +314,15 @@ def selector(tag: str, nodes: list[str]) -> Object:
     return {"type": "selector", "tag": tag, "outbounds": nodes}
 
 
+# noinspection HttpUrlsUsage
+__TEST_URL = "http://cp.cloudflare.com/generate_204"
+# noinspection HttpUrlsUsage
+# __TEST_URL = "http://www.apple.com/library/test/success.html"
+
+
 def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
-    return {"type": "urltest", "tag": tag, "outbounds": nodes}
+    return {"type": "urltest", "tag": tag, "outbounds": nodes, "url": __TEST_URL}
 
 
 def is_cheap(cost):
@@ -351,6 +359,8 @@ def add_to_group(
             add_tag(f"{group} 👍")
     if protocol:
         match protocol:
+            case "anytls":
+                add_tag(f"{group} 🐍")
             case "hysteria2":
                 add_tag(f"{group} 🌪️")
             case "shadowsocks":
@@ -360,9 +370,9 @@ def add_to_group(
             case "tuic":
                 add_tag(f"{group} 🦬")
             case "vless":
-                add_tag(f"{group} 🪶")
+                add_tag(f"{group} 🦢")
             case "vmess":
-                add_tag(f"{group} 🎯")
+                add_tag(f"{group} 🐙")
 
 
 def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
