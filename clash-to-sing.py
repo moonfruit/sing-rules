@@ -46,13 +46,9 @@ __FLAG_MAP = {
     "UK": "🇬🇧",
     "US": "🇺🇸",
     "VN": "🇻🇳",
-    "GP": ["🌐", "❇️"],
+    "GP": ["🏳️‍🌈", "❇️"],
     "UN": "🌏",
 }
-
-__TAG_GROUP = [
-    ("SG", re.compile(r"去除\s*\d\s*条不合适线路")),
-]
 
 __GROUP_ALIAS = {
     "HK": "香港",
@@ -84,7 +80,7 @@ __GROUP_MAP = {
     "UK": "🇬🇧 英国节点",
     "US": "🇺🇸 美国节点",
     "VN": "🇻🇳 越南节点",
-    "GP": "🌐 动态节点",
+    "GP": "🏳️‍🌈 动态节点",
 }
 
 
@@ -103,9 +99,6 @@ def __fix_tag(tag: str, length: int) -> str:
 
 
 def find_group(tag: str) -> tuple[str, str]:
-    # for group, pattern in __TAG_GROUP:
-    #     if pattern.match(tag):
-    #         return group, tag
     for group, flag in __FLAG_MAP.items():
         if isinstance(flag, list):
             for f in flag:
