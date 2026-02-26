@@ -606,14 +606,18 @@ def reorder(groups: dict[str, list[str]]) -> dict[str, list[str]]:
     result_groups = {}
     other_tags = []
     other_groups = {}
+    last_groups = {}
     for k, v in groups.items():
         if k.startswith("🇺🇸 美国节点"):
             result_groups[k] = v
+        elif k == "🏳️ 其它节点":
+            last_groups[k] = v
         else:
             other_tags.append(k)
             other_groups[k] = v
     for k in sorted(other_tags):
         result_groups[k] = other_groups[k]
+    result_groups.update(last_groups)
     return result_groups
 
 
