@@ -2,6 +2,8 @@ DOMAIN-SUFFIX,chatgpt.livekit.cloud
 DOMAIN-SUFFIX,chatkit.app
 DOMAIN-SUFFIX,coze.com
 DOMAIN-SUFFIX,poe.com
+# Apple
+DOMAIN,gsa.apple.com
 # Microsoft
 DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN-SUFFIX,designer.microsoft.com
