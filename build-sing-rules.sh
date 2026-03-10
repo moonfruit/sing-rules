@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 BIN=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 title() {
@@ -29,7 +29,11 @@ title "Downloading clash rules"
 CLASH=$(mktemp -d)
 mkdir -p "$CLASH"
 echo ">>> $CLASH"
-(cd "$CLASH" && "$BIN/clash-download.sh" "$BIN/clash-list.txt")
+(
+    cd "$CLASH"
+    "$BIN/clash-download.sh" "$BIN/clash-list.txt"
+    "$BIN/build-fakeip-filter.sh" https://raw.githubusercontent.com/juewuy/ShellCrash/refs/heads/dev/public/fake_ip_filter.list
+)
 
 title "Merging clash rules to sing rule sets"
 "$BIN/clash-merge.sh" "$CLASH"

@@ -14,9 +14,9 @@
       },
       {
         "tag": "dns-proxy",
-        "type": "udp",
+        "type": "h3",
         "server": "one.one.one.one",
-        "domain_resolver": "dns-resolver"
+        "detour": "🔰 默认出口"
       },
       {
         "tag": "dns-gingkoo",
@@ -38,7 +38,7 @@
       {
         "tag": "dns-fakeip",
         "type": "fakeip",
-        "inet4_range": "198.18.0.0/15",
+        "inet4_range": "33.0.0.0/8",
         "inet6_range": "fc00::/64"
       }
     ],
@@ -148,19 +148,19 @@
       {
         "type": "remote",
         "tag": "GeoIP@CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geoip-cn.srs?access_token=c1f6ba66dd5b8620b26ac68f2fad7a52&ref=main",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geoip-cn.srs?access_token=$TOKEN&ref=main",
         "download_detour": "DIRECT"
       },
       {
         "type": "remote",
         "tag": "GeoSites@CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-cn.srs?access_token=c1f6ba66dd5b8620b26ac68f2fad7a52&ref=main",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-cn.srs?access_token=$TOKEN&ref=main",
         "download_detour": "DIRECT"
       },
       {
         "type": "remote",
         "tag": "GeoSites@!CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?access_token=c1f6ba66dd5b8620b26ac68f2fad7a52&ref=main",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?access_token=$TOKEN&ref=main",
         "download_detour": "DIRECT"
       }
     ],
