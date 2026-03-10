@@ -29,7 +29,7 @@ jobs:
           path: dat
           ref: release
 
-      - name: Download clash config
+      - name: Download resources
         env:
           ASH_URL: ${{ secrets.ASH_URL }}
           NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
