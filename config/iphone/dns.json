@@ -100,7 +100,6 @@
           "AAAA"
         ],
         "server": "dns-fakeip",
-        "strategy": "ipv4_only",
         "rewrite_ttl": 1
       }
     ],
