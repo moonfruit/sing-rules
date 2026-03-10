@@ -16,7 +16,7 @@
         "tag": "dns-proxy",
         "type": "h3",
         "server": "one.one.one.one",
-        "detour": "🔰 默认出口"
+        "detour": "♻️ 自动选择"
       },
       {
         "tag": "dns-gingkoo",
@@ -49,38 +49,24 @@
         "rewrite_ttl": 2592000
       },
       {
-        "domain_suffix": ["arpa", "local"],
-        "action": "predefined",
-        "rcode": "NXDOMAIN"
-      },
-      {
-        "domain": ["dns.alidns.com", "doh.pub", "dot.pub", "dns.google", "one.one.one.one", "cloudflare-dns.com"],
+        "domain": [
+          "dns.alidns.com",
+          "doh.pub",
+          "dot.pub",
+          "dns.google",
+          "one.one.one.one",
+          "cloudflare-dns.com"
+        ],
         "server": "dns-resolver"
       },
       {
-        "domain_suffix": [
-          "apple.com",
-          "gingkoo.com",
-          "ip.sb",
-          "ipip.net",
-          "lazycat.cloud",
-          "alicdn.win",
-          "demo-chat-airport.com",
-          "edg3.org",
-          "v2ray.in",
-          "xipcloud.org"
-        ],
+        "rule_set": "FakeIpBypass",
         "server": "dns-direct"
       },
       {
         "domain_suffix": "server.gingkoo",
         "server": "dns-gingkoo",
         "rewrite_ttl": 2592000
-      },
-      {
-        "query_type": ["A", "AAAA"],
-        "server": "dns-fakeip",
-        "rewrite_ttl": 1
       },
       {
         "clash_mode": "Direct",
@@ -107,6 +93,15 @@
           }
         ],
         "server": "dns-direct"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip",
+        "strategy": "ipv4_only",
+        "rewrite_ttl": 1
       }
     ],
     "final": "dns-proxy",
@@ -136,7 +131,11 @@
         "action": "hijack-dns"
       },
       {
-        "protocol": ["bittorrent", "ntp", "stun"],
+        "protocol": [
+          "bittorrent",
+          "ntp",
+          "stun"
+        ],
         "outbound": "DIRECT"
       },
       {
@@ -161,6 +160,18 @@
         "type": "remote",
         "tag": "GeoSites@!CN",
         "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?access_token=$TOKEN&ref=main",
+        "download_detour": "DIRECT"
+      },
+      {
+        "type": "remote",
+        "tag": "Lan",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/lan.srs?access_token=$TOKEN&ref=main",
+        "download_detour": "DIRECT"
+      },
+      {
+        "type": "remote",
+        "tag": "FakeIpBypass",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/fakeip-bypass.srs?access_token=$TOKEN&ref=main",
         "download_detour": "DIRECT"
       }
     ],
