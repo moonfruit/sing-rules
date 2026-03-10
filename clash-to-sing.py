@@ -423,6 +423,16 @@ def proxies_to_outbound(
 
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
+    outbounds.append({"type": "http", "tag": "🪞 中间人", "server": "127.0.0.1", "server_port": 7899})
+    outbounds.append(
+        {
+            "type": "http",
+            "tag": "💻 中间人",
+            "server": "moons-macbook-m2.local",
+            "server_port": 7899,
+            "domain_resolver": "dns-local",
+        }
+    )
 
     seen = set()
     providers = {}
@@ -494,7 +504,7 @@ def proxies_to_outbound(
     clean_keys(groups)
     clean_keys(providers)
     groups = reorder(groups)
-    group_tags = ["🍑 自由切换", *providers, *groups]
+    group_tags = ["🍑 自由切换", *providers, *groups, "🔍 调试出口"]
 
     if cheap_nodes and cheap_nodes != all_nodes:
         cheap_tag = ["🛢️ 省流节点"]
@@ -544,7 +554,7 @@ def proxies_to_outbound(
         )
     count += len(embies)
 
-    if count % 2 == 1:
+    if count % 2 == 0:
         outbounds.append(selector("⬛ --------", ["🔰 默认出口"]))
         # outbounds.append(selector("⬜ --------", ["🔰 默认出口"]))
 
@@ -555,26 +565,30 @@ def proxies_to_outbound(
     else:
         ai_tags = ["🔰 默认出口", *expansive_tag, *group_tags, "DIRECT"]
 
+    default_direct = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
+    default_proxy = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
+
     outbounds.append(selector("🤖 人工智能", ai_tags))
     outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]))
-    outbounds.append(selector("🍎 苹果服务", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("Ⓜ️ 微软服务", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("⚙️ 软件开发", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
-    outbounds.append(selector("📦 软件仓库", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Nintendo", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Nintendo@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 PlayStation", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 PlayStation@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Steam", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Steam@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Xbox", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Xbox@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Games", ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎮 Games@CN", ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]))
-    outbounds.append(selector("🎥 Disney+", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
-    outbounds.append(selector("🎥 Netflix", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
+    outbounds.append(selector("🔍 调试出口", ["DIRECT", "🪞 中间人", "💻 中间人"]))
+    outbounds.append(selector("🍎 苹果服务", default_direct))
+    outbounds.append(selector("Ⓜ️ 微软服务", default_direct))
+    outbounds.append(selector("⚙️ 软件开发", default_proxy))
+    outbounds.append(selector("📦 软件仓库", default_direct))
+    outbounds.append(selector("🎮 Nintendo", default_proxy))
+    outbounds.append(selector("🎮 Nintendo@CN", default_direct))
+    outbounds.append(selector("🎮 PlayStation", default_proxy))
+    outbounds.append(selector("🎮 PlayStation@CN", default_direct))
+    outbounds.append(selector("🎮 Steam", default_proxy))
+    outbounds.append(selector("🎮 Steam@CN", default_direct))
+    outbounds.append(selector("🎮 Xbox", default_proxy))
+    outbounds.append(selector("🎮 Xbox@CN", default_direct))
+    outbounds.append(selector("🎮 Games", default_proxy))
+    outbounds.append(selector("🎮 Games@CN", default_direct))
+    outbounds.append(selector("🎥 Disney+", default_proxy))
+    outbounds.append(selector("🎥 Netflix", default_proxy))
     outbounds.append(selector("🎥 TikTok", ai_tags))
-    outbounds.append(selector("🎥 YouTube", ["🔰 默认出口", *expansive_tag, "DIRECT", *group_tags]))
+    outbounds.append(selector("🎥 YouTube", default_proxy))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
