@@ -3,7 +3,8 @@
     "servers": [
       {
         "tag": "dns-local",
-        "type": "local"
+        "type": "local",
+        "prefer_go": true
       },
       {
         "tag": "dns-resolver",
