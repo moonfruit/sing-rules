@@ -1,10 +1,30 @@
 DOMAIN-SUFFIX,apple.com
-DOMAIN-SUFFIX,gingkoo.com
 # IP
 DOMAIN-SUFFIX,ip.sb
 DOMAIN-SUFFIX,ipip.net
+# Gingkoo
+DOMAIN-SUFFIX,gingkoo.com
+DOMAIN-SUFFIX,server.gingkoo
 # LazyCat
+DOMAIN-SUFFIX,heiyu.space
 DOMAIN-SUFFIX,lazycat.cloud
+# XiaoMI
+DOMAIN-SUFFIX,mi.com
+DOMAIN-SUFFIX,miot-spec.com
+DOMAIN-SUFFIX,miot-spec.org
+DOMAIN-SUFFIX,miui.com
+DOMAIN-SUFFIX,miwifi.com
+DOMAIN-SUFFIX,xiaomi.com
+# Yeelight
+DOMAIN-SUFFIX,yeelight.com
+DOMAIN-SUFFIX,yeelink.net
+# Midea
+DOMAIN-SUFFIX,midea.com
+DOMAIN-SUFFIX,midea.com.cn
+DOMAIN-SUFFIX,smartmidea.net
+# Fotile
+DOMAIN-SUFFIX,fotile.com
+DOMAIN-SUFFIX,fotilecloud.com
 # Airport
 DOMAIN-SUFFIX,671234.xyz
 DOMAIN-SUFFIX,alicdn.win

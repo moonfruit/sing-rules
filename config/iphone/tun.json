@@ -3,7 +3,10 @@
     {
       "type": "tun",
       "tag": "tun-in",
-      "address": ["172.20.0.1/30", "fdfe:dcba:9876::1/126"],
+      "address": [
+        "11.0.0.1/30",
+        "fdfe:dcba:9876::1/126"
+      ],
       "auto_route": true,
       "strict_route": true,
       "platform": {
@@ -11,7 +14,13 @@
           "enabled": true,
           "server": "127.0.0.1",
           "server_port": 7890,
-          "bypass_domain": ["localhost", "arpa", "local", "heiyu.space", "apple.com", "gingkoo.com", "server.gingkoo"]
+          "bypass_domain": [
+            "localhost",
+            "arpa",
+            "local",
+            "gingkoo.com",
+            "server.gingkoo"
+          ]
         }
       }
     }
