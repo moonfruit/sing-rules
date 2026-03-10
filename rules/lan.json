@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain_suffix": [
+        ".direct",
+        ".example",
+        ".home.arpa",
+        ".invalid",
+        ".lan",
+        ".local",
+        ".localdomain",
+        ".localhost",
+        ".test"
+      ],
+      "domain_regex": "^[^.]+$"
+    }
+  ]
+}
