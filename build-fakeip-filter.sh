@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 BIN=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
