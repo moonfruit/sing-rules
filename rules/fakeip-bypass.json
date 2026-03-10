@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": [
+        "671234.xyz",
+        "alicdn.win",
+        "apple.com",
+        "demo-chat-airport.com",
+        "edg3.org",
+        "gingkoo.com",
+        "ip.sb",
+        "ipip.net",
+        "lazycat.cloud"
+      ],
+      "domain_suffix": [
+        ".671234.xyz",
+        ".alicdn.win",
+        ".apple.com",
+        ".demo-chat-airport.com",
+        ".edg3.org",
+        ".gingkoo.com",
+        ".ip.sb",
+        ".ipip.net",
+        ".lazycat.cloud"
+      ]
+    }
+  ]
+}
