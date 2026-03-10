@@ -25,15 +25,13 @@ title "Exporting geo as sing rule sets"
 "$BIN/geo-to-sing-rules.py"
 rm -f geoip.db geosite.db
 
+"$BIN/build-fakeip-filter.sh" https://raw.githubusercontent.com/juewuy/ShellCrash/refs/heads/dev/public/fake_ip_filter.list
+
 title "Downloading clash rules"
 CLASH=$(mktemp -d)
 mkdir -p "$CLASH"
 echo ">>> $CLASH"
-(
-    cd "$CLASH"
-    "$BIN/clash-download.sh" "$BIN/clash-list.txt"
-    "$BIN/build-fakeip-filter.sh" https://raw.githubusercontent.com/juewuy/ShellCrash/refs/heads/dev/public/fake_ip_filter.list
-)
+(cd "$CLASH" && "$BIN/clash-download.sh" "$BIN/clash-list.txt")
 
 title "Merging clash rules to sing rule sets"
 "$BIN/clash-merge.sh" "$CLASH"
