@@ -2,7 +2,9 @@
   "version": 1,
   "rules": [
     {
+      "domain": "arpa",
       "domain_suffix": [
+        ".arpa",
         ".direct",
         ".example",
         ".home.arpa",
