@@ -7,6 +7,7 @@
       "secret": "QAZ@wsx3EDC",
       "access_control_allow_origin": [
         "http://127.0.0.1:9999",
+        "http://localhost:9999",
         "http://moons-iphone.local:9999"
       ],
       "access_control_allow_private_network": true

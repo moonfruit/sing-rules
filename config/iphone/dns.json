@@ -69,6 +69,14 @@
         "rewrite_ttl": 2592000
       },
       {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns-fakeip",
+        "rewrite_ttl": 1
+      },
+      {
         "clash_mode": "Direct",
         "server": "dns-direct"
       },
@@ -93,14 +101,6 @@
           }
         ],
         "server": "dns-direct"
-      },
-      {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
-        "server": "dns-fakeip",
-        "rewrite_ttl": 1
       }
     ],
     "final": "dns-proxy",
