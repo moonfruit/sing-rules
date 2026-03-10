@@ -31,8 +31,8 @@ mkdir -p "$CLASH"
 echo ">>> $CLASH"
 (
     cd "$CLASH"
-    ls -l "$BIN"
     "$BIN/clash-download.sh" "$BIN/clash-list.txt"
+    ls -l "$BIN/build-fakeip-filter.sh"
     "$BIN/build-fakeip-filter.sh" https://raw.githubusercontent.com/juewuy/ShellCrash/refs/heads/dev/public/fake_ip_filter.list
 )
 
