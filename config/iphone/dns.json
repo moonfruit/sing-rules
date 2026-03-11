@@ -14,9 +14,9 @@
       },
       {
         "tag": "dns-proxy",
-        "type": "h3",
+        "type": "udp",
         "server": "one.one.one.one",
-        "detour": "♻️ 自动选择"
+        "domain_resolver": "dns-resolver"
       },
       {
         "tag": "dns-gingkoo",
