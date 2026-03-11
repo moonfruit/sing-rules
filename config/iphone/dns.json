@@ -53,6 +53,11 @@
         "rewrite_ttl": 2592000
       },
       {
+        "rule_set": "Lan",
+        "action": "predefined",
+        "rcode": "NXDOMAIN"
+      },
+      {
         "domain": [
           "dns.alidns.com",
           "doh.pub",
