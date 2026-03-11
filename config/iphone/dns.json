@@ -2,10 +2,6 @@
   "dns": {
     "servers": [
       {
-        "tag": "dns-local",
-        "type": "local"
-      },
-      {
         "tag": "dns-resolver",
         "type": "udp",
         "server": "119.29.29.29"
