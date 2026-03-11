@@ -60,7 +60,32 @@
         "server": "dns-resolver"
       },
       {
-        "rule_set": "FakeIpBypass",
+        "domain_suffix": [
+          "apple.com",
+          "ip.sb",
+          "ipip.net",
+          "gingkoo.com",
+          "server.gingkoo",
+          "heiyu.space",
+          "lazycat.cloud",
+          "mi.com",
+          "miot-spec.com",
+          "miot-spec.org",
+          "miui.com",
+          "miwifi.com",
+          "xiaomi.com",
+          "yeelight.com",
+          "yeelink.net",
+          "midea.com",
+          "midea.com.cn",
+          "smartmidea.net",
+          "fotile.com",
+          "fotilecloud.com",
+          "671234.xyz",
+          "alicdn.win",
+          "demo-chat-airport.com",
+          "edg3.org"
+        ],
         "server": "dns-direct"
       },
       {
