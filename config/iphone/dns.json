@@ -108,14 +108,6 @@
     "reverse_mapping": true,
     "strategy": "prefer_ipv6"
   },
-  "inbounds": [
-    {
-      "type": "direct",
-      "tag": "dns-in",
-      "listen": "127.0.0.1",
-      "listen_port": 53
-    }
-  ],
   "route": {
     "rules": [
       {
