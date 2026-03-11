@@ -14,9 +14,9 @@
       },
       {
         "tag": "dns-proxy",
-        "type": "udp",
+        "type": "h3",
         "server": "one.one.one.one",
-        "domain_resolver": "dns-resolver"
+        "detour": "♻️ 自动选择"
       },
       {
         "tag": "dns-gingkoo",
@@ -38,7 +38,7 @@
       {
         "tag": "dns-fakeip",
         "type": "fakeip",
-        "inet4_range": "198.18.0.0/15",
+        "inet4_range": "22.0.0.0/8",
         "inet6_range": "fc00::/64"
       }
     ],
