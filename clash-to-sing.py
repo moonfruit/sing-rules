@@ -427,15 +427,6 @@ def proxies_to_outbound(
     outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.170", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wired", "server": "192.168.50.80", "server_port": 7899})
-    outbounds.append(
-        {
-            "type": "http",
-            "tag": "Bonjour",
-            "server": "moons-macbook-m2.local",
-            "server_port": 7899,
-            "domain_resolver": "dns-local",
-        }
-    )
 
     seen = set()
     providers = {}
@@ -570,7 +561,7 @@ def proxies_to_outbound(
 
     default_direct = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
     default_proxy = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
-    middle_man = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired", "Bonjour"]
+    middle_man = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
 
     outbounds.append(selector("🤖 人工智能", ai_tags))
     outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]))
