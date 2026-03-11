@@ -20,10 +20,10 @@ jobs:
           echo "TAG=$(env TZ=Asia/Shanghai date +%Y%m%d%H%M)" | tee -a "$GITHUB_ENV"
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Checkout Rules
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: Loyalsoldier/v2ray-rules-dat
           path: dat
@@ -44,14 +44,14 @@ jobs:
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: MetaCubeX/geo
           path: geo
 
       - name: Setup Go
         if: env.BUILD_RULES == 1
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: geo/go.mod
           cache-dependency-path: geo/go.sum
@@ -68,9 +68,9 @@ jobs:
           sing-box version
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.14"
           cache: pip
 
       - name: Install python requirements
@@ -111,7 +111,7 @@ jobs:
 
       - name: Setup Node
         if: env.BUILD_RULES == 1
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           registry-url: "https://registry.npmjs.org"
 
