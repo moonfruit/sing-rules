@@ -38,7 +38,7 @@
       {
         "tag": "dns-fakeip",
         "type": "fakeip",
-        "inet4_range": "33.0.0.0/8",
+        "inet4_range": "22.0.0.0/8",
         "inet6_range": "fc00::/64"
       }
     ],
@@ -60,32 +60,7 @@
         "server": "dns-resolver"
       },
       {
-        "domain_suffix": [
-          "apple.com",
-          "ip.sb",
-          "ipip.net",
-          "gingkoo.com",
-          "server.gingkoo",
-          "heiyu.space",
-          "lazycat.cloud",
-          "mi.com",
-          "miot-spec.com",
-          "miot-spec.org",
-          "miui.com",
-          "miwifi.com",
-          "xiaomi.com",
-          "yeelight.com",
-          "yeelink.net",
-          "midea.com",
-          "midea.com.cn",
-          "smartmidea.net",
-          "fotile.com",
-          "fotilecloud.com",
-          "671234.xyz",
-          "alicdn.win",
-          "demo-chat-airport.com",
-          "edg3.org"
-        ],
+        "rule_set": "FakeIpBypass",
         "server": "dns-direct"
       },
       {
