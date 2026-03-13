@@ -750,7 +750,15 @@ def to_sing(
                 *build_local_rules(local),
                 {"rule_set": "AI", "outbound": "🤖 人工智能"},
                 {"rule_set": "Apple", "outbound": "🍎 苹果服务"},
-                {"rule_set": "Microsoft", "outbound": "Ⓜ️ 微软服务"},
+                {
+                    "type": "logical",
+                    "mode": "and",
+                    "rules": [
+                        {"rule_set": "Microsoft"},
+                        {"rule_set": ["Development", "Sources", "Xbox"], "invert": True},
+                    ],
+                    "outbound": "Ⓜ️ 微软服务",
+                },
                 {"rule_set": "Development@CN", "outbound": "🎯 全球直连"},
                 {"rule_set": "Development", "outbound": "⚙️ 软件开发"},
                 {"rule_set": "Sources", "outbound": "📦 软件仓库"},
