@@ -17,4 +17,4 @@ DOMAIN-SUFFIX,grok.com
 DOMAIN-SUFFIX,grokipedia.com
 DOMAIN-SUFFIX,x.ai
 # Open Router
-#DOMAIN-SUFFIX,openrouter.ai
+DOMAIN-SUFFIX,openrouter.ai
