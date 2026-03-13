@@ -424,7 +424,7 @@ def proxies_to_outbound(
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
     outbounds.append({"type": "http", "tag": "💻 中间人", "server": "127.0.0.1", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.170", "server_port": 7899})
+    outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.120", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wired", "server": "192.168.50.80", "server_port": 7899})
 
