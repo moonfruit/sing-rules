@@ -60,4 +60,7 @@ DOMAIN-SUFFIX,registry.k8s.io
 # Helm
 DOMAIN-SUFFIX,artifacthub.io
 # HuggingFace
+DOMAIN-SUFFIX,hf.co
 DOMAIN-SUFFIX,huggingface.co
+# Ollama
+DOMAIN-SUFFIX,ollama.com
