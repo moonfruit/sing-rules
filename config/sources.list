@@ -1,39 +1,39 @@
 # SCM
 DOMAIN-SUFFIX,bitbucket.org
 # Software
+DOMAIN,apt.postgresql.org
+DOMAIN,apt.puppet.com
+DOMAIN,dl.google.com
+DOMAIN,download.postgresql.org
+DOMAIN,opensource.wandisco.com
+DOMAIN,packages.microsoft.com
+DOMAIN,repo.mongodb.org
+DOMAIN,yum.puppet.com
+DOMAIN,zypp.postgresql.org
 DOMAIN-SUFFIX,brew.sh
 DOMAIN-SUFFIX,cloudsmith.io
 DOMAIN-SUFFIX,fury.io
 DOMAIN-SUFFIX,gemfury.com
 DOMAIN-SUFFIX,packagecloud.io
 DOMAIN-SUFFIX,snapcraft.io
-DOMAIN,dl.google.com
-DOMAIN,opensource.wandisco.com
-DOMAIN,packages.microsoft.com
-DOMAIN,repo.mongodb.org
-DOMAIN,apt.postgresql.org
-DOMAIN,download.postgresql.org
-DOMAIN,zypp.postgresql.org
-DOMAIN,apt.puppet.com
-DOMAIN,yum.puppet.com
 # Go
-DOMAIN-SUFFIX,golang.org
-DOMAIN-SUFFIX,googlesource.com
-DOMAIN-SUFFIX,gopkg.in
 DOMAIN,go.etcd.io
 DOMAIN,go.mongodb.org
 DOMAIN,go.uber.org
+DOMAIN-SUFFIX,golang.org
+DOMAIN-SUFFIX,googlesource.com
+DOMAIN-SUFFIX,gopkg.in
 # Java
-DOMAIN-SUFFIX,maven.org
 DOMAIN-SUFFIX,gradle.org
+DOMAIN-SUFFIX,maven.org
 DOMAIN-SUFFIX,shibboleth.net
 # JavaScript
-DOMAIN-SUFFIX,npmjs.org
 DOMAIN-SUFFIX,nodesource.com
+DOMAIN-SUFFIX,npmjs.org
 DOMAIN-SUFFIX,yarnpkg.com
 # Lua
-DOMAIN-SUFFIX,luarocks.org
 DOMAIN,rocks.moonscript.org
+DOMAIN-SUFFIX,luarocks.org
 # Perl
 DOMAIN-SUFFIX,cpan.org
 DOMAIN-SUFFIX,metacpan.org
@@ -54,6 +54,7 @@ DOMAIN-SUFFIX,icr.io
 DOMAIN-SUFFIX,lscr.io
 DOMAIN-SUFFIX,mcr.microsoft.com
 DOMAIN-SUFFIX,nvcr.io
+DOMAIN-SUFFIX,pack.local
 DOMAIN-SUFFIX,quay.io
 DOMAIN-SUFFIX,registry.jetbrains.team
 DOMAIN-SUFFIX,registry.k8s.io
