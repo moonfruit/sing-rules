@@ -65,13 +65,13 @@
         "server": "dns-resolver"
       },
       {
-        "rule_set": "FakeIpBypass",
-        "server": "dns-direct"
-      },
-      {
         "domain_suffix": "server.gingkoo",
         "server": "dns-gingkoo",
         "rewrite_ttl": 2592000
+      },
+      {
+        "rule_set": "FakeIpBypass",
+        "server": "dns-direct"
       },
       {
         "query_type": [
