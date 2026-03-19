@@ -491,8 +491,6 @@ def proxies_to_outbound(
             if emby and provider_name not in embies:
                 embies[provider_name] = {"name": emby_name(provider_name), "config": emby}
 
-    if local:
-        other_nodes[0:0] = ["🧅 Tor Browser"]
     if other_nodes:
         groups["🏳️ 其它节点"] = other_nodes
     clean_keys(groups)
