@@ -545,6 +545,7 @@
         "yarnpkg.com",
         "yogalayout.com",
         "youtrack.cloud",
+        "ziglang.org",
         "zsh.org"
       ],
       "domain_suffix": [
@@ -1047,6 +1048,7 @@
         ".yarnpkg.com",
         ".yogalayout.com",
         ".youtrack.cloud",
+        ".ziglang.org",
         ".zsh.org"
       ],
       "domain_regex": [
