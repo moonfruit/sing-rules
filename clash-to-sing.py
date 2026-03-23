@@ -424,7 +424,7 @@ def proxies_to_outbound(
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
     outbounds.append({"type": "http", "tag": "💻 中间人", "server": "127.0.0.1", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.120", "server_port": 7899})
+    outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.248", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wired", "server": "192.168.50.80", "server_port": 7899})
 
@@ -550,44 +550,36 @@ def proxies_to_outbound(
         outbounds.append(selector("⬛ --------", ["🔰 默认出口"]))
         # outbounds.append(selector("⬜ --------", ["🔰 默认出口"]))
 
-    if "🇺🇸 美国节点" in group_tags:
-        us_tags = [tag for tag in group_tags if tag.startswith("🇺🇸 美国节点")]
-        not_us_tags = [tag for tag in group_tags if not tag.startswith("🇺🇸 美国节点")]
-        ai_tags = [*us_tags, "🔰 默认出口", *expansive_tag, *not_us_tags, "DIRECT"]
-    else:
-        ai_tags = ["🔰 默认出口", *expansive_tag, *group_tags, "DIRECT"]
+    direct_tags = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
+    proxy_tags = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
 
-    if "🇭🇰 香港节点" in group_tags:
-        not_hk_tags = [tag for tag in group_tags if tag != "🇭🇰 香港节点"]
-        hk_tags = ["🇭🇰 香港节点", "🔰 默认出口", *expansive_tag, *not_hk_tags, "DIRECT"]
-    else:
-        hk_tags = ["🔰 默认出口", *expansive_tag, *group_tags, "DIRECT"]
+    ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点")
+    playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
 
-    default_direct = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
-    default_proxy = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
-    middle_man = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
+    lazycat_tags = ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]
+    mitm_tags = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
 
     outbounds.append(selector("🤖 人工智能", ai_tags))
-    outbounds.append(selector("🐱 懒猫微服", ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]))
-    outbounds.append(selector("🔍 调试出口", middle_man))
-    outbounds.append(selector("🍎 苹果服务", default_direct))
-    outbounds.append(selector("Ⓜ️ 微软服务", default_direct))
-    outbounds.append(selector("⚙️ 软件开发", default_proxy))
-    outbounds.append(selector("📦 软件仓库", default_direct))
-    outbounds.append(selector("🎮 Nintendo", default_proxy))
-    outbounds.append(selector("🎮 Nintendo@CN", default_direct))
-    outbounds.append(selector("🎮 PlayStation", hk_tags))
-    outbounds.append(selector("🎮 PlayStation@CN", default_direct))
-    outbounds.append(selector("🎮 Steam", default_proxy))
-    outbounds.append(selector("🎮 Steam@CN", default_direct))
-    outbounds.append(selector("🎮 Xbox", default_proxy))
-    outbounds.append(selector("🎮 Xbox@CN", default_direct))
-    outbounds.append(selector("🎮 Games", default_proxy))
-    outbounds.append(selector("🎮 Games@CN", default_direct))
-    outbounds.append(selector("🎥 Disney+", default_proxy))
-    outbounds.append(selector("🎥 Netflix", default_proxy))
+    outbounds.append(selector("🐱 懒猫微服", lazycat_tags))
+    outbounds.append(selector("🔍 调试出口", mitm_tags))
+    outbounds.append(selector("🍎 苹果服务", direct_tags))
+    outbounds.append(selector("Ⓜ️ 微软服务", direct_tags))
+    outbounds.append(selector("⚙️ 软件开发", proxy_tags))
+    outbounds.append(selector("📦 软件仓库", direct_tags))
+    outbounds.append(selector("🎮 Nintendo", proxy_tags))
+    outbounds.append(selector("🎮 Nintendo@CN", direct_tags))
+    outbounds.append(selector("🎮 PlayStation", playstation_tags))
+    outbounds.append(selector("🎮 PlayStation@CN", direct_tags))
+    outbounds.append(selector("🎮 Steam", proxy_tags))
+    outbounds.append(selector("🎮 Steam@CN", direct_tags))
+    outbounds.append(selector("🎮 Xbox", proxy_tags))
+    outbounds.append(selector("🎮 Xbox@CN", direct_tags))
+    outbounds.append(selector("🎮 Games", proxy_tags))
+    outbounds.append(selector("🎮 Games@CN", direct_tags))
+    outbounds.append(selector("🎥 Disney+", proxy_tags))
+    outbounds.append(selector("🎥 Netflix", proxy_tags))
     outbounds.append(selector("🎥 TikTok", ai_tags))
-    outbounds.append(selector("🎥 YouTube", default_proxy))
+    outbounds.append(selector("🎥 YouTube", proxy_tags))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -603,6 +595,12 @@ def proxies_to_outbound(
     outbounds.append(selector("GLOBAL", [*all_nodes]))
 
     return outbounds, domains, ips, embies
+
+
+def prioritize(lst, prefix):
+    head = [x for x in lst if x.startswith(prefix)]
+    tail = [x for x in lst if not x.startswith(prefix)]
+    return [*head, *tail]
 
 
 def emby_name(name):
