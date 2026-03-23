@@ -2,14 +2,12 @@
 DOMAIN-SUFFIX,cryptocompare.com
 DOMAIN-SUFFIX,infura.io
 DOMAIN-SUFFIX,metamask.io
-# Development
-DOMAIN-SUFFIX,mitmproxy.org
-DOMAIN-SUFFIX,jsfiddle.net
 # Proxy
 DOMAIN-SUFFIX,dustinwin.top
 DOMAIN-SUFFIX,gost.run
 DOMAIN-SUFFIX,openvpn.net
 DOMAIN-SUFFIX,sagernet.org
+DOMAIN-SUFFIX,stc-cloudserver.com
 # Other
 DOMAIN-REGEX,\bjjmh[^.]*\.top$
 DOMAIN-REGEX,\bmxs\d+\.cc$
