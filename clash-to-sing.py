@@ -557,6 +557,12 @@ def proxies_to_outbound(
     else:
         ai_tags = ["🔰 默认出口", *expansive_tag, *group_tags, "DIRECT"]
 
+    if "🇭🇰 香港节点" in group_tags:
+        not_hk_tags = [tag for tag in group_tags if tag != "🇭🇰 香港节点"]
+        hk_tags = ["🇭🇰 香港节点", "🔰 默认出口", *expansive_tag, *not_hk_tags, "DIRECT"]
+    else:
+        hk_tags = ["🔰 默认出口", *expansive_tag, *group_tags, "DIRECT"]
+
     default_direct = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
     default_proxy = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
     middle_man = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
@@ -570,7 +576,7 @@ def proxies_to_outbound(
     outbounds.append(selector("📦 软件仓库", default_direct))
     outbounds.append(selector("🎮 Nintendo", default_proxy))
     outbounds.append(selector("🎮 Nintendo@CN", default_direct))
-    outbounds.append(selector("🎮 PlayStation", default_proxy))
+    outbounds.append(selector("🎮 PlayStation", hk_tags))
     outbounds.append(selector("🎮 PlayStation@CN", default_direct))
     outbounds.append(selector("🎮 Steam", default_proxy))
     outbounds.append(selector("🎮 Steam@CN", default_direct))
