@@ -54,7 +54,6 @@ DOMAIN-SUFFIX,icr.io
 DOMAIN-SUFFIX,lscr.io
 DOMAIN-SUFFIX,mcr.microsoft.com
 DOMAIN-SUFFIX,nvcr.io
-DOMAIN-SUFFIX,pack.local
 DOMAIN-SUFFIX,quay.io
 DOMAIN-SUFFIX,registry.jetbrains.team
 DOMAIN-SUFFIX,registry.k8s.io
