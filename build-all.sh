@@ -32,6 +32,8 @@ if [[ ! -d $PRIVATE_DIR ]]; then
     echo "错误: 未找到 private 目录" >&2
     exit 1
 fi
+echo ">>> 拉取 private 远程更新"
+git -C "$PRIVATE_DIR" pull --rebase || true
 
 # ---- 创建临时工作区 ----
 WORKDIR=$(mktemp -d)
@@ -119,7 +121,6 @@ fi
 echo ">>> 提交 private"
 (
     cd "$PRIVATE_DIR"
-    git pull --rebase || true
     if [[ -n $(git status --porcelain) ]]; then
         git add .
         git commit -m "Update config"
