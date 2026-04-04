@@ -10,9 +10,14 @@ set -euo pipefail
 BIN=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 cd "$BIN"
 
+# ---- 拉取远程更新 ----
+echo ">>> 拉取主工程远程更新"
+git pull --rebase || true
+
 # ---- 激活 Python venv ----
 # shellcheck disable=SC1091
 source venv/bin/activate
+pip install -qr requirements.txt
 
 # ---- 读取订阅地址 ----
 CLASH_TXT="config/clash.txt"
