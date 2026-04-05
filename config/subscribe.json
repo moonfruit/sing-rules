@@ -1,0 +1,12 @@
+{
+  "ash": {
+    "url_env": "ASH_URL",
+    "output": "dat/ash.json",
+    "interval": 86400
+  },
+  "nanocloud": {
+    "url_env": "NANOCLOUD_URL",
+    "output": "dat/nanocloud.json",
+    "interval": 3600
+  }
+}

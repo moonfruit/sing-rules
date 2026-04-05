@@ -29,13 +29,20 @@ jobs:
           path: dat
           ref: release
 
+      - name: Restore subscribe cache
+        uses: actions/cache@v5
+        with:
+          path: cache
+          key: subscribe-${{ hashFiles('config/subscribe.json') }}-${{ github.run_id }}
+          restore-keys: |
+            subscribe-${{ hashFiles('config/subscribe.json') }}-
+            subscribe-
+
       - name: Download resources
         env:
           ASH_URL: ${{ secrets.ASH_URL }}
           NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
-        run: |
-          ./subscribe.sh "$ASH_URL" dat/ash.json
-          ./subscribe.sh "$NANOCLOUD_URL" dat/nanocloud.json
+        run: ./cached-subscribe.sh
 
       - name: Preflight
         run: |
