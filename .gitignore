@@ -8,6 +8,7 @@ __pycache__
 
 *.srs
 
+/cache
 /dat
 /geo
 /node_modules
