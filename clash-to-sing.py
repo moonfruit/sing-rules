@@ -548,10 +548,11 @@ def proxies_to_outbound(
     count += len(provider_info_dict)
 
     for provider_name, emby in embies.items():
+        provider_cost_tags = [t for t in (f"{provider_name} 🛢️", f"{provider_name} 👍") if t in providers]
         outbounds.append(
             selector(
                 emby["name"],
-                [provider_name, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(provider_name, emby, group_tags)],
+                [provider_name, *provider_cost_tags, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(provider_name, emby, group_tags)],
             )
         )
     count += len(embies)
