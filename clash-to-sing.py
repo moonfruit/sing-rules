@@ -113,8 +113,15 @@ def find_group(tag: str) -> tuple[str, str]:
 
 
 def find_cost(tag: str, cost: float = 1) -> float:
+    if tag.endswith("-Direct"):
+        return 0.5
     match = re.match(r".*\s(?:\(\s*)?(\d+(?:\.\d+)?)x(?:\s*\))?\s*$", tag)
-    return float(match.group(1)) if match else cost
+    if match:
+        return float(match.group(1))
+    match = re.match(r".*×(\d+(?:\.\d+)?)\s*$", tag)
+    if match:
+        return float(match.group(1))
+    return cost
 
 
 def get_flag(group: str) -> str:
