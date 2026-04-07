@@ -16,6 +16,7 @@ from common import (
     Object,
     SimpleObject,
     apply_to,
+    as_set,
     compute_if_absent,
     domain_sort_key,
     get_list,
@@ -389,12 +390,11 @@ def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
     return d
 
 
-def is_ipv4_address(hostname):
+def as_ip(hostname):
     try:
-        ip = ipaddress.ip_address(hostname)
-        return isinstance(ip, ipaddress.IPv4Address)
+        return ipaddress.ip_address(hostname)
     except ValueError:
-        return False
+        return None
 
 
 def proxies_to_outbound(
@@ -467,8 +467,11 @@ def proxies_to_outbound(
             continue
 
         outbounds.append(outbound)
-        if is_ipv4_address(server):
+        ip = as_ip(server)
+        if isinstance(ip, ipaddress.IPv4Address):
             ips.add(server + "/32")
+        elif isinstance(ip, ipaddress.IPv6Address):
+            ips.add(server + "/128")
         else:
             domains.add(server)
 
@@ -640,8 +643,8 @@ def reorder(groups: dict[str, list[str]]) -> dict[str, list[str]]:
 
 
 def as_tuple(ip):
-    parts = ip.split("/", maxsplit=1)
-    return *(int(n) for n in parts[0].split(".")), int(parts[1])
+    network = ipaddress.ip_network(ip, strict=False)
+    return network.version, network.network_address.packed, network.prefixlen
 
 
 def build_direct_rules(direct: bool):
