@@ -33,13 +33,14 @@ def re_match(pattern: str, string: str) -> str | None:
 
 def retry(max_attempts=3, delay=1):
     def decorator(func):
-        # noinspection PyBroadException,PyInconsistentReturns
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
+            # noinspection PyInconsistentReturns
             for attempt in range(max_attempts):
+                # noinspection PyBroadException
                 try:
                     return func(*args, **kwargs)
-                except Exception as e:
+                except Exception:
                     if attempt == max_attempts - 1:
                         raise
                     time.sleep(delay)

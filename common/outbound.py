@@ -108,6 +108,7 @@ def find_country(outbound: dict, log_level: str = "warn") -> str:
         atexit.register(cleanup)
 
         # 发送配置到 sing-box
+        assert process.stdin
         process.stdin.write(json.dumps(config))
         process.stdin.close()
 
@@ -121,6 +122,7 @@ def find_country(outbound: dict, log_level: str = "warn") -> str:
     finally:
         if cleanup:
             cleanup()
+            # noinspection PyTypeChecker
             atexit.unregister(cleanup)
 
 

@@ -26,4 +26,5 @@ def dump(data, stream: AnyStr | IO = None, dumper=Dumper, **kwargs):
     Parse the first YAML document in a stream
     and produce the corresponding Python object.
     """
+    # noinspection PyTypeChecker
     return yaml.dump(data, stream, dumper, **kwargs)
