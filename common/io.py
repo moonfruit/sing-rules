@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Any, IO, TextIO
+from typing import Any, IO
 
 
 def open_path(path: Path, mode="r", **kwargs) -> IO[Any]:

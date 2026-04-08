@@ -16,7 +16,6 @@ from common import (
     Object,
     SimpleObject,
     apply_to,
-    as_set,
     compute_if_absent,
     domain_sort_key,
     get_list,
@@ -85,12 +84,12 @@ __GROUP_MAP = {
 }
 
 
-def __find_group(tag: str) -> str | None:
+def __find_group(tag: str) -> str:
     match = re.match(r"(?:IPLC)?([A-Z]{2})\w*(?:-([A-Z]{2}))?\b", tag)
     if match:
         groups = match.groups()
         return groups[1] if groups[1] in __FLAG_MAP else groups[0]
-    return None
+    return ""
 
 
 def __fix_tag(tag: str, length: int) -> str:
@@ -127,11 +126,13 @@ def find_cost(tag: str, cost: float = 1) -> float:
 
 def get_flag(group: str) -> str:
     flag = __FLAG_MAP.get(group, "🏳️")
-    return isinstance(flag, list) and flag[0] or flag
+    if isinstance(flag, list):
+        return flag[0]
+    return flag
 
 
 def proxy_to_outbound(
-    proxy: Object, seen: set, saved_countries: dict[str, str], overwrite_country: bool
+    proxy: Object, seen: set, saved_countries: dict[str, str] | None, overwrite_country: bool
 ) -> tuple[bool, str, float, Object]:
     name = proxy["name"].strip().lstrip("🔴")
     group, name = find_group(name)
@@ -155,7 +156,7 @@ def proxy_to_outbound(
     seen.add(seen_key)
 
     if saved_countries is not None and (not group or group == "UN"):
-        detected: str = safe_find_country(outbound)
+        detected = safe_find_country(outbound)
         if detected and detected != "UN":
             group = detected
             if overwrite_country or name not in saved_countries:
@@ -284,7 +285,7 @@ def format_provider_info(info: dict[str, Any]) -> str:
         reset = 0
 
     if "expired" in info:
-        expired = info["expired"]
+        expired: datetime = info["expired"]
         countdown = (expired - datetime.now()).days
     else:
         expired = None
@@ -398,7 +399,7 @@ def as_ip(hostname):
 
 
 def proxies_to_outbound(
-    local: bool, proxies: list[Object], saved_countries: dict[str, str], overwrite_country: bool
+    local: bool, proxies: list[Object], saved_countries: dict[str, str] | None, overwrite_country: bool
 ) -> tuple[list[SimpleObject], set[str], set[str], Object]:
     outbounds = []
     domains = set()
@@ -446,7 +447,7 @@ def proxies_to_outbound(
             continue
 
         if "provider" in proxy:
-            provider = proxy["provider"]
+            provider: dict = proxy["provider"]
             provider_name = provider["name"]
 
             info = provider["info"]
@@ -459,8 +460,8 @@ def proxies_to_outbound(
                 provider_info.update(extracted)
                 continue
         else:
-            provider = None
-            provider_name = None
+            provider = {}
+            provider_name = ""
 
         dup, group, cost, outbound = proxy_to_outbound(proxy, seen, saved_countries, overwrite_country)
         if dup:
@@ -487,12 +488,10 @@ def proxies_to_outbound(
         if group in __GROUP_MAP:
             if group == "US":
                 add_to_group(groups, __GROUP_MAP[group], tag, cost=cost, protocol=outbound["type"])
-            elif group in ("HK", "JP", "KR", "TW"):
-                add_to_group(groups, __GROUP_MAP[group], tag, cost=cost)
             else:
                 if group in ("DE", "FR", "LT", "NL", "UK"):
-                    add_to_group(groups, __GROUP_MAP["EU"], tag)
-                add_to_group(groups, __GROUP_MAP[group], tag)
+                    add_to_group(groups, __GROUP_MAP["EU"], tag, cost=cost)
+                add_to_group(groups, __GROUP_MAP[group], tag, cost=cost)
         else:
             other_nodes.append(tag)
 
@@ -740,7 +739,7 @@ def to_sing(
     proxies: list[SimpleObject],
     local: bool,
     direct: bool,
-    saved_countries: dict[str, str],
+    saved_countries: dict[str, str] | None,
     overwrite_country: bool,
     gitee_token: str | None,
 ) -> Object:
@@ -979,7 +978,7 @@ def load_proxies(config: ConfigFile) -> list[Object]:
     return proxies
 
 
-def load_countries(saved_country: Path | None) -> Any:
+def load_countries(saved_country: Path | None) -> dict[str, str]:
     if saved_country and saved_country.exists():
         with saved_country.open() as f:
             return json.load(f)
@@ -999,7 +998,7 @@ def main(
     configs: Annotated[
         list[Path], typer.Option("--config", "-c", show_default=False, exists=True, dir_okay=False, readable=True)
     ] = None,
-    output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = "-",
+    output: Annotated[Path, typer.Option("--output", "-o", dir_okay=False, writable=True)] = Path("-"),
     local: Annotated[bool, typer.Option("--local", "-l")] = False,
     direct: Annotated[bool, typer.Option("--direct", "-d")] = False,
     resolve_country: Annotated[bool, typer.Option("--resolve-country", "-r")] = False,
