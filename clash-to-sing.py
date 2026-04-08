@@ -411,8 +411,8 @@ def proxies_to_outbound(
     other_nodes = []
     groups: dict[str, list[str]] = {
         "🇺🇸 美国节点": [],
-        "🇺🇸 美国节点 🛢️": [],
         "🇺🇸 美国节点 👍": [],
+        "🇺🇸 美国节点 🛢️": [],
         "🇺🇸 美国节点 🌪️": [],
         "🇺🇸 美国节点 🚀": [],
         "🇺🇸 美国节点 🐴": [],
@@ -487,6 +487,8 @@ def proxies_to_outbound(
         if group in __GROUP_MAP:
             if group == "US":
                 add_to_group(groups, __GROUP_MAP[group], tag, cost=cost, protocol=outbound["type"])
+            elif group in ("HK", "JP", "KR", "TW"):
+                add_to_group(groups, __GROUP_MAP[group], tag, cost=cost)
             else:
                 if group in ("DE", "FR", "LT", "NL", "UK"):
                     add_to_group(groups, __GROUP_MAP["EU"], tag)
@@ -552,7 +554,14 @@ def proxies_to_outbound(
         outbounds.append(
             selector(
                 emby["name"],
-                [provider_name, *provider_cost_tags, "🔰 默认出口", "DIRECT", *expansive_tag, *emby_filter(provider_name, emby, group_tags)],
+                [
+                    provider_name,
+                    *provider_cost_tags,
+                    "🔰 默认出口",
+                    "DIRECT",
+                    *expansive_tag,
+                    *emby_filter(provider_name, emby, group_tags),
+                ],
             )
         )
     count += len(embies)
