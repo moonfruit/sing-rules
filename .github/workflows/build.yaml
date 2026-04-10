@@ -71,7 +71,7 @@ jobs:
 
       - name: Install sing-box
         run: |
-          bash <(curl -fsSL https://sing-box.app/deb-install.sh)
+          ./install-sing-box.sh
           sing-box version
 
       - name: Setup Python
