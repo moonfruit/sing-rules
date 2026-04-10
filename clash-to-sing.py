@@ -486,12 +486,9 @@ def proxies_to_outbound(
             expansive_nodes.append(tag)
 
         if group in __GROUP_MAP:
-            if group == "US":
-                add_to_group(groups, __GROUP_MAP[group], tag, cost=cost, protocol=outbound["type"])
-            else:
-                if group in ("DE", "FR", "LT", "NL", "UK"):
-                    add_to_group(groups, __GROUP_MAP["EU"], tag, cost=cost)
-                add_to_group(groups, __GROUP_MAP[group], tag, cost=cost)
+            if group in ("DE", "FR", "LT", "NL", "UK"):
+                add_to_group(groups, __GROUP_MAP["EU"], tag, cost=cost)
+            add_to_group(groups, __GROUP_MAP[group], tag, cost=cost)
         else:
             other_nodes.append(tag)
 
