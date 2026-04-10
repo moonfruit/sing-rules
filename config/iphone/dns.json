@@ -44,9 +44,13 @@
     ],
     "rules": [
       {
-        "ip_accept_any": true,
-        "server": "dns-hosts",
-        "rewrite_ttl": 2592000
+        "action": "evaluate",
+        "server": "dns-hosts"
+      },
+      {
+        "match_response": true,
+        "response_rcode": "NOERROR",
+        "action": "respond"
       },
       {
         "rule_set": "Lan",
@@ -94,18 +98,17 @@
         "server": "dns-direct"
       },
       {
-        "type": "logical",
-        "mode": "and",
-        "rules": [
-          {
-            "rule_set": "GeoSites@!CN",
-            "invert": true
-          },
-          {
-            "rule_set": "GeoIP@CN"
-          }
-        ],
+        "rule_set": "GeoSites@!CN",
+        "server": "dns-proxy"
+      },
+      {
+        "action": "evaluate",
         "server": "dns-direct"
+      },
+      {
+        "match_response": true,
+        "rule_set": "GeoIP@CN",
+        "action": "respond"
       }
     ],
     "final": "dns-proxy",
