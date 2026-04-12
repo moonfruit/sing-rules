@@ -13,6 +13,7 @@ for name in $(jq -r 'keys[]' "$CONFIG"); do
     url_env=$(jq -r ".\"$name\".url_env" "$CONFIG")
     output=$(jq -r ".\"$name\".output" "$CONFIG")
     interval=$(jq -r ".\"$name\".interval" "$CONFIG")
+    client=$(jq -r ".\"$name\".client // \"\"" "$CONFIG")
 
     url="${!url_env:-}"
     if [[ -z "$url" ]]; then
@@ -38,7 +39,7 @@ for name in $(jq -r 'keys[]' "$CONFIG"); do
 
     # Try to download
     echo "$name: downloading..."
-    if ./subscribe.sh "$url" "$output"; then
+    if ./subscribe.sh "$url" "$output" ${client:+"$client"}; then
         echo "$name: download succeeded, updating cache"
         cp "$output" "$cache_file"
         [[ -f "$output.info" ]] && cp "$output.info" "$cache_info"

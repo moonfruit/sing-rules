@@ -8,8 +8,8 @@
   {
     "name": "👻 Ash",
     "cost": 1.0,
-    "path": "dat/ash.json",
-    "format": "sing-box",
+    "path": "dat/ash.b64",
+    "format": "shadowrocket",
     "emby": {
       "domain": ["ask.ash.yt", "tv.ash.yt"],
       "exclude": ["美国", "日本"]

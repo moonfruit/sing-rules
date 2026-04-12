@@ -143,6 +143,8 @@ def proxy_to_outbound(
     match proxy["format"]:
         case "clash":
             outbound = clash_proxy_to_outbound(proxy, tag)
+        case "shadowrocket":
+            outbound = shadowrocket_proxy_to_outbound(proxy, tag)
         case "sing-box":
             outbound = sing_box_proxy_to_outbound(proxy, tag)
         case _:
@@ -249,6 +251,98 @@ def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
                 "security": clash["cipher"],
                 "alter_id": clash["alterId"],
             }
+        case _:
+            raise ValueError(f"Unknown type '{clash['type']}'")
+    return outbound
+
+
+def shadowrocket_proxy_to_outbound(clash: Object, tag: str) -> Object:
+    query: Object = clash["query"]
+    struct = clash["struct"]
+
+    def is_truthy(v) -> bool:
+        return str(v).lower() in ("1", "true", "yes")
+
+    outbound: Object = {}
+    match clash["type"]:
+        case "vless":
+            outbound = {
+                "type": "vless",
+                "tag": tag,
+                "server": clash["server"],
+                "server_port": clash["port"],
+                "uuid": struct.username,
+            }
+            if "flow" in query:
+                outbound["flow"] = query["flow"]
+            security = query.get("security", "")
+            tls: Object = {"enabled": True}
+            if "sni" in query:
+                tls["server_name"] = query["sni"]
+            if is_truthy(query.get("insecure", 0)) or is_truthy(query.get("allowInsecure", 0)):
+                tls["insecure"] = True
+            if "fp" in query:
+                tls["utls"] = {"enabled": True, "fingerprint": query["fp"]}
+            if security == "reality":
+                reality: Object = {"enabled": True}
+                if "pbk" in query:
+                    reality["public_key"] = query["pbk"]
+                if "sid" in query:
+                    reality["short_id"] = query["sid"]
+                tls["reality"] = reality
+            if security or "sni" in query or "fp" in query:
+                outbound["tls"] = tls
+            network = query.get("type", "tcp")
+            if network == "ws":
+                transport: Object = {"type": "ws"}
+                if "path" in query:
+                    transport["path"] = query["path"]
+                if "host" in query and query["host"]:
+                    transport["headers"] = {"Host": query["host"]}
+                outbound["transport"] = transport
+            elif network == "grpc":
+                outbound["transport"] = {
+                    "type": "grpc",
+                    "service_name": query.get("serviceName", ""),
+                }
+            outbound["packet_encoding"] = "xudp"
+        case "trojan":
+            outbound = {
+                "type": "trojan",
+                "tag": tag,
+                "server": clash["server"],
+                "server_port": clash["port"],
+                "password": struct.username,
+                "tls": {"enabled": True},
+            }
+            sni = query.get("sni") or query.get("peer")
+            if sni:
+                outbound["tls"]["server_name"] = sni
+            if is_truthy(query.get("allowInsecure", 0)) or is_truthy(query.get("insecure", 0)):
+                outbound["tls"]["insecure"] = True
+            network = query.get("type", "tcp")
+            if network == "ws":
+                transport: Object = {"type": "ws"}
+                if "path" in query:
+                    transport["path"] = query["path"]
+                if "host" in query and query["host"]:
+                    transport["headers"] = {"Host": query["host"]}
+                outbound["transport"] = transport
+        case "anytls":
+            outbound = {
+                "type": "anytls",
+                "tag": tag,
+                "server": clash["server"],
+                "server_port": clash["port"],
+                "password": struct.username,
+                "tls": {"enabled": True},
+            }
+            if "sni" in query:
+                outbound["tls"]["server_name"] = query["sni"]
+            if is_truthy(query.get("insecure", 0)) or is_truthy(query.get("allowInsecure", 0)):
+                outbound["tls"]["insecure"] = True
+            if "fp" in query:
+                outbound["tls"]["utls"] = {"enabled": True, "fingerprint": query["fp"]}
         case _:
             raise ValueError(f"Unknown type '{clash['type']}'")
     return outbound
@@ -456,7 +550,7 @@ def proxies_to_outbound(
 
             extracted = extract_provider_info(proxy["name"])
             if extracted:
-                provider_info = compute_if_absent(provider_info_dict, provider_name, lambda k: {})
+                provider_info = compute_if_absent(provider_info_dict, provider_name, lambda: {})
                 provider_info.update(extracted)
                 continue
         else:
@@ -909,7 +1003,7 @@ def load_clash_proxies(path: Path) -> list[SimpleObject]:
     return clash["proxies"]
 
 
-def load_shadow_rocket_proxies(path: Path) -> list[SimpleObject]:
+def load_shadowrocket_proxies(path: Path) -> list[SimpleObject]:
     with open_path(path) as f:
         data = f.read()
     lines = base64.b64decode(data).decode().splitlines()
@@ -957,8 +1051,8 @@ def load_proxies(config: ConfigFile) -> list[Object]:
     match config.format:
         case "clash":
             proxies = load_clash_proxies(config.path)
-        case "shadow-rocket":
-            proxies = load_shadow_rocket_proxies(config.path)
+        case "shadowrocket":
+            proxies = load_shadowrocket_proxies(config.path)
         case "sing-box":
             proxies = load_sing_box_proxies(config.path)
         case _:
