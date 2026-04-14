@@ -112,7 +112,6 @@
       }
     ],
     "final": "dns-proxy",
-    "independent_cache": true,
     "reverse_mapping": true,
     "strategy": "prefer_ipv6"
   },
