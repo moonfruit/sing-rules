@@ -11,9 +11,7 @@
         ".local",
         ".localdomain",
         ".localhost",
-        ".test",
-        ".heiyu.space",
-        ".ts.net"
+        ".test"
       ],
       "domain_regex": "^[^.]+$"
     }
