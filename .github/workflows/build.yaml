@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: write
     steps:
@@ -47,7 +48,13 @@ jobs:
       - name: Preflight
         run: |
           set -o pipefail
-          ./preflight.sh ash.json ash.json.info nanocloud.json nanocloud.json.info | tee -a "$GITHUB_ENV"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ./preflight.sh ash.json ash.json.info nanocloud.json nanocloud.json.info || true
+            echo "BUILD_RULES=1" | tee -a "$GITHUB_ENV"
+            echo "BUILD_CONFIG=1" | tee -a "$GITHUB_ENV"
+          else
+            ./preflight.sh ash.json ash.json.info nanocloud.json nanocloud.json.info | tee -a "$GITHUB_ENV"
+          fi
 
       - name: Checkout geo
         if: env.BUILD_RULES == 1
@@ -115,6 +122,9 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           files: rules/*
+          draft: false
+          prerelease: false
+          make_latest: "true"
 
       - name: Setup Node
         if: env.BUILD_RULES == 1
