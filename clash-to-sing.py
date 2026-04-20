@@ -85,8 +85,7 @@ __GROUP_MAP = {
 
 
 def __find_group(tag: str) -> str:
-    match = re.match(r"(?:IPLC)?([A-Z]{2})\w*(?:-([A-Z]{2}))?\b", tag)
-    if match:
+    if match := re.match(r"(?:IPLC)?([A-Z]{2})\w*(?:-([A-Z]{2}))?\b", tag):
         groups = match.groups()
         return groups[1] if groups[1] in __FLAG_MAP else groups[0]
     return ""
@@ -115,11 +114,9 @@ def find_group(tag: str) -> tuple[str, str]:
 def find_cost(tag: str, cost: float = 1) -> float:
     if tag.endswith("-Direct"):
         return 0.5
-    match = re.match(r".*\s(?:\(\s*)?(\d+(?:\.\d+)?)x(?:\s*\))?\s*$", tag)
-    if match:
+    if match := re.match(r".*\s(?:\(\s*)?(\d+(?:\.\d+)?)x(?:\s*\))?\s*$", tag):
         return float(match.group(1))
-    match = re.match(r".*×(\d+(?:\.\d+)?)\s*$", tag)
-    if match:
+    if match := re.match(r".*×(\d+(?:\.\d+)?)\s*$", tag):
         return float(match.group(1))
     return cost
 
@@ -158,8 +155,7 @@ def proxy_to_outbound(
     seen.add(seen_key)
 
     if saved_countries is not None and (not group or group == "UN"):
-        detected = safe_find_country(outbound)
-        if detected and detected != "UN":
+        if (detected := safe_find_country(outbound)) and detected != "UN":
             group = detected
             if overwrite_country or name not in saved_countries:
                 saved_countries[name] = group
@@ -172,15 +168,9 @@ def proxy_to_outbound(
 
 
 def patch_outbound(outbound: Object):
-    if "domain_resolver" in outbound:
-        del outbound["domain_resolver"]
-    if "tls" in outbound:
-        tls = outbound["tls"]
-        if "utls" in tls:
-            utls = tls["utls"]
-            if "fingerprint" in utls:
-                # utls["fingerprint"] = "random"
-                utls["fingerprint"] = "randomized"
+    outbound.pop("domain_resolver", None)
+    if (utls := outbound.get("tls", {}).get("utls")) and "fingerprint" in utls:
+        utls["fingerprint"] = "randomized"
 
 
 def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
@@ -232,8 +222,7 @@ def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
                     transport = {
                         "type": "ws",
                     }
-                    opts = clash.get("ws-opts", {})
-                    if opts:
+                    if opts := clash.get("ws-opts", {}):
                         if "path" in opts:
                             transport["path"] = opts["path"]
                         if "headers" in opts:
@@ -356,14 +345,11 @@ def sing_box_proxy_to_outbound(sing: Object, tag: str) -> Object:
 
 def extract_provider_info(name: str) -> dict[str, Any] | None:
     # region ---- Ash ----
-    remaining = re_match(r"剩余流量：(\d+(?:\.\d+)?)", name)
-    if remaining:
+    if remaining := re_match(r"剩余流量：(\d+(?:\.\d+)?)", name):
         return {"remaining": float(remaining)}
-    reset = re_match(r"距离下次重置剩余：(\d+)", name)
-    if reset:
+    if reset := re_match(r"距离下次重置剩余：(\d+)", name):
         return {"reset": int(reset)}
-    expired = re_match(r"套餐到期：(\d{4}-\d{2}-\d{2})", name)
-    if expired:
+    if expired := re_match(r"套餐到期：(\d{4}-\d{2}-\d{2})", name):
         return {"expired": datetime.fromisoformat(expired)}
     # endregion
     return None
@@ -477,8 +463,7 @@ def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
         for icon in (" 🛢️", " 👍", " 🌪️", " 🚀", " 🐴", " 🦬", " 🪶", " 🎯"):
             if key.endswith(icon):
                 break
-            new_key = key + icon
-            if new_key in d and value == d[new_key]:
+            if (new_key := key + icon) in d and value == d[new_key]:
                 keys_to_remove.append(new_key)
     for key in keys_to_remove:
         del d[key]
@@ -544,12 +529,10 @@ def proxies_to_outbound(
             provider: dict = proxy["provider"]
             provider_name = provider["name"]
 
-            info = provider["info"]
-            if info and provider_name not in provider_info_dict:
+            if (info := provider["info"]) and provider_name not in provider_info_dict:
                 provider_info_dict[provider_name] = info.as_provider_info()
 
-            extracted = extract_provider_info(proxy["name"])
-            if extracted:
+            if extracted := extract_provider_info(proxy["name"]):
                 provider_info = compute_if_absent(provider_info_dict, provider_name, lambda: {})
                 provider_info.update(extracted)
                 continue
@@ -589,8 +572,7 @@ def proxies_to_outbound(
         if provider:
             add_to_group(providers, provider_name, tag, cost=cost)
 
-            emby = provider["emby"]
-            if emby and provider_name not in embies:
+            if (emby := provider["emby"]) and provider_name not in embies:
                 embies[provider_name] = {"name": emby_name(provider_name), "config": emby}
 
     if other_nodes:
@@ -792,8 +774,8 @@ def build_local_rule_sets(local: bool, gitee_token: str | None):
     if not local:
         return []
     return [
-        rule_set(gitee_token, "AI:Direct", "rules/ai-direct.srs"),
-        rule_set(gitee_token, "AI:Process", "rules/ai-proc.srs"),
+        rule_set(local, gitee_token, "AI:Direct", "rules/ai-direct.srs"),
+        rule_set(local, gitee_token, "AI:Process", "rules/ai-proc.srs"),
     ]
 
 
@@ -803,7 +785,7 @@ __CDN = "fastly.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.cn"
 
 
-def rule_set(gitee_token: str | None, tag: str, url: str):
+def rule_set(local: bool, gitee_token: str | None, tag: str, url: str):
     # noinspection HttpUrlsUsage
     if url.startswith("http://") or url.startswith("https://"):
         url_to_use = url
@@ -817,12 +799,17 @@ def rule_set(gitee_token: str | None, tag: str, url: str):
     else:
         format_to_use = "binary"
 
+    if local:
+        options = {}
+    else:
+        options = {"download_detour": "DIRECT"}
+
     return {
         "type": "remote",
         "tag": tag,
         "format": format_to_use,
         "url": url_to_use,
-        "download_detour": "DIRECT",
+        **options,
     }
 
 
@@ -900,32 +887,32 @@ def to_sing(
                 {"inbound": ["direct-in", "redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
             ],
             "rule_set": [
-                rule_set(gitee_token, "AI", "rules/ai.srs"),
-                rule_set(gitee_token, "Apple", "rules/apple.srs"),
-                rule_set(gitee_token, "Block", "rules/block.srs"),
-                rule_set(gitee_token, "Development", "rules/dev.srs"),
-                rule_set(gitee_token, "Development@CN", "rules/dev-cn.srs"),
-                rule_set(gitee_token, "Direct", "rules/direct.srs"),
-                rule_set(gitee_token, "Disney+", "rules/disney-plus.srs"),
-                rule_set(gitee_token, "Games", "rules/games.srs"),
-                rule_set(gitee_token, "Games@CN", "rules/games-cn.srs"),
-                rule_set(gitee_token, "GFW", "rules/gfw.srs"),
-                rule_set(gitee_token, "Microsoft", "rules/microsoft.srs"),
-                rule_set(gitee_token, "Netflix", "rules/netflix.srs"),
-                rule_set(gitee_token, "Nintendo", "rules/nintendo.srs"),
-                rule_set(gitee_token, "Nintendo@CN", "rules/nintendo-cn.srs"),
-                rule_set(gitee_token, "PlayStation", "rules/playstation.srs"),
-                rule_set(gitee_token, "PlayStation@CN", "rules/playstation-cn.srs"),
-                rule_set(gitee_token, "Porn", "rules/porn.srs"),
-                rule_set(gitee_token, "Private", "rules/private.srs"),
-                rule_set(gitee_token, "Proxy", "rules/proxy.srs"),
-                rule_set(gitee_token, "Sources", "rules/sources.srs"),
-                rule_set(gitee_token, "Steam", "rules/steam.srs"),
-                rule_set(gitee_token, "Steam@CN", "rules/steam-cn.srs"),
-                rule_set(gitee_token, "Xbox", "rules/xbox.srs"),
-                rule_set(gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
-                rule_set(gitee_token, "TikTok", "rules/tiktok.srs"),
-                rule_set(gitee_token, "YouTube", "rules/youtube.srs"),
+                rule_set(local, gitee_token, "AI", "rules/ai.srs"),
+                rule_set(local, gitee_token, "Apple", "rules/apple.srs"),
+                rule_set(local, gitee_token, "Block", "rules/block.srs"),
+                rule_set(local, gitee_token, "Development", "rules/dev.srs"),
+                rule_set(local, gitee_token, "Development@CN", "rules/dev-cn.srs"),
+                rule_set(local, gitee_token, "Direct", "rules/direct.srs"),
+                rule_set(local, gitee_token, "Disney+", "rules/disney-plus.srs"),
+                rule_set(local, gitee_token, "Games", "rules/games.srs"),
+                rule_set(local, gitee_token, "Games@CN", "rules/games-cn.srs"),
+                rule_set(local, gitee_token, "GFW", "rules/gfw.srs"),
+                rule_set(local, gitee_token, "Microsoft", "rules/microsoft.srs"),
+                rule_set(local, gitee_token, "Netflix", "rules/netflix.srs"),
+                rule_set(local, gitee_token, "Nintendo", "rules/nintendo.srs"),
+                rule_set(local, gitee_token, "Nintendo@CN", "rules/nintendo-cn.srs"),
+                rule_set(local, gitee_token, "PlayStation", "rules/playstation.srs"),
+                rule_set(local, gitee_token, "PlayStation@CN", "rules/playstation-cn.srs"),
+                rule_set(local, gitee_token, "Porn", "rules/porn.srs"),
+                rule_set(local, gitee_token, "Private", "rules/private.srs"),
+                rule_set(local, gitee_token, "Proxy", "rules/proxy.srs"),
+                rule_set(local, gitee_token, "Sources", "rules/sources.srs"),
+                rule_set(local, gitee_token, "Steam", "rules/steam.srs"),
+                rule_set(local, gitee_token, "Steam@CN", "rules/steam-cn.srs"),
+                rule_set(local, gitee_token, "Xbox", "rules/xbox.srs"),
+                rule_set(local, gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
+                rule_set(local, gitee_token, "TikTok", "rules/tiktok.srs"),
+                rule_set(local, gitee_token, "YouTube", "rules/youtube.srs"),
                 *build_local_rule_sets(local, gitee_token),
             ],
             "final": "🐟 漏网之鱼",

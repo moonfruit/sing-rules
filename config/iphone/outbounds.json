@@ -1,12 +1,12 @@
 {
   "outbounds": [
     {
-      "type": "direct",
-      "tag": "DIRECT"
+      "tag": "DIRECT",
+      "type": "direct"
     },
     {
-      "type": "block",
-      "tag": "REJECT"
+      "tag": "REJECT",
+      "type": "block"
     }
   ],
   "route": {
