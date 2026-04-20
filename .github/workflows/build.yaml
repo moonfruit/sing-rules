@@ -48,7 +48,8 @@ jobs:
       - name: Preflight
         run: |
           set -o pipefail
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          # Manual re-run (attempt > 1) or workflow_dispatch: always succeed
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.run_attempt }}" -gt 1 ]; then
             ./preflight.sh ash.json ash.json.info nanocloud.json nanocloud.json.info || true
             echo "BUILD_RULES=1" | tee -a "$GITHUB_ENV"
             echo "BUILD_CONFIG=1" | tee -a "$GITHUB_ENV"
