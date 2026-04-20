@@ -844,7 +844,7 @@ def to_sing(
                 {"domain": ["4.ipcheck.ing", "6.ipcheck.ing"], "outbound": "DIRECT"},
                 {
                     "domain": ["api.ip.sb", "api.ipapi.is"],
-                    "ip_cidr": ["1.0.0.1/32", "2606:4700:4700::1111/128"],
+                    "ip_cidr": ["1.0.0.2/32", "2606:4700:4700::1111/128"],
                     "outbound": "🔰 默认出口",
                 },
                 {"domain": "ptest-1.ipcheck.ing", "outbound": "🤖 人工智能"},
