@@ -27,6 +27,11 @@ from common.io import open_path
 from common.object import as_hashable, copy_without_tag
 from common.outbound import safe_find_country
 
+__AI_MASK = [
+    "美国-A(通用)",
+    "美国-E(通用)",
+]
+
 __FLAG_MAP = {
     "AR": "🇦🇷",
     "DE": "🇩🇪",
@@ -170,7 +175,7 @@ def proxy_to_outbound(
 def patch_outbound(outbound: Object):
     outbound.pop("domain_resolver", None)
     if (utls := outbound.get("tls", {}).get("utls")) and "fingerprint" in utls:
-        utls["fingerprint"] = "randomized"
+        utls["fingerprint"] = "random"
 
 
 def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
@@ -658,7 +663,7 @@ def proxies_to_outbound(
     direct_tags = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
     proxy_tags = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
 
-    ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点")
+    ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点", "🤖 自然选择")
     playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
 
     lazycat_tags = ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]
@@ -691,6 +696,15 @@ def proxies_to_outbound(
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
+    outbounds.append(
+        urltest(
+            "🤖 自然选择",
+            costs,
+            [tag for tag in groups["🇺🇸 美国节点"] if not any(mask in tag for mask in __AI_MASK)],
+            "https://api.anthropic.com/",
+        )
+    )
+
     emitted_providers: set[str] = set()
     for tag, nodes in providers.items():
         if tag in emitted_providers:
@@ -713,10 +727,10 @@ def proxies_to_outbound(
     return outbounds, domains, ips, embies
 
 
-def prioritize(lst, prefix):
-    head = [x for x in lst if x.startswith(prefix)]
-    tail = [x for x in lst if not x.startswith(prefix)]
-    return [*head, *tail]
+def prioritize(tags, prefix, *prepend):
+    head = [x for x in tags if x.startswith(prefix)]
+    tail = [x for x in tags if not x.startswith(prefix)]
+    return [*prepend, *head, *tail]
 
 
 def emby_name(name):
