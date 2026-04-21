@@ -144,33 +144,18 @@
     "rule_set": [
       {
         "type": "remote",
-        "tag": "GeoIP@CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geoip-cn.srs?access_token=$TOKEN&ref=main",
-        "download_detour": "DIRECT"
-      },
-      {
-        "type": "remote",
-        "tag": "GeoSites@CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-cn.srs?access_token=$TOKEN&ref=main",
-        "download_detour": "DIRECT"
-      },
-      {
-        "type": "remote",
         "tag": "GeoSites@!CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?access_token=$TOKEN&ref=main",
-        "download_detour": "DIRECT"
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?access_token=$TOKEN&ref=main"
       },
       {
         "type": "remote",
         "tag": "Lan",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/lan.srs?access_token=$TOKEN&ref=main",
-        "download_detour": "DIRECT"
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/lan.srs?access_token=$TOKEN&ref=main"
       },
       {
         "type": "remote",
         "tag": "FakeIpBypass",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/fakeip-bypass.srs?access_token=$TOKEN&ref=main",
-        "download_detour": "DIRECT"
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/fakeip-bypass.srs?access_token=$TOKEN&ref=main"
       }
     ],
     "default_domain_resolver": "dns-direct"
