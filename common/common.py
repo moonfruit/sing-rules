@@ -121,11 +121,18 @@ def split(rule: Rule) -> list[Rule]:
     return result
 
 
-def merge(rules: list[Rule]) -> list[Rule]:
+def merge(rules: list[Rule], exclude_rules: list[Rule] | None = None) -> list[Rule]:
     merged = {}
     for rule in rules:
         for key, values in rule.items():
             get_set(merged, key).update(as_set(values))
+
+    if exclude_rules:
+        for rule in exclude_rules:
+            for key, values in rule.items():
+                if key in merged:
+                    merged[key] -= as_set(values)
+
     return split(merged)
 
 
