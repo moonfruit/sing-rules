@@ -31,6 +31,7 @@ __AI_MASK = [
     "Gingkoo",
     "美国-A(通用)",
     "美国-E(通用)",
+    "美国-X(通用)",
 ]
 
 __FLAG_MAP = {
@@ -638,7 +639,7 @@ def proxies_to_outbound(
         seen_nodes: set[str] = set()
         for tag in filtered_tags:
             for node in groups.get(tag) or []:
-                if node not in seen_nodes:
+                if node not in seen_nodes and is_cheap(costs[node]):
                     seen_nodes.add(node)
                     emby_nodes.append(node)
         emby_url = emby["config"].test_url()
@@ -768,6 +769,16 @@ def as_tuple(ip):
     return network.version, network.network_address.packed, network.prefixlen
 
 
+def build_emby_ipcheck(embies):
+    rules = []
+    index = 2
+    for _, emby in embies.items():
+        rules.append({"domain": f"ptest-{index}.ipcheck.ing", "outbound": emby["name"]})
+        if (index := index + 1) > 8:
+            break
+    return rules
+
+
 def build_direct_rules(direct: bool):
     if direct:
         return [
@@ -804,7 +815,7 @@ def build_local_rules(local: bool):
 
 def build_emby_rules(embies):
     rules = []
-    for name, emby in embies.items():
+    for _, emby in embies.items():
         rules.append({"domain": emby["config"].domain, "outbound": emby["name"]})
     return rules
 
@@ -874,13 +885,7 @@ def to_sing(
                     "outbound": "🔰 默认出口",
                 },
                 {"domain": "ptest-1.ipcheck.ing", "outbound": "🤖 人工智能"},
-                {"domain": "ptest-2.ipcheck.ing", "outbound": "♻️ 自动选择"},
-                {"domain": "ptest-3.ipcheck.ing", "outbound": "🐟 漏网之鱼"},
-                {"domain": "ptest-4.ipcheck.ing", "outbound": "👻 透明代理"},
-                {"domain": "ptest-5.ipcheck.ing", "outbound": "🇺🇸 美国节点"},
-                {"domain": "ptest-6.ipcheck.ing", "outbound": "🚀 手动切换"},
-                {"domain": "ptest-7.ipcheck.ing", "outbound": "🍑 自由切换"},
-                {"domain": "ptest-8.ipcheck.ing", "outbound": "🎯 全球直连"},
+                *build_emby_ipcheck(embies),
                 {"domain_suffix": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
                 *build_proxies_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
