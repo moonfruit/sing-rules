@@ -742,7 +742,7 @@ def emby_name(name):
 
 
 def emby_filter(name, emby, tags):
-    return [tag for tag in tags if tag != name and all(e not in tag for e in emby["config"].exclude)]
+    return [tag for tag in tags if all(e not in tag for e in emby["config"].exclude)]
 
 
 def reorder(groups: dict[str, list[str]]) -> dict[str, list[str]]:
