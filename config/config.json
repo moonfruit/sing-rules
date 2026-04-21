@@ -12,7 +12,8 @@
     "format": "shadowrocket",
     "emby": {
       "domain": ["ask.ash.yt", "tv.ash.yt"],
-      "exclude": ["美国", "日本"]
+      "exclude": ["美国", "日本", "动态"],
+      "url": "https://tv.ash.yt/favicon.ico"
     }
   },
   {
