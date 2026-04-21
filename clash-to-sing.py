@@ -400,9 +400,12 @@ def selector(tag: str, nodes: list[str]) -> Object:
 # __TEST_URL = "https://www.apple.com/library/test/success.html"
 
 
-def urltest(tag: str, costs: dict[str, float], nodes: list[str]) -> Object:
+def urltest(tag: str, costs: dict[str, float], nodes: list[str], url: str = None) -> Object:
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
-    return {"type": "urltest", "tag": tag, "outbounds": nodes}
+    outbound = {"type": "urltest", "tag": tag, "outbounds": nodes}
+    if url:
+        outbound["url"] = url
+    return outbound
 
 
 def is_cheap(cost):
@@ -621,18 +624,28 @@ def proxies_to_outbound(
         outbounds.append(selector(f"{tag} {format_provider_info(provider_info)}", [tag]))
     count += len(provider_info_dict)
 
+    emby_groups: dict[str, Object] = {}
     for provider_name, emby in embies.items():
-        provider_cost_tags = [t for t in (f"{provider_name} 🛢️", f"{provider_name} 👍") if t in providers]
+        emby_tag = f"{provider_name} 🎬"
+        filtered_tags = emby_filter(provider_name, emby, group_tags)
+        emby_nodes: list[str] = []
+        seen_nodes: set[str] = set()
+        for tag in filtered_tags:
+            for node in groups.get(tag) or []:
+                if node not in seen_nodes:
+                    seen_nodes.add(node)
+                    emby_nodes.append(node)
+        emby_url = emby["config"].test_url()
+        emby_groups[provider_name] = urltest(emby_tag, costs, emby_nodes, url=emby_url)
         outbounds.append(
             selector(
                 emby["name"],
                 [
-                    provider_name,
-                    *provider_cost_tags,
+                    emby_tag,
                     "🔰 默认出口",
                     "DIRECT",
                     *expansive_tag,
-                    *emby_filter(provider_name, emby, group_tags),
+                    *filtered_tags,
                 ],
             )
         )
@@ -678,8 +691,19 @@ def proxies_to_outbound(
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
+    emitted_providers: set[str] = set()
     for tag, nodes in providers.items():
+        if tag in emitted_providers:
+            continue
         outbounds.append(urltest(tag, costs, nodes))
+        emitted_providers.add(tag)
+        for suffix in (" 🛢️", " 👍"):
+            variant = tag + suffix
+            if variant in providers and variant not in emitted_providers:
+                outbounds.append(urltest(variant, costs, providers[variant]))
+                emitted_providers.add(variant)
+        if tag in emby_groups:
+            outbounds.append(emby_groups[tag])
 
     for tag, nodes in groups.items():
         outbounds.append(urltest(tag, costs, nodes))
@@ -697,8 +721,8 @@ def prioritize(lst, prefix):
 
 def emby_name(name):
     if len(name) > 2 and name[0] != " " and name[1] == " ":
-        return "🎥 Emby " + name[2:]
-    return "🎥 Emby " + name
+        return "🎬 Emby " + name[2:]
+    return "🎬 Emby " + name
 
 
 def emby_filter(name, emby, tags):
@@ -926,6 +950,14 @@ def to_sing(
 class ConfigEmby:
     domain: tuple[str, ...] = ()
     exclude: tuple[str, ...] = ()
+    url: str = ""
+
+    def test_url(self) -> str | None:
+        if self.url:
+            return self.url
+        if self.domain:
+            return f"https://{self.domain[0]}/"
+        return None
 
 
 @define(frozen=True)
