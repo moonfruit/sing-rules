@@ -91,10 +91,10 @@ def main():
             "category-ai-!cn",
             "category-ai-chat-!cn",
             "anthropic",
+            "github-copilot",
             "jetbrains-ai",
             "openai",
             "perplexity",
-            "github-copilot",
         ],
         excluded_geosite="google-gemini",
     )
@@ -126,7 +126,17 @@ def main():
 
     generate("private.json", geosite="private", geoip="private")
     generate("block.json", geosite="category-ads-all")
-    generate("gfw.json", geosite=["gfw", "telegram", "twitter", "x"], geoip=["telegram", "twitter"])
+    generate(
+        "gfw.json",
+        geosite=[
+            "gfw",
+            "google-gemini",
+            "telegram",
+            "twitter",
+            "x",
+        ],
+        geoip=["telegram", "twitter"],
+    )
     generate(
         "direct.json",
         geosite=["china-list", "google-cn", "tld-cn"],
