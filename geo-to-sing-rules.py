@@ -85,7 +85,19 @@ def main():
     generate("geosites-cn.json", geosite=["cn", "geolocation-cn", "geolocation-cn@cn"])
     generate("geosites-not-cn.json", geosite="geolocation-!cn")
 
-    generate("ai.json", geosite=["anthropic", "jetbrains-ai", "openai", "perplexity"])
+    generate(
+        "ai.json",
+        geosite=[
+            "category-ai-!cn",
+            "category-ai-chat-!cn",
+            "anthropic",
+            "jetbrains-ai",
+            "openai",
+            "perplexity",
+            "github-copilot",
+        ],
+        excluded_geosite="google-gemini",
+    )
     generate("sources.json", geosite=["github", "gitlab", "sourceforge"])
     generate("nintendo.json", geosite="nintendo")
     generate("nintendo-cn.json", geosite="nintendo@cn")
