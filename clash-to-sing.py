@@ -28,10 +28,7 @@ from common.object import as_hashable, copy_without_tag
 from common.outbound import safe_find_country
 
 __AI_MASK = [
-    "Gingkoo",
     "美国-A(通用)",
-    "美国-E(通用)",
-    "美国-X(通用)",
 ]
 
 __FLAG_MAP = {
