@@ -1,6 +1,10 @@
+# AI
 DOMAIN,ai-proxy.chatwise.app
-DOMAIN,cn.bing.com
+DOMAIN-SUFFIX,bianxie.ai
+DOMAIN-SUFFIX,bigmodel.cn
+# Speedtest
 DOMAIN-REGEX,\bspeedtest\b
+# IoT
 DOMAIN-SUFFIX,miot-spec.com
 DOMAIN-SUFFIX,alicdn.win
 DOMAIN-SUFFIX,demo-chat-airport.com

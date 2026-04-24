@@ -1,0 +1,8 @@
+PROCESS-NAME,ChatGPT
+PROCESS-NAME,ChatGPTHelper
+PROCESS-NAME,Codex
+PROCESS-NAME,Codex Helper
+PROCESS-NAME,Codex Helper (GPU)
+PROCESS-NAME,Codex Helper (Plugin)
+PROCESS-NAME,Codex Helper (Renderer)
+PROCESS-PATH-REGEX,/Applications/(ChatGPT|Codex)\.app/.*

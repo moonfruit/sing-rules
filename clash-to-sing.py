@@ -512,7 +512,6 @@ def proxies_to_outbound(
         costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
 
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
-    outbounds.append({"type": "socks", "tag": "🐱 LazyCat(S)", "server": "127.0.0.1", "server_port": 31086})
     outbounds.append({"type": "http", "tag": "💻 中间人", "server": "127.0.0.1", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.248", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "🏠 中间人 Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
@@ -655,24 +654,24 @@ def proxies_to_outbound(
         outbounds.append(selector("⬛ --------", ["🔰 默认出口"]))
         # outbounds.append(selector("⬜ --------", ["🔰 默认出口"]))
 
-    mitm_tags = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
-    lazycat_tags = ["DIRECT", "🐱 LazyCat", "🐱 LazyCat(S)"]
-
     direct_tags = ["DIRECT", "🔰 默认出口", *expansive_tag, *group_tags]
     proxy_tags = ["🔰 默认出口", "DIRECT", *expansive_tag, *group_tags]
 
     ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点")
     playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
 
-    outbounds.append(selector("🔍 调试出口", mitm_tags))
-    outbounds.append(selector("🐱 懒猫微服", lazycat_tags))
-    outbounds.append(selector("🤖 人工智能", ai_tags))
-    outbounds.append(selector("🍎 苹果服务", direct_tags))
-    outbounds.append(selector("Ⓜ️ 微软服务", direct_tags))
-    outbounds.append(selector("⚙️ 软件开发", proxy_tags))
-    outbounds.append(selector("📦 软件仓库", direct_tags))
+    lazycat_tags = ["DIRECT", "🐱 LazyCat"]
+    mitm_tags = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
+
+    outbounds.append(selector("🤖 AI", ai_tags))
     outbounds.append(selector("🤖 Claude", ["🤖 自然选择 Claude", *ai_tags]))
     outbounds.append(selector("🤖 ChatGPT", ["🤖 自然选择 ChatGPT", *ai_tags]))
+
+    outbounds.append(selector("🍎 Apple", direct_tags))
+    outbounds.append(selector("Ⓜ️ Microsoft", direct_tags))
+    outbounds.append(selector("⚙️ Development", proxy_tags))
+    outbounds.append(selector("📦 Sources", direct_tags))
+
     outbounds.append(selector("🎮 Nintendo", proxy_tags))
     outbounds.append(selector("🎮 Nintendo@CN", direct_tags))
     outbounds.append(selector("🎮 PlayStation", playstation_tags))
@@ -687,6 +686,9 @@ def proxies_to_outbound(
     outbounds.append(selector("🎥 Netflix", proxy_tags))
     outbounds.append(selector("🎥 TikTok", ai_tags))
     outbounds.append(selector("🎥 YouTube", proxy_tags))
+
+    outbounds.append(selector("🐱 懒猫微服", lazycat_tags))
+    outbounds.append(selector("🔍 调试出口", mitm_tags))
 
     outbounds.append(selector("🎯 全球直连", ["DIRECT", "🔰 默认出口"]))
     outbounds.append(selector("🛑 全球拦截", ["REJECT", "🔰 默认出口", "DIRECT"]))
@@ -872,7 +874,7 @@ def to_sing(
                     "ip_cidr": ["1.0.0.2/32", "2606:4700:4700::1111/128"],
                     "outbound": "🔰 默认出口",
                 },
-                {"domain": "ptest-1.ipcheck.ing", "outbound": "🤖 人工智能"},
+                {"domain": "ptest-1.ipcheck.ing", "outbound": "🤖 AI"},
                 {"domain": "ptest-2.ipcheck.ing", "outbound": "🤖 Claude"},
                 {"domain": "ptest-3.ipcheck.ing", "outbound": "🤖 ChatGPT"},
                 *build_emby_ipcheck(embies, 4),
@@ -880,23 +882,23 @@ def to_sing(
                 *build_proxies_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
-                *build_local_rules(local),
-                {"rule_set": "Anthropic", "outbound": "🤖 人工智能"},
-                {"rule_set": "OpenAI", "outbound": "🤖 人工智能"},
-                {"rule_set": "AI", "outbound": "🤖 人工智能"},
-                {"rule_set": "Apple", "outbound": "🍎 苹果服务"},
+                # *build_local_rules(local),
+                {"rule_set": "Anthropic", "outbound": "🤖 Claude"},
+                {"rule_set": "OpenAI", "outbound": "🤖 ChatGPT"},
+                {"rule_set": "AI", "outbound": "🤖 AI"},
+                {"rule_set": "Apple", "outbound": "🍎 Apple"},
                 {
                     "type": "logical",
                     "mode": "and",
                     "rules": [
                         {"rule_set": "Microsoft"},
-                        {"rule_set": ["Development", "Sources", "Xbox"], "invert": True},
+                        {"rule_set": ["AI", "Development", "Sources", "Xbox"], "invert": True},
                     ],
-                    "outbound": "Ⓜ️ 微软服务",
+                    "outbound": "Ⓜ️ Microsoft",
                 },
                 {"rule_set": "Development@CN", "outbound": "🎯 全球直连"},
-                {"rule_set": "Development", "outbound": "⚙️ 软件开发"},
-                {"rule_set": "Sources", "outbound": "📦 软件仓库"},
+                {"rule_set": "Development", "outbound": "⚙️ Development"},
+                {"rule_set": "Sources", "outbound": "📦 Sources"},
                 {"rule_set": "Nintendo@CN", "outbound": "🎮 Nintendo@CN"},
                 {"rule_set": "Nintendo", "outbound": "🎮 Nintendo"},
                 {"rule_set": "PlayStation@CN", "outbound": "🎮 PlayStation@CN"},
@@ -952,7 +954,7 @@ def to_sing(
                 rule_set(local, gitee_token, "Xbox", "rules/xbox.srs"),
                 rule_set(local, gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
                 rule_set(local, gitee_token, "YouTube", "rules/youtube.srs"),
-                *build_local_rule_sets(local, gitee_token),
+                # *build_local_rule_sets(local, gitee_token),
             ],
             "final": "🐟 漏网之鱼",
         },
