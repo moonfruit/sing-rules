@@ -19,3 +19,5 @@ cp config/iphone/* "$TEMP"
 sed -i'' "s|\$TOKEN|$TOKEN|g" "$TEMP"/*
 cat private/config.json | ./copy-config.py >"$TEMP/zoo.json"
 sing-box merge -C "$TEMP" private/config-iphone.json
+
+./prune-config.py private/config-iphone.json >private/config-appletv.json
