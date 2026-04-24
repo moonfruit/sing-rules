@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "agentclientprotocol.com",
         "ai.com",
         "ai.google.dev",
         "aistudio.google.com",
@@ -106,6 +107,7 @@
         "oystermercury.top",
         "perplexity.ai",
         "perplexity.com",
+        "plannotator.ai",
         "poe.com",
         "poecdn.net",
         "ppl-ai-file-upload.s3.amazonaws.com",
@@ -128,6 +130,7 @@
         "youmind.site"
       ],
       "domain_suffix": [
+        ".agentclientprotocol.com",
         ".ai.com",
         ".aistudio.google.com",
         ".anthropic.com",
@@ -223,6 +226,7 @@
         ".oystermercury.top",
         ".perplexity.ai",
         ".perplexity.com",
+        ".plannotator.ai",
         ".poe.com",
         ".poecdn.net",
         ".pplx.ai",
