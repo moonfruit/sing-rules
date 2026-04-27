@@ -698,10 +698,7 @@ def proxies_to_outbound(
     outbounds.append(urltest("🤖 自然选择 Claude", costs, groups["🇺🇸 美国节点"], "https://api.anthropic.com/"))
     outbounds.append(
         urltest(
-            "🤖 自然选择 ChatGPT",
-            costs,
-            [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"], *groups["🇰🇷 韩国节点"]],
-            "https://api.openai.com/",
+            "🤖 自然选择 ChatGPT", costs, [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]], "https://api.openai.com/"
         )
     )
 
