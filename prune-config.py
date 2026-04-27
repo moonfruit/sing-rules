@@ -21,6 +21,8 @@ from __future__ import annotations
 import json
 import sys
 
+KEEP_OUTBOUND_KEYWORDS = ("NanoCloud", "Ash")
+
 KEEP_RULE_SETS = {
     "GeoSites@!CN",
     "Lan",
@@ -65,32 +67,32 @@ def main() -> None:
     removed_set_tags = set(removed_sets)
     kept_set_tags = set(KEEP_RULE_SETS)
 
-    # Pass 1: 移除引用被删 rule_set 的规则
+    # Pass 1: 标记引用被删 rule_set 的规则
     removed_outbounds: set[str] = set()
     rules = route.get("rules", []) or []
-    after_pass1 = []
-    for r in rules:
+    pass1_remove = [False] * len(rules)
+    for i, r in enumerate(rules):
         if isinstance(r, dict) and rule_refs_any(r, removed_set_tags):
             ob = r.get("outbound")
             if isinstance(ob, str):
                 removed_outbounds.add(ob)
-            continue
-        after_pass1.append(r)
+            pass1_remove[i] = True
 
     # Pass 2: 级联移除——outbound 命中 removed_outbounds 且规则未引用任何保留的 rule_set
-    after_pass2 = []
-    cascaded = 0
-    for r in after_pass1:
-        if isinstance(r, dict):
-            ob = r.get("outbound")
-            if (
-                isinstance(ob, str)
-                and ob in removed_outbounds
-                and not rule_refs_any(r, kept_set_tags)
-            ):
-                cascaded += 1
-                continue
-        after_pass2.append(r)
+    removed_flags = list(pass1_remove)
+    for i, r in enumerate(rules):
+        if removed_flags[i] or not isinstance(r, dict):
+            continue
+        ob = r.get("outbound")
+        if (
+            isinstance(ob, str)
+            and ob in removed_outbounds
+            and not rule_refs_any(r, kept_set_tags)
+        ):
+            removed_flags[i] = True
+
+    removed_rules = [r for r, rm in zip(rules, removed_flags) if rm]
+    after_pass2 = [r for r, rm in zip(rules, removed_flags) if not rm]
     route["rules"] = after_pass2
 
     # 基于最终剩余规则，决定哪些 outbound 可以真正删除
@@ -154,7 +156,12 @@ def main() -> None:
             if isinstance(child, str) and child not in reachable and child in by_tag:
                 stack.append(child)
 
-    orphan_outbounds = {tag for tag in by_tag if tag not in reachable}
+    orphan_outbounds = {
+        tag
+        for tag in by_tag
+        if tag not in reachable
+        and not any(kw in tag for kw in KEEP_OUTBOUND_KEYWORDS)
+    }
     if orphan_outbounds:
         config["outbounds"] = [
             o for o in config["outbounds"] if o.get("tag") not in orphan_outbounds
@@ -166,10 +173,9 @@ def main() -> None:
                 ]
 
     print("Removed rule_sets:", ", ".join(removed_sets) or "(none)", file=sys.stderr)
-    print(
-        f"Cascade removed rules (outbound 命中移除集且未引用保留 rule_set): {cascaded}",
-        file=sys.stderr,
-    )
+    print(f"Removed rules ({len(removed_rules)}):", file=sys.stderr)
+    for r in removed_rules:
+        print(json.dumps(r, ensure_ascii=False), file=sys.stderr)
     print(
         "Removed outbounds:",
         ", ".join(sorted(outbounds_to_remove)) or "(none)",
