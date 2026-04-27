@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "ai-proxy.chatwise.app",
         "bianxie.ai",
         "bigmodel.cn"
       ],
