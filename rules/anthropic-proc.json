@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "process_name": [
+        "Claude",
+        "Claude Helper",
+        "Claude Helper (GPU)",
+        "Claude Helper (Plugin)",
+        "Claude Helper (Renderer)"
+      ]
+    },
+    {
+      "process_path_regex": "/Applications/Claude.app/.*"
+    }
+  ]
+}

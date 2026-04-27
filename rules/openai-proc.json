@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "process_name": [
+        "ChatGPT",
+        "ChatGPTHelper",
+        "Codex",
+        "Codex Helper",
+        "Codex Helper (GPU)",
+        "Codex Helper (Plugin)",
+        "Codex Helper (Renderer)"
+      ]
+    },
+    {
+      "process_path_regex": "/Applications/(ChatGPT|Codex)\\.app/.*"
+    }
+  ]
+}
