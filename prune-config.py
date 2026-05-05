@@ -21,6 +21,8 @@ from __future__ import annotations
 import json
 import sys
 
+from common.config import remove_outbounds
+
 KEEP_OUTBOUND_KEYWORDS = ("NanoCloud", "Ash")
 
 KEEP_RULE_SETS = {
@@ -111,15 +113,7 @@ def main() -> None:
     collect_refs(after_pass2)
     outbounds_to_remove = removed_outbounds - still_referenced
 
-    outbounds = config.get("outbounds", []) or []
-    config["outbounds"] = [
-        o for o in outbounds if o.get("tag") not in outbounds_to_remove
-    ]
-    for o in config["outbounds"]:
-        if isinstance(o.get("outbounds"), list):
-            o["outbounds"] = [
-                t for t in o["outbounds"] if t not in outbounds_to_remove
-            ]
+    remove_outbounds(config, outbounds_to_remove)
 
     # Pass 3: 基于规则/route.final/dns detour 做可达性分析，剔除孤立 outbound
     roots: set[str] = set()
@@ -162,15 +156,7 @@ def main() -> None:
         if tag not in reachable
         and not any(kw in tag for kw in KEEP_OUTBOUND_KEYWORDS)
     }
-    if orphan_outbounds:
-        config["outbounds"] = [
-            o for o in config["outbounds"] if o.get("tag") not in orphan_outbounds
-        ]
-        for o in config["outbounds"]:
-            if isinstance(o.get("outbounds"), list):
-                o["outbounds"] = [
-                    t for t in o["outbounds"] if t not in orphan_outbounds
-                ]
+    remove_outbounds(config, orphan_outbounds)
 
     print("Removed rule_sets:", ", ".join(removed_sets) or "(none)", file=sys.stderr)
     print(f"Removed rules ({len(removed_rules)}):", file=sys.stderr)
