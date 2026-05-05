@@ -129,7 +129,7 @@ def get_flag(group: str) -> str:
 
 
 def proxy_to_outbound(
-    proxy: Object, seen: set, saved_countries: dict[str, str] | None, overwrite_country: bool
+    proxy: Object, seen: set, local: bool, saved_countries: dict[str, str] | None, overwrite_country: bool
 ) -> tuple[bool, str, float, Object]:
     name = proxy["name"].strip().lstrip("🔴")
     group, name = find_group(name)
@@ -146,7 +146,7 @@ def proxy_to_outbound(
             outbound = sing_box_proxy_to_outbound(proxy, tag)
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
-    patch_outbound(outbound)
+    patch_outbound(outbound, local)
 
     seen_key = as_hashable(copy_without_tag(outbound))
     dup = seen_key in seen
@@ -167,10 +167,13 @@ def proxy_to_outbound(
     return dup, group, cost, outbound
 
 
-def patch_outbound(outbound: Object):
+def patch_outbound(outbound: Object, local: bool):
     outbound.pop("domain_resolver", None)
-    if (utls := outbound.get("tls", {}).get("utls")) and "fingerprint" in utls:
-        utls["fingerprint"] = "random"
+    if tls := outbound.get("tls"):
+        if (utls := tls.get("utls")) and "fingerprint" in utls:
+            utls["fingerprint"] = "random"
+        if not local and "curve_preferences" not in tls:
+            tls["curve_preferences"] = ["X25519", "P256", "P384", "P521"]
 
 
 def clash_proxy_to_outbound(clash: Object, tag: str) -> Object:
@@ -544,7 +547,7 @@ def proxies_to_outbound(
             provider = {}
             provider_name = ""
 
-        dup, group, cost, outbound = proxy_to_outbound(proxy, seen, saved_countries, overwrite_country)
+        dup, group, cost, outbound = proxy_to_outbound(proxy, seen, local, saved_countries, overwrite_country)
         if dup:
             continue
 
