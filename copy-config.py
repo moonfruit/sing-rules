@@ -8,6 +8,8 @@
   2. 删除白名单以外的 urltest outbound 及其引用
      (白名单: 自动选择 / 省流节点 / 高级节点 / 自然选择 / 以 🎬 结尾)
   3. 剩余 urltest 中 interval < 3m 时移除该字段
+  4. 清理 outbounds 为空的 selector：信息型节点 (形如 '🌸 NanoCloud 🔴 (...)') 重定向到默认出口，
+     其余直接删除并级联清理
 """
 
 import json
@@ -26,6 +28,9 @@ URLTEST_KEEP_KEYWORDS = ("自动选择", "省流节点", "高级节点", "自然
 URLTEST_KEEP_SUFFIX = "🎬"
 
 INTERVAL_THRESHOLD_SECONDS = 180
+
+DEFAULT_OUTBOUND = "🔰 默认出口"
+INFO_SELECTOR_RE = re.compile(r"[🟢🟡🔴] \([^)]*\)$")
 
 
 class Action(Enum):
@@ -142,6 +147,25 @@ def _trim_short_intervals(outbounds, threshold_seconds: float) -> None:
             ob.pop("interval", None)
 
 
+def _prune_empty_selectors(config: dict) -> None:
+    """循环清理 outbounds 为空的 selector，信息型 selector 改为指向默认出口。"""
+    while True:
+        to_remove: set[str] = set()
+        for ob in config.get("outbounds") or []:
+            if ob.get("type") != "selector" or ob.get("outbounds"):
+                continue
+            tag = ob.get("tag")
+            if not isinstance(tag, str):
+                continue
+            if INFO_SELECTOR_RE.search(tag):
+                ob["outbounds"] = [DEFAULT_OUTBOUND]
+            else:
+                to_remove.add(tag)
+        if not to_remove:
+            return
+        remove_outbounds(config, to_remove)
+
+
 def main():
     config = json.load(sys.stdin)
 
@@ -161,6 +185,7 @@ def main():
         )
         remove_outbounds(config, tags_to_remove)
         _trim_short_intervals(config["outbounds"], INTERVAL_THRESHOLD_SECONDS)
+        _prune_empty_selectors(config)
 
     json.dump(config, sys.stdout, ensure_ascii=False, indent=2)
     print()
