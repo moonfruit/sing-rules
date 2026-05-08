@@ -40,9 +40,13 @@ jobs:
             subscribe-
 
       - name: Install sops
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq sops
+          TAG=$(gh release view --repo getsops/sops --json tagName -q .tagName)
+          curl -fsSLo /tmp/sops "https://github.com/getsops/sops/releases/download/${TAG}/sops-${TAG}.linux.amd64"
+          sudo install -m 0755 /tmp/sops /usr/local/bin/sops
+          rm -f /tmp/sops
           sops --version --disable-version-check
 
       - name: Decrypt secrets
