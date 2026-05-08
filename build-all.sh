@@ -19,12 +19,22 @@ git pull --rebase || true
 source venv/bin/activate
 pip install -qr requirements.txt
 
-# ---- 读取订阅地址 ----
-CLASH_TXT="config/clash.txt"
-if [[ ! -f $CLASH_TXT ]]; then
-    echo "错误: 未找到 $CLASH_TXT" >&2
+# ---- 加载 secrets（订阅 URL + GITEE_TOKEN + NODE_AUTH_TOKEN）----
+SECRETS_ENV="config/secrets.env"
+if [[ ! -f $SECRETS_ENV ]]; then
+    echo "错误: 未找到 $SECRETS_ENV" >&2
     exit 1
 fi
+echo ">>> 解密 secrets ($SECRETS_ENV)"
+SECRETS_OUTPUT=$(./bin/load-secrets.sh "$SECRETS_ENV") || {
+    echo "错误: 解密 $SECRETS_ENV 失败（检查 SSH 私钥或 SOPS_AGE_KEY）" >&2
+    exit 1
+}
+set -a
+# shellcheck disable=SC1090
+eval "$SECRETS_OUTPUT"
+set +a
+unset SECRETS_OUTPUT
 
 # ---- 检查 private 目录 ----
 PRIVATE_DIR=$(realpath private)
@@ -56,21 +66,16 @@ ln -sfn "$WORKDIR/dat" dat
 
 # ---- 下载订阅 ----
 echo ">>> 下载订阅"
-while IFS= read -r line; do
-    [[ -z $line || $line == \#* ]] && continue
-    read -r name url client <<<"$line"
-    echo "  下载 $name (client=$client)"
-    ./subscribe.sh "$url" "dat/$name" "$client"
-done <"$CLASH_TXT"
+./cached-subscribe.sh
 
 # ---- Preflight ----
 echo ">>> Preflight"
 PREFLIGHT_ARGS=()
-while IFS= read -r line; do
-    [[ -z $line || $line == \#* ]] && continue
-    read -r name _ _ <<<"$line"
-    PREFLIGHT_ARGS+=("$name" "$name.info")
-done <"$CLASH_TXT"
+while IFS= read -r name; do
+    output=$(jq -r --arg n "$name" '.[$n].output' config/subscribe.json)
+    base=$(basename "$output")
+    PREFLIGHT_ARGS+=("$base" "$base.info")
+done < <(jq -r 'keys[]' config/subscribe.json)
 
 BUILD_RULES=0
 BUILD_CONFIG=0
@@ -90,19 +95,6 @@ if ((BUILD_RULES)); then
     echo ">>> Checkout MetaCubeX/geo"
     git clone --depth 1 https://github.com/MetaCubeX/geo.git "$WORKDIR/geo"
     ln -sfn "$WORKDIR/geo" geo
-fi
-
-# ---- 读取 Gitee token ----
-SECRETS_TXT="config/secrets.txt"
-GITEE_TOKEN=""
-if [[ -f $SECRETS_TXT ]]; then
-    while IFS='=' read -r key value; do
-        [[ -z $key || $key == \#* ]] && continue
-        if [[ $key == GITEE_TOKEN ]]; then
-            GITEE_TOKEN="$value"
-            break
-        fi
-    done <"$SECRETS_TXT"
 fi
 
 # ---- Build config ----

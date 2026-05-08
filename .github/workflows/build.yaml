@@ -39,10 +39,22 @@ jobs:
             subscribe-${{ hashFiles('config/subscribe.json') }}-
             subscribe-
 
-      - name: Download resources
+      - name: Install sops
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sops
+          sops --version --disable-version-check
+
+      - name: Decrypt secrets
         env:
-          ASH_URL: ${{ secrets.ASH_URL }}
-          NANOCLOUD_URL: ${{ secrets.NANOCLOUD_URL }}
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          ./bin/load-secrets.sh | while IFS='=' read -r k v; do
+            echo "::add-mask::$v"
+            printf '%s=%s\n' "$k" "$v" >> "$GITHUB_ENV"
+          done
+
+      - name: Download resources
         run: ./cached-subscribe.sh
 
       - name: Preflight
@@ -92,15 +104,10 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Checkout private
-        env:
-          GITEE_USER: ${{ secrets.GITEE_USER }}
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: ./checkout-gitee.sh "$GITEE_USER" "$GITEE_TOKEN"
 
       - name: Build config
         if: env.BUILD_CONFIG == 1
-        env:
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: ./build-sing-config.sh "$GITEE_TOKEN"
 
       - name: Build rule sets
@@ -135,6 +142,4 @@ jobs:
 
       - name: Publish to npmjs
         if: env.BUILD_RULES == 1
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: ./npm-publish.sh  "${{ env.TAG }}"
