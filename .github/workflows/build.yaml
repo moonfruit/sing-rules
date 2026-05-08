@@ -43,10 +43,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG=$(gh release view --repo getsops/sops --json tagName -q .tagName)
-          curl -fsSLo /tmp/sops "https://github.com/getsops/sops/releases/download/${TAG}/sops-${TAG}.linux.amd64"
-          sudo install -m 0755 /tmp/sops /usr/local/bin/sops
-          rm -f /tmp/sops
+          ./bin/install-github-binary.sh getsops/sops '^sops-.+\.linux\.amd64$' sops
           sops --version --disable-version-check
 
       - name: Decrypt secrets
@@ -94,8 +91,10 @@ jobs:
           geo | head -1
 
       - name: Install sing-box
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          ./install-sing-box.sh
+          ./bin/install-github-binary.sh --prerelease SagerNet/sing-box '^sing-box-.+-linux-amd64\.tar\.gz$' sing-box
           sing-box version
 
       - name: Setup Python
