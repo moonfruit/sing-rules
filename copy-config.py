@@ -24,7 +24,7 @@ BLOCK_OUTBOUND = "全球拦截"
 
 PRUNE_SUFFIXES = ("👍", "🛢️")
 
-URLTEST_KEEP_KEYWORDS = ("自动选择", "省流节点", "高级节点", "自然选择")
+URLTEST_KEEP_KEYWORDS = ("自动选择", "省流节点", "高级节点", "自然选择", "美国节点")
 URLTEST_KEEP_SUFFIX = "🎬"
 
 INTERVAL_THRESHOLD_SECONDS = 180
@@ -75,19 +75,11 @@ def filter_rule_sets(rule_sets) -> list[Any]:
 
 
 def _block_outbound_tags(outbounds) -> set[str]:
-    return {
-        ob["tag"]
-        for ob in outbounds
-        if isinstance(ob.get("tag"), str) and BLOCK_OUTBOUND in ob["tag"]
-    }
+    return {ob["tag"] for ob in outbounds if isinstance(ob.get("tag"), str) and BLOCK_OUTBOUND in ob["tag"]}
 
 
 def _suffix_outbound_tags(outbounds) -> set[str]:
-    return {
-        ob["tag"]
-        for ob in outbounds
-        if isinstance(ob.get("tag"), str) and ob["tag"].endswith(PRUNE_SUFFIXES)
-    }
+    return {ob["tag"] for ob in outbounds if isinstance(ob.get("tag"), str) and ob["tag"].endswith(PRUNE_SUFFIXES)}
 
 
 def _is_kept_urltest(tag: str) -> bool:
@@ -100,9 +92,7 @@ def _urltest_tags_to_remove(outbounds) -> set[str]:
     return {
         ob["tag"]
         for ob in outbounds
-        if ob.get("type") == "urltest"
-        and isinstance(ob.get("tag"), str)
-        and not _is_kept_urltest(ob["tag"])
+        if ob.get("type") == "urltest" and isinstance(ob.get("tag"), str) and not _is_kept_urltest(ob["tag"])
     }
 
 
@@ -179,9 +169,7 @@ def main():
     outbounds = config.get("outbounds")
     if isinstance(outbounds, list):
         tags_to_remove = (
-            _block_outbound_tags(outbounds)
-            | _suffix_outbound_tags(outbounds)
-            | _urltest_tags_to_remove(outbounds)
+            _block_outbound_tags(outbounds) | _suffix_outbound_tags(outbounds) | _urltest_tags_to_remove(outbounds)
         )
         remove_outbounds(config, tags_to_remove)
         _trim_short_intervals(config["outbounds"], INTERVAL_THRESHOLD_SECONDS)
