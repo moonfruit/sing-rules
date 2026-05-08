@@ -1,0 +1,5 @@
+creation_rules:
+  - path_regex: config/secrets\.env$
+    age: >-
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILjSU8sPr3D/6tUXRl0VqIg4Nc1DGxb/yRnS8zoa8Rax moon@Moons-MacBook.local,
+      age1zpsuf30d8anc2xw50cz4k45pep95vwr8txvnkn7qspy9vzwv9eeqcmuv9z
