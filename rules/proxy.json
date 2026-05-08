@@ -22,6 +22,7 @@
         "mirror.kumi.systems",
         "mirror.level66.network",
         "mirror.ossplanet.net",
+        "nist.gov",
         "one.one.one.one"
       ],
       "domain_suffix": [
@@ -35,7 +36,8 @@
         ".gboxlab.com",
         ".hearthstonejson.com",
         ".hsdecktracker.net",
-        ".hsreplay.net"
+        ".hsreplay.net",
+        ".nist.gov"
       ]
     }
   ]
