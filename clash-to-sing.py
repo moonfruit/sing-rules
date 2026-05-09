@@ -528,7 +528,7 @@ def proxies_to_outbound(
     embies = {}
 
     for proxy in proxies:
-        server = proxy["server"]
+        server: str = proxy["server"]
         if server == "None":
             continue
 
@@ -560,7 +560,7 @@ def proxies_to_outbound(
         else:
             domains.add(server)
 
-        tag = outbound["tag"]
+        tag: str = outbound["tag"]
         costs[tag] = cost
         all_nodes.append(tag)
 
