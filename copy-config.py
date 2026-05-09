@@ -162,7 +162,7 @@ def main():
     if "route" in config:
         route = config["route"]
         if "rules" in route:
-            route["rules"] = filter_rules(route["rules"][3:])
+            route["rules"] = filter_rules(route["rules"])
         if "rule_set" in route:
             route["rule_set"] = filter_rule_sets(route["rule_set"])
 
