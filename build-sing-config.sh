@@ -9,7 +9,7 @@ fi
 TOKEN="$1"
 
 cd "$BIN"
-./clash-to-sing.py -c config/config.json -drw -s preflight/saved-countries.json -t "$TOKEN" |
+./clash-to-sing.py -c config/config.json -rw -s preflight/saved-countries.json -t "$TOKEN" |
     sing-box format -c /dev/stdin |
     ./fix-format.py >private/config.json
 
