@@ -118,17 +118,20 @@ jobs:
         run: ./build-sing-rules.sh
 
       - name: Commit and Push (private)
-        run: ../commit-and-push.sh "Update config" || true
+        continue-on-error: true
+        run: ../commit-and-push.sh "Update config"
         working-directory: private
 
       - name: Commit and Push
+        id: commit_push
+        continue-on-error: true
         run: ./commit-and-push.sh "Update rules" "${{ env.TAG }}"
 
       - name: Cleanup old tags
         run: ./cleanup-old-tags.sh
 
       - name: Release
-        if: env.BUILD_RULES == 1
+        if: env.BUILD_RULES == 1 && steps.commit_push.outcome == 'success'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
@@ -138,11 +141,11 @@ jobs:
           make_latest: "true"
 
       - name: Setup Node
-        if: env.BUILD_RULES == 1
+        if: env.BUILD_RULES == 1 && steps.commit_push.outcome == 'success'
         uses: actions/setup-node@v6
         with:
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish to npmjs
-        if: env.BUILD_RULES == 1
+        if: env.BUILD_RULES == 1 && steps.commit_push.outcome == 'success'
         run: ./npm-publish.sh  "${{ env.TAG }}"
