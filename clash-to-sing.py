@@ -843,7 +843,7 @@ def rule_set(local: bool, gitee_token: str | None, tag: str, url: str):
     if url.startswith("http://") or url.startswith("https://"):
         url_to_use = url
     elif gitee_token:
-        url_to_use = f"https://gitee.com/api/v5/repos/moonfruit/private/raw/{url}?access_token={gitee_token}&ref=main"
+        url_to_use = f"https://gitee.com/api/v5/repos/moonfruit/private/raw/{url}?ref=main&access_token={gitee_token}"
     else:
         url_to_use = f"https://{__CDN}/npm/sing-rules/{url}"
 
