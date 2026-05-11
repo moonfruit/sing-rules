@@ -38,8 +38,7 @@
       {
         "tag": "dns-fakeip",
         "type": "fakeip",
-        "inet4_range": "22.0.0.0/8",
-        "inet6_range": "fc00::/64"
+        "inet4_range": "22.0.0.0/8"
       }
     ],
     "rules": [
