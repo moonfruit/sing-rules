@@ -1,3 +1,4 @@
+# Apple
 DOMAIN-SUFFIX,apple.com
 # IP
 DOMAIN-SUFFIX,ipip.net
@@ -32,3 +33,5 @@ DOMAIN-SUFFIX,alicdn.win
 DOMAIN-SUFFIX,demo-chat-airport.com
 DOMAIN-SUFFIX,edu-header-airport.com
 DOMAIN-SUFFIX,edg3.org
+# Router
+DOMAIN,moonfruit.asuscomm.com
