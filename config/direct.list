@@ -9,3 +9,7 @@ DOMAIN-SUFFIX,miot-spec.com
 DOMAIN-SUFFIX,alicdn.win
 DOMAIN-SUFFIX,demo-chat-airport.com
 DOMAIN-SUFFIX,v2ray.in
+# BitTorrent
+DOMAIN,dht.libtorrent.org
+DOMAIN,dht.transmissionbt.com
+DOMAIN,router.bittorrent.com
