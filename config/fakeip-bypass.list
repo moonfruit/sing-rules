@@ -35,3 +35,7 @@ DOMAIN-SUFFIX,edu-header-airport.com
 DOMAIN-SUFFIX,edg3.org
 # Router
 DOMAIN,moonfruit.asuscomm.com
+# BitTorrent
+DOMAIN,dht.libtorrent.org
+DOMAIN,dht.transmissionbt.com
+DOMAIN,router.bittorrent.com
