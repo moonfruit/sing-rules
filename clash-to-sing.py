@@ -403,7 +403,7 @@ def selector(tag: str, nodes: list[str]) -> Object:
 # __TEST_URL = "https://www.apple.com/library/test/success.html"
 
 
-def urltest(tag: str, costs: dict[str, float], nodes: list[str], url: str = None, interval: str = None) -> Object:
+def urltest(tag: str, costs: dict[str, float], nodes: list[str], *, url: str = None, interval: str = None) -> Object:
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
     outbound = {"type": "urltest", "tag": tag, "outbounds": nodes}
     if url:
@@ -700,13 +700,15 @@ def proxies_to_outbound(
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
-    outbounds.append(urltest("🤖 自然选择 Claude", costs, groups["🇺🇸 美国节点"], "https://api.anthropic.com/"))
+    outbounds.append(
+        urltest("🤖 自然选择 Claude", costs, groups["🇺🇸 美国节点"], url="https://api.anthropic.com/", interval="1m")
+    )
     outbounds.append(
         urltest(
             "🤖 自然选择 ChatGPT",
             costs,
             [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]],
-            "https://api.openai.com/",
+            url="https://api.openai.com/",
             interval="1m",
         )
     )
