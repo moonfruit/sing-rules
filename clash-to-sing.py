@@ -664,6 +664,7 @@ def proxies_to_outbound(
 
     ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点")
     playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
+    youtube_tags = prioritize(proxy_tags, "🇮🇳 印度节点")
 
     lazycat_tags = ["DIRECT", "🐱 LazyCat"]
     mitm_tags = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
@@ -690,7 +691,7 @@ def proxies_to_outbound(
     outbounds.append(selector("🎥 Disney+", proxy_tags))
     outbounds.append(selector("🎥 Netflix", proxy_tags))
     outbounds.append(selector("🎥 TikTok", ai_tags))
-    outbounds.append(selector("🎥 YouTube", proxy_tags))
+    outbounds.append(selector("🎥 YouTube", youtube_tags))
 
     outbounds.append(selector("🐱 懒猫微服", lazycat_tags))
     outbounds.append(selector("🔍 调试出口", mitm_tags))
@@ -892,7 +893,8 @@ def to_sing(
                 {"domain": "ptest-1.ipcheck.ing", "outbound": "🤖 AI"},
                 {"domain": "ptest-2.ipcheck.ing", "outbound": "🤖 Claude"},
                 {"domain": "ptest-3.ipcheck.ing", "outbound": "🤖 ChatGPT"},
-                *build_emby_ipcheck(embies, 4),
+                {"domain": "ptest-4.ipcheck.ing", "outbound": "🎥 YouTube"},
+                *build_emby_ipcheck(embies, 5),
                 {"domain_suffix": ["heiyu.space", "lazycat.cloud"], "outbound": "🐱 懒猫微服"},
                 *build_proxies_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
