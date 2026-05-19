@@ -2,6 +2,9 @@
 
 DIR=preflight
 V2RAY_RULES_COMMIT=$DIR/v2ray-rules-dat.commit
+BT_TRACKERS_URL=https://raw.githubusercontent.com/XIU2/TrackersListCollection/refs/heads/master/best.txt
+BT_TRACKERS_FILE=dat/bt-trackers.txt
+BT_TRACKERS_SHA1=$DIR/bt-trackers.txt.sha1
 
 TEMP=$(mktemp)
 mkdir -p "$DIR"
@@ -14,6 +17,24 @@ check-v2ray-rules() {
         return 1
     else
         mv "$TEMP" "$V2RAY_RULES_COMMIT"
+    fi
+}
+
+check-bt-trackers() {
+    echo "Downloading bt-trackers from $BT_TRACKERS_URL"
+    if ! curl -fsSL "$BT_TRACKERS_URL" -o "$BT_TRACKERS_FILE"; then
+        echo "bt-trackers.txt download failed"
+        return 1
+    fi
+    echo "Downloaded $(wc -l < "$BT_TRACKERS_FILE") lines to $BT_TRACKERS_FILE"
+
+    echo -n "bt-trackers.txt: "
+    sha1sum "$BT_TRACKERS_FILE" | awk '{print $1}' | tee "$TEMP"
+    if diff "$TEMP" "$BT_TRACKERS_SHA1"; then
+        echo "bt-trackers.txt is not changed"
+        return 1
+    else
+        mv "$TEMP" "$BT_TRACKERS_SHA1"
     fi
 }
 
@@ -38,11 +59,18 @@ check-all-config() {
     return $result
 }
 
-RESULT=()
+build_rules=0
 if check-v2ray-rules >&2; then
-    RESULT+=(BUILD_RULES)
+    build_rules=1
 fi
 echo "--------" >&2
+if check-bt-trackers >&2; then
+    build_rules=1
+fi
+echo "--------" >&2
+
+RESULT=()
+((build_rules)) && RESULT+=(BUILD_RULES)
 if (($#)); then
     if check-all-config "$@" >&2; then
         RESULT+=(BUILD_CONFIG)
