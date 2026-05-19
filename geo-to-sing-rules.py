@@ -131,7 +131,7 @@ def main():
     )
     generate(
         "direct.json",
-        geosite=["china-list", "google-cn", "tld-cn"],
+        geosite=["china-list", "google-cn", "tld-cn", "category-public-tracker"],
         excluded_geosite=["cn", "geolocation-cn", "geolocation-cn@cn"],
     )
     generate("proxy.json", geosite=["firefox"])

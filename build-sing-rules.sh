@@ -37,6 +37,18 @@ title "Merging clash rules to sing rule sets"
 "$BIN/clash-merge.sh" "$CLASH"
 "$BIN/clash-merge.sh" --enable-process "$BIN/config"
 
+title "Merging bt-trackers to fakeip-bypass and direct rule sets"
+BT_LIST=$(mktemp)
+trap 'rm -f "$BT_LIST"' EXIT
+grep -oE '^[a-z]+://[^:/]+' "$BIN/dat/bt-trackers.txt" \
+    | sed -E 's|^[a-z]+://||' \
+    | grep -vE '^([0-9]{1,3}\.){3}[0-9]{1,3}$' \
+    | sort -u \
+    | sed 's/^/DOMAIN,/' >"$BT_LIST"
+echo "Extracted $(wc -l < "$BT_LIST") domains"
+"$BIN/clash-to-sing-rules.py" "$BT_LIST" fakeip-bypass.json
+"$BIN/clash-to-sing-rules.py" "$BT_LIST" direct.json
+
 title "Compile sing rule sets"
 for JSON in *.json; do
     echo "Compiling $JSON"
