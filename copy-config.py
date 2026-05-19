@@ -24,7 +24,7 @@ BLOCK_OUTBOUND = "全球拦截"
 
 PRUNE_SUFFIXES = ("👍", "🛢️")
 
-URLTEST_KEEP_KEYWORDS = ("自动选择", "省流节点", "高级节点", "自然选择", "美国节点")
+URLTEST_KEEP_KEYWORDS = ("自动选择", "省流节点", "高级节点", "自然选择", "美国节点", "香港节点", "印度节点")
 URLTEST_KEEP_SUFFIX = "🎬"
 
 INTERVAL_THRESHOLD_SECONDS = 180
