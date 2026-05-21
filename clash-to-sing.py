@@ -904,15 +904,6 @@ def to_sing(
                 {"rule_set": "OpenAI", "outbound": "🤖 ChatGPT"},
                 {"rule_set": "AI", "outbound": "🤖 AI"},
                 {"rule_set": "Apple", "outbound": "🍎 Apple"},
-                {
-                    "type": "logical",
-                    "mode": "and",
-                    "rules": [
-                        {"rule_set": "Microsoft"},
-                        {"rule_set": ["AI", "Development", "Sources", "Xbox"], "invert": True},
-                    ],
-                    "outbound": "Ⓜ️ Microsoft",
-                },
                 {"rule_set": "Development@CN", "outbound": "🎯 全球直连"},
                 {"rule_set": "Development", "outbound": "⚙️ Development"},
                 {"rule_set": "Sources", "outbound": "📦 Sources"},
@@ -936,6 +927,7 @@ def to_sing(
                 {"rule_set": "TikTok", "outbound": "🎥 TikTok"},
                 {"rule_set": "YouTube", "outbound": "🎥 YouTube"},
                 *build_emby_rules(embies),
+                {"rule_set": "Microsoft", "outbound": "Ⓜ️ Microsoft"},
                 {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": ["Direct", "GeoIP@CN", "GeoSites@CN"], "outbound": "🎯 全球直连"},
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
