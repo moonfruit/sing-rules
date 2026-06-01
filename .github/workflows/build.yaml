@@ -148,4 +148,5 @@ jobs:
 
       - name: Publish to npmjs
         if: env.BUILD_RULES == 1 && steps.commit_push.outcome == 'success'
+        continue-on-error: true
         run: ./npm-publish.sh  "${{ env.TAG }}"
