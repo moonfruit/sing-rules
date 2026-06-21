@@ -327,9 +327,8 @@
         "gog.com",
         "gog.qtlglb.com",
         "gog-cdn.akamaized.net",
-        "gog-cdn-fastly.gog.com",
+        "gog-cdn-lumen.secure2.footprint.net",
         "gog-statics.com",
-        "gogalaxy.gog-statics.com",
         "gooblox.com",
         "goto-game.com",
         "goto-game.mobi",
@@ -469,7 +468,6 @@
         "maxis.com",
         "me4399.com",
         "media-rockstargames-com.akamaized.net",
-        "menu-static.gog-statics.com",
         "metalrevolution.com",
         "mhystatic.com",
         "mhyurl.cn",
@@ -655,7 +653,6 @@
         "priconne-redive.jp",
         "prismlauncher.org",
         "prodforza.blob.core.windows.net",
-        "productcard.gog-statics.com",
         "projectapex.com",
         "protondb.com",
         "proximabeta.com",
@@ -807,7 +804,6 @@
         "starwarsfallenorder.com",
         "starwarsjedifallenorder.com",
         "starwarstheoldrepublic.com",
-        "static-login.gog-statics.com",
         "steam.apac.qtlglb.com",
         "steam.cdn.on.net",
         "steam.cdn.orcon.net.nz",
@@ -1006,7 +1002,6 @@
         "wotblitz.com",
         "wowsblitz.com",
         "wtmobile.com",
-        "www4-static.gog-statics.com",
         "xbox.co",
         "xbox.com",
         "xbox.eu",
@@ -2040,12 +2035,9 @@
       ],
       "domain_regex": [
         "^.+-mihayo\\.akamaized\\.net$",
-        "^cdn-akamai-.+\\.gog-services\\.com$",
         "^cdn\\d-epicgames-\\d+\\.file\\.myqcloud\\.com$",
         "^epicgames-download\\d-\\d+\\.file\\.myqcloud\\.com$",
-        "^epicgames-download\\d\\.akamaized\\.net$",
-        "^gog-cdn-.+\\.footprint\\.net$",
-        "^images(-\\d)?\\.gog-statics\\.com$"
+        "^epicgames-download\\d\\.akamaized\\.net$"
       ]
     }
   ]
