@@ -3,7 +3,6 @@
   "rules": [
     {
       "domain": [
-        "analytics.tiktok.com",
         "bytedance.map.fastly.net",
         "bytedapm.com",
         "byteglb.com",
@@ -56,7 +55,6 @@
         "ttwstatic.com"
       ],
       "domain_suffix": [
-        ".analytics.tiktok.com",
         ".bytedapm.com",
         ".byteglb.com",
         ".byteoversea.com",
