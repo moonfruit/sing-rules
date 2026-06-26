@@ -84,6 +84,7 @@ def main():
     generate("geoip-cn.json", geoip="cn")
     generate("geosites-cn.json", geosite=["cn", "geolocation-cn", "geolocation-cn@cn"])
     generate("geosites-not-cn.json", geosite="geolocation-!cn")
+    generate("doh.json", geosite="category-doh", excluded_geosite=["cn", "geolocation-cn", "geolocation-cn@cn"])
 
     generate("ai.json", geosite=["category-ai-!cn", "category-ai-chat-!cn", "jetbrains-ai"])
     generate("anthropic.json", geosite="anthropic")
