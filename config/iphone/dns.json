@@ -1,114 +1,27 @@
 {
   "dns": {
     "servers": [
-      {
-        "tag": "dns-resolver",
-        "type": "udp",
-        "server": "119.29.29.29"
-      },
-      {
-        "tag": "dns-direct",
-        "type": "https",
-        "server": "doh.pub",
-        "domain_resolver": "dns-resolver"
-      },
-      {
-        "tag": "dns-proxy",
-        "type": "h3",
-        "server": "one.one.one.one",
-        "detour": "♻️ 自动选择"
-      },
-      {
-        "tag": "dns-gingkoo",
-        "type": "https",
-        "server": "10.1.2.32",
-        "tls": {
-          "insecure": true
-        }
-      },
-      {
-        "tag": "dns-hosts",
-        "type": "hosts",
-        "predefined": {
-          "asusrouter.com": "192.168.50.1",
-          "router.asus.com": "192.168.50.1",
-          "www.asusrouter.com": "192.168.50.1"
-        }
-      },
-      {
-        "tag": "dns-fakeip",
-        "type": "fakeip",
-        "inet4_range": "22.0.0.0/8"
-      }
+      {"tag": "dns-resolver", "type": "udp", "server": "119.29.29.29"},
+      {"tag": "dns-direct", "type": "https", "server": "doh.pub", "domain_resolver": "dns-resolver"},
+      {"tag": "dns-proxy", "type": "h3", "server": "one.one.one.one", "detour": "♻️ 自动选择"},
+      {"tag": "dns-gingkoo", "type": "udp", "server": "10.1.2.59"},
+      {"tag": "dns-fakeip", "type": "fakeip", "inet4_range": "22.0.0.0/8"}
     ],
     "rules": [
+      {"rule_set": "Lan", "action": "predefined", "rcode": "NXDOMAIN"},
       {
-        "action": "evaluate",
-        "server": "dns-hosts"
-      },
-      {
-        "match_response": true,
-        "response_rcode": "NOERROR",
-        "action": "respond"
-      },
-      {
-        "rule_set": "Lan",
-        "action": "predefined",
-        "rcode": "NXDOMAIN"
-      },
-      {
-        "domain": [
-          "dns.alidns.com",
-          "doh.pub",
-          "dot.pub",
-          "dns.google",
-          "one.one.one.one",
-          "cloudflare-dns.com"
-        ],
+        "domain": ["dns.alidns.com", "doh.pub", "dot.pub", "dns.google", "one.one.one.one", "cloudflare-dns.com"],
         "server": "dns-resolver"
       },
-      {
-        "domain_suffix": "server.gingkoo",
-        "server": "dns-gingkoo",
-        "rewrite_ttl": 2592000
-      },
-      {
-        "rule_set": "FakeIpBypass",
-        "server": "dns-direct"
-      },
-      {
-        "query_type": [
-          "A",
-          "AAAA"
-        ],
-        "server": "dns-fakeip",
-        "rewrite_ttl": 1
-      },
-      {
-        "clash_mode": "Direct",
-        "server": "dns-direct"
-      },
-      {
-        "clash_mode": "Global",
-        "server": "dns-proxy"
-      },
-      {
-        "rule_set": "GeoSites@CN",
-        "server": "dns-direct"
-      },
-      {
-        "rule_set": "GeoSites@!CN",
-        "server": "dns-proxy"
-      },
-      {
-        "action": "evaluate",
-        "server": "dns-direct"
-      },
-      {
-        "match_response": true,
-        "rule_set": "GeoIP@CN",
-        "action": "respond"
-      }
+      {"domain_suffix": ["server.gingkoo", "gingkoo.internal"], "server": "dns-gingkoo"},
+      {"rule_set": "FakeIpBypass", "server": "dns-direct"},
+      {"query_type": ["A", "AAAA"], "server": "dns-fakeip", "rewrite_ttl": 1},
+      {"clash_mode": "Direct", "server": "dns-direct"},
+      {"clash_mode": "Global", "server": "dns-proxy"},
+      {"rule_set": "GeoSites@CN", "server": "dns-direct"},
+      {"rule_set": "GeoSites@!CN", "server": "dns-proxy"},
+      {"action": "evaluate", "server": "dns-direct"},
+      {"match_response": true, "rule_set": "GeoIP@CN", "action": "respond"}
     ],
     "final": "dns-proxy",
     "reverse_mapping": true,
@@ -116,35 +29,33 @@
   },
   "route": {
     "rules": [
+      {"network": "icmp", "outbound": "DIRECT"},
+      {"ip_is_private": true, "outbound": "DIRECT"},
+      {"port": 853, "action": "reject", "method": "drop"},
+      {"action": "sniff"},
+      {"protocol": "dns", "action": "hijack-dns"},
       {
-        "network": "icmp",
-        "outbound": "DIRECT"
-      },
-      {
-        "action": "sniff"
-      },
-      {
-        "protocol": "dns",
-        "action": "hijack-dns"
-      },
-      {
-        "protocol": [
-          "bittorrent",
-          "ntp",
-          "stun"
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {"rule_set": "GeoSites@CN", "invert": true},
+          {"protocol": ["http", "tls", "quic"], "rule_set": "DoH"}
         ],
-        "outbound": "DIRECT"
+        "action": "reject",
+        "method": "drop"
       },
-      {
-        "ip_is_private": true,
-        "outbound": "DIRECT"
-      }
+      {"protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT"}
     ],
     "rule_set": [
       {
         "type": "remote",
         "tag": "GeoSites@!CN",
         "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?ref=main&access_token=$TOKEN"
+      },
+      {
+        "type": "remote",
+        "tag": "DoH",
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/doh.srs?ref=main&access_token=$TOKEN"
       },
       {
         "type": "remote",
