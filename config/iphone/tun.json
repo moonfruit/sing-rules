@@ -18,8 +18,10 @@
             "localhost",
             "arpa",
             "local",
+            "test",
             "gingkoo.com",
-            "server.gingkoo"
+            "server.gingkoo",
+            "gingkoo.internal"
           ]
         }
       }
