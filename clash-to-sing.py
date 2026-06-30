@@ -669,7 +669,7 @@ def proxies_to_outbound(
     lazycat_tags = ["DIRECT", "🐱 LazyCat"]
     mitm_tags = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
 
-    outbounds.append(selector("🤖 AI", ai_tags))
+    outbounds.append(selector("🤖 AI", ["🤖 自然选择 AI", *ai_tags]))
     outbounds.append(selector("🤖 Claude", ["🤖 自然选择 Claude", *ai_tags]))
     outbounds.append(selector("🤖 ChatGPT", ["🤖 自然选择 ChatGPT", *ai_tags]))
 
@@ -701,18 +701,11 @@ def proxies_to_outbound(
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
-    outbounds.append(
-        urltest("🤖 自然选择 Claude", costs, groups["🇺🇸 美国节点"], url="https://api.anthropic.com/", interval="1m")
-    )
-    outbounds.append(
-        urltest(
-            "🤖 自然选择 ChatGPT",
-            costs,
-            [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]],
-            url="https://api.openai.com/",
-            interval="1m",
-        )
-    )
+    us_tags = groups["🇺🇸 美国节点"]
+    us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
+    outbounds.append(urltest("🤖 自然选择 AI", costs, us_jp_tags, url="https://gemini.google/"))
+    outbounds.append(urltest("🤖 自然选择 Claude", costs, us_tags, url="https://api.anthropic.com/", interval="1m"))
+    outbounds.append(urltest("🤖 自然选择 ChatGPT", costs, us_jp_tags, url="https://api.openai.com/", interval="1m"))
 
     emitted_providers: set[str] = set()
     for tag, nodes in providers.items():
