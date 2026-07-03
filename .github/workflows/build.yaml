@@ -22,6 +22,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 10
 
       - name: Checkout Rules
         uses: actions/checkout@v6

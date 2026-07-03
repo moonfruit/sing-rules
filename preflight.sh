@@ -38,6 +38,27 @@ check-bt-trackers() {
     fi
 }
 
+# push 事件中 config/ 下的 .list/.exclude 变更时触发规则集构建
+check-config-list() {
+    [ "$GITHUB_EVENT_NAME" = "push" ] || return 1
+    [ -n "$GITHUB_EVENT_PATH" ] && [ -n "$GITHUB_SHA" ] || return 1
+
+    local before
+    before=$(jq -r '.before // empty' "$GITHUB_EVENT_PATH")
+    [ -n "$before" ] || return 1
+    # 全零表示无父提交（首次推送/新分支），跳过
+    case "$before" in *[!0]*) ;; *) return 1 ;; esac
+
+    echo -n "config list/exclude: "
+    if git diff --name-only "$before" "$GITHUB_SHA" 2>/dev/null \
+        | grep -E '^config/.*\.(list|exclude)$'; then
+        return 0
+    else
+        echo "not changed"
+        return 1
+    fi
+}
+
 check-config() {
     echo -n "$1: "
     sha1sum "dat/$1" | awk '{print $1}' | tee "$TEMP"
@@ -65,6 +86,10 @@ if check-v2ray-rules >&2; then
 fi
 echo "--------" >&2
 if check-bt-trackers >&2; then
+    build_rules=1
+fi
+echo "--------" >&2
+if check-config-list >&2; then
     build_rules=1
 fi
 echo "--------" >&2
