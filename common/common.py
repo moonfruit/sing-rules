@@ -1,5 +1,6 @@
 import functools
 import ipaddress
+import re
 import time
 from collections.abc import Callable, Collection, Iterable
 
@@ -121,6 +122,40 @@ def split(rule: Rule) -> list[Rule]:
     return result
 
 
+DOMAIN_KEYS = frozenset(["domain", "domain_suffix", "domain_keyword", "domain_regex"])
+
+
+def suffix_core(suffix: str) -> str:
+    """去掉 domain_suffix 的前导点，得到域名主体。"""
+    return suffix[1:] if suffix.startswith(".") else suffix
+
+
+def domain_parents(domain: str) -> list[str]:
+    """domain 的所有真祖先（按标签边界逐级去掉最左标签），不含自身。"""
+    parts = domain.split(".")
+    return [".".join(parts[i:]) for i in range(1, len(parts))]
+
+
+def _domain_matcher(exclude_rules: list[Rule]):
+    exact: set[str] = set()
+    bare: set[str] = set()  # 无前导点后缀的 core：匹配 apex + 子域
+    dot: set[str] = set()  # 有前导点后缀的 core：仅匹配子域
+    keywords: set[str] = set()
+    regex_strings: set[str] = set()
+    for rule in exclude_rules:
+        for key, values in rule.items():
+            if key == "domain":
+                exact |= as_set(values)
+            elif key == "domain_suffix":
+                for suffix in as_set(values):
+                    (dot if suffix.startswith(".") else bare).add(suffix_core(suffix))
+            elif key == "domain_keyword":
+                keywords |= as_set(values)
+            elif key == "domain_regex":
+                regex_strings |= as_set(values)
+    return exact, bare, dot, keywords, regex_strings
+
+
 def merge(rules: list[Rule], exclude_rules: list[Rule] | None = None) -> list[Rule]:
     merged = {}
     for rule in rules:
@@ -128,11 +163,56 @@ def merge(rules: list[Rule], exclude_rules: list[Rule] | None = None) -> list[Ru
             get_set(merged, key).update(as_set(values))
 
     if exclude_rules:
+        exact, bare, dot, keywords, regex_strings = _domain_matcher(exclude_rules)
+        regexes = [re.compile(r) for r in regex_strings]
+        # 真祖先命中无点/有点任一后缀 core 即被覆盖；apex 仅由无点后缀覆盖。
+        any_parent = bare | dot
+
+        # 非域名 key 保持原字面相减
+        literal = {}
         for rule in exclude_rules:
             for key, values in rule.items():
-                if key in merged:
-                    merged[key] -= as_set(values)
+                if key not in DOMAIN_KEYS:
+                    get_set(literal, key).update(as_set(values))
 
+        def suffix_hits_domain(d: str) -> bool:
+            # exclude 后缀是否命中具体域名 d（祖先链查表，O(标签数)）
+            if d in bare:  # 无点后缀匹配 apex 自身
+                return True
+            return any(p in any_parent for p in domain_parents(d))
+
+        def domain_covered(d: str) -> bool:
+            return (
+                d in exact
+                or suffix_hits_domain(d)
+                or any(k in d for k in keywords)
+                or any(r.search(d) for r in regexes)
+            )
+
+        def suffix_covered(s: str) -> bool:
+            m = suffix_core(s)
+            if s.startswith("."):
+                # 仅子域：m 或其真祖先落在任一后缀 core 内即被完全覆盖
+                if m in any_parent or any(p in any_parent for p in domain_parents(m)):
+                    return True
+            elif suffix_hits_domain(m):  # 含 apex：exclude 需匹配 apex m
+                return True
+            return any(k in m for k in keywords)  # keyword 吃后缀
+
+        for key, values in merged.items():
+            if key == "domain":
+                merged[key] = {d for d in values if not domain_covered(d)}
+            elif key == "domain_suffix":
+                merged[key] = {s for s in values if not suffix_covered(s)}
+            elif key == "domain_keyword":
+                merged[key] = {k for k in values if not any(ek in k for ek in keywords)}
+            elif key == "domain_regex":
+                merged[key] = values - regex_strings
+            elif key in literal:
+                merged[key] = values - literal[key]
+
+    # 丢弃被清空的 key，避免输出空数组
+    merged = {key: values for key, values in merged.items() if values}
     return split(merged)
 
 
