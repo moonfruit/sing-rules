@@ -3,7 +3,6 @@
   "rules": [
     {
       "domain": [
-        "004430.xyz",
         "0123456789nonexistent.com",
         "021912.xyz",
         "0d.kebhana.mx",
@@ -315,6 +314,7 @@
         "torrentzilla.org",
         "tplogin.cn",
         "tr.abiir.top",
+        "tr.abir.ga",
         "tr.bangumi.moe",
         "tr.burnabyhighstar.com",
         "tr.fuckbitcoin.xyz",
@@ -417,7 +417,6 @@
         "tracker.monikadesign.uk",
         "tracker.moxing.party",
         "tracker.mywaifu.best",
-        "tracker.nekomi.cn",
         "tracker.netmap.top",
         "tracker.nighthawk.pw",
         "tracker.open-internet.nl",
@@ -531,6 +530,7 @@
         "yolo.liberbear.com",
         "yuwabits.net",
         "z.paranoid.agency",
+        "zer0day.ch",
         "zone-torrent.net",
         "zte.home",
         "zupix.online"
