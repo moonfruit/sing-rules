@@ -26,3 +26,5 @@ DOMAIN-SUFFIX,hsreplay.net
 DOMAIN-SUFFIX,brickset.com
 # NIST
 DOMAIN-SUFFIX,nist.gov
+# iStat Menus
+DOMAIN-SUFFIX,istatmenus.app
