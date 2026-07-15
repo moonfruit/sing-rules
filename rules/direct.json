@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "004430.xyz",
         "0123456789nonexistent.com",
         "021912.xyz",
         "0d.kebhana.mx",
@@ -419,6 +420,7 @@
         "tracker.nekomi.cn",
         "tracker.netmap.top",
         "tracker.nighthawk.pw",
+        "tracker.nyaa.vc",
         "tracker.open-internet.nl",
         "tracker.openbittorrent.com",
         "tracker.opentorrent.top",
@@ -529,7 +531,6 @@
         "yolo.liberbear.com",
         "yuwabits.net",
         "z.paranoid.agency",
-        "zer0day.ch",
         "zone-torrent.net",
         "zte.home",
         "zupix.online"

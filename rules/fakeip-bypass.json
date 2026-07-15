@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "004430.xyz",
         "021912.xyz",
         "1337.abcvg.info",
         "671234.xyz",
@@ -27,7 +28,6 @@
         "edg3.org",
         "edu-header-airport.com",
         "evan.im",
-        "exodus.desync.com",
         "ff.dorado.sdo.com",
         "fotile.com",
         "gingkoo.com",
@@ -76,6 +76,7 @@
         "proxy.golang.org",
         "ps.res.netease.com",
         "retracker.hotplug.ru",
+        "retracker01-msk-virt.corbina.net",
         "router.bittorrent.com",
         "seedpeer.net",
         "server.gingkoo",
@@ -97,6 +98,7 @@
         "torrentsmd.com",
         "tr.abiir.top",
         "tr.abir.ga",
+        "tr4ck3r.duckdns.org",
         "tracker.7471.top",
         "tracker.anibt.net",
         "tracker.aruku.ovh",
@@ -107,8 +109,6 @@
         "tracker.corpscorp.online",
         "tracker.dhitechnical.com",
         "tracker.dler.com",
-        "tracker.dler.org",
-        "tracker.ducks.party",
         "tracker.foreverpirates.co",
         "tracker.gmi.gd",
         "tracker.ilibr.org",
@@ -117,6 +117,7 @@
         "tracker.manager.v6.navy",
         "tracker.mywaifu.best",
         "tracker.nekomi.cn",
+        "tracker.nyaa.vc",
         "tracker.opentorrent.top",
         "tracker.opentrackr.com",
         "tracker.opentrackr.org",
@@ -128,12 +129,14 @@
         "tracker.skyts.net",
         "tracker.teambelgium.net",
         "tracker.torrent.eu.org",
+        "tracker.tryhackx.org",
         "tracker.waaa.moe",
         "tracker.wildkat.net",
         "tracker.xn--djrq4gl4hvoi.top",
         "tracker.zhuqiy.com",
         "tracker-udp.gbitt.info",
         "tracker1.520.jp",
+        "tracker2.dler.org",
         "trackercdn.kugou.com",
         "ts.net",
         "www.wareztorrent.com",
@@ -141,8 +144,7 @@
         "xnotify.xboxlive.com",
         "y.qq.com",
         "yeelight.com",
-        "yeelink.net",
-        "zer0day.ch"
+        "yeelink.net"
       ],
       "domain_suffix": [
         ".126.net",
