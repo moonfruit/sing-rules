@@ -6,3 +6,5 @@ DOMAIN-SUFFIX,designer.microsoft.com
 DOMAIN-SUFFIX,cline.bot
 # Open Code
 DOMAIN-SUFFIX,opencode.ai
+# Google
+DOMAIN-SUFFIX,gemini.google.com
