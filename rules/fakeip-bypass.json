@@ -66,6 +66,7 @@
         "open.demonii.com",
         "open.ftorrent.com",
         "open.stealth.si",
+        "open.tracker.cl",
         "open.tracker.ink",
         "opentor.org",
         "orgtgju.org",
@@ -110,7 +111,6 @@
         "tracker.nekomi.cn",
         "tracker.nexusstream.eu",
         "tracker.nyaa.vc",
-        "tracker.opentorrent.top",
         "tracker.opentrackr.com",
         "tracker.opentrackr.org",
         "tracker.openwebtorrent.com",
@@ -135,7 +135,8 @@
         "xnotify.xboxlive.com",
         "y.qq.com",
         "yeelight.com",
-        "yeelink.net"
+        "yeelink.net",
+        "zer0day.ch"
       ],
       "domain_suffix": [
         ".126.net",
