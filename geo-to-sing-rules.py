@@ -99,7 +99,7 @@ def main():
     generate("xbox-cn.json", geosite="xbox@cn")
     generate("netflix.json", geosite="netflix", geoip="netflix")
     generate("tiktok.json", geosite="bytedance@!cn")
-    generate("youtube.json", geosite="youtube")
+    generate("youtube.json", geosite=["pikpak", "youtube"])
 
     generate("dev.json", geosite="category-dev")
     generate("dev-cn.json", geosite=["category-dev-cn", "category-dev@cn"])
