@@ -872,6 +872,7 @@ def to_sing(
 ) -> Object:
     outbounds, domains, ips, embies = proxies_to_outbound(local, proxies, saved_countries, overwrite_country)
     return {
+        "$schema": "https://sing-box.sagernet.org/schema.json",
         "outbounds": outbounds,
         "route": {
             "rules": [

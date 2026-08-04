@@ -1,4 +1,5 @@
 {
+  "$schema": "https://sing-box.sagernet.org/schema.json",
   "dns": {
     "servers": [
       {"tag": "dns-resolver", "type": "udp", "server": "119.29.29.29"},
