@@ -1,0 +1,6 @@
+{
+  "$schema": "https://sing-box.sagernet.org/schema.json",
+  "certificate": {
+    "store": "mozilla"
+  }
+}

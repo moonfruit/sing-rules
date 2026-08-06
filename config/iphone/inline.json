@@ -1,0 +1,18 @@
+{
+  "$schema": "https://sing-box.sagernet.org/schema.json",
+  "route": {
+    "rule_set": [
+      {
+        "type": "inline",
+        "tag": "NoIPv6",
+        "rules": [
+          {
+            "type": "logical",
+            "mode": "and",
+            "rules": [{ "query_type": "AAAA" }, { "default_interface_address": ["2000::/3"], "invert": true }]
+          }
+        ]
+      }
+    ]
+  }
+}

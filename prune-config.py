@@ -2,7 +2,7 @@
 """从标准输入读取 sing-box 配置 JSON，裁剪 rule_set / rules / outbounds 后写入标准输出。
 
 保留的 rule_set:
-  GeoSites@!CN, Lan, FakeIpBypass, Direct, GFW, GeoIP@CN, GeoSites@CN, Private, Proxy
+  Direct, DoH, FakeIpBypass, GFW, GeoIP@CN, GeoSites@!CN, GeoSites@CN, NoIPv6, Private, Proxy
 
 处理流程:
   1. 仅保留白名单中的 rule_set，记录被移除的 rule_set
@@ -26,13 +26,14 @@ from common.config import remove_outbounds
 KEEP_OUTBOUND_KEYWORDS = ("NanoCloud", "Ash")
 
 KEEP_RULE_SETS = {
-    "GeoSites@!CN",
-    "Lan",
-    "FakeIpBypass",
     "Direct",
+    "DoH",
+    "FakeIpBypass",
     "GFW",
     "GeoIP@CN",
+    "GeoSites@!CN",
     "GeoSites@CN",
+    "NoIPv6",
     "Private",
     "Proxy",
 }

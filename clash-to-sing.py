@@ -517,10 +517,16 @@ def proxies_to_outbound(
         costs = {"⛰️ Gingkoo": 0, "🧅 Tor Browser": 0}
 
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
-    outbounds.append({"type": "http", "tag": "💻 中间人", "server": "127.0.0.1", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "🏢 中间人", "server": "10.2.20.160", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "🏠 中间人 Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "🏠 中间人 Wired", "server": "192.168.50.80", "server_port": 7899})
+    outbounds.append({"type": "http", "tag": "🌀 Localhost", "server": "127.0.0.1", "server_port": 7899})
+    outbounds.append(
+        {
+            "type": "http",
+            "tag": "💻 MacbookPro",
+            "server": "moons-macbook-m2.local",
+            "server_port": 7899,
+            "domain_resolver": "dns-local",
+        }
+    )
 
     seen = set()
     providers = {}
@@ -664,10 +670,10 @@ def proxies_to_outbound(
 
     ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点")
     playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
-    youtube_tags = prioritize(proxy_tags, "🇮🇳 印度节点")
+    youtube_tags = prioritize(prioritize(proxy_tags, "🇲🇾 马来西亚节点"), "🇮🇳 印度节点")
 
     lazycat_tags = ["DIRECT", "🐱 LazyCat"]
-    mitm_tags = ["DIRECT", "💻 中间人", "🏢 中间人", "🏠 中间人 Wi-Fi", "🏠 中间人 Wired"]
+    mitm_tags = ["DIRECT", "🌀 Localhost", "💻 MacbookPro"]
 
     outbounds.append(selector("🤖 AI", ["🤖 自然选择 AI", *ai_tags]))
     outbounds.append(selector("🤖 Claude", ["🤖 自然选择 Claude", *ai_tags]))
