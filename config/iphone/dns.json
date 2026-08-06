@@ -28,9 +28,7 @@
   },
   "route": {
     "rules": [
-      { "network": "icmp", "preferred_by": "BRIDGE", "outbound": "BRIDGE" },
       { "network": "icmp", "outbound": "DIRECT" },
-      { "ip_is_private": true, "preferred_by": "BRIDGE", "outbound": "BRIDGE" },
       { "ip_is_private": true, "outbound": "DIRECT" },
       { "action": "sniff" },
       { "protocol": "dns", "action": "hijack-dns" },
