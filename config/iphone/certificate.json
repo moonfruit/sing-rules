@@ -1,6 +1,6 @@
 {
   "$schema": "https://sing-box.sagernet.org/schema.json",
-  "http_clients": [
-    { "tag": "http-direct" }
-  ]
+  "certificate": {
+    "store": "mozilla"
+  }
 }

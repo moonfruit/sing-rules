@@ -2,27 +2,25 @@
   "$schema": "https://sing-box.sagernet.org/schema.json",
   "dns": {
     "servers": [
-      {"tag": "dns-resolver", "type": "udp", "server": "119.29.29.29"},
-      {"tag": "dns-direct", "type": "https", "server": "doh.pub", "domain_resolver": "dns-resolver"},
-      {"tag": "dns-proxy", "type": "h3", "server": "one.one.one.one", "detour": "♻️ 自动选择"},
-      {"tag": "dns-gingkoo", "type": "udp", "server": "10.1.2.59"},
-      {"tag": "dns-fakeip", "type": "fakeip", "inet4_range": "22.0.0.0/8"}
+      { "tag": "dns-resolver", "type": "udp", "server": "223.5.5.5" },
+      { "tag": "dns-direct", "type": "h3", "server": "dns.alidns.com", "domain_resolver": "dns-resolver" },
+      { "tag": "dns-proxy", "type": "h3", "server": "one.one.one.one", "detour": "🔰 默认出口" },
+      { "tag": "dns-local", "type": "local" },
+      { "tag": "dns-gingkoo", "type": "udp", "server": "10.1.2.59" },
+      { "tag": "dns-fakeip", "type": "fakeip", "inet4_range": "22.0.0.0/8" }
     ],
     "rules": [
-      {"rule_set": "Lan", "action": "predefined", "rcode": "NXDOMAIN"},
-      {
-        "domain": ["dns.alidns.com", "doh.pub", "dot.pub", "dns.google", "one.one.one.one", "cloudflare-dns.com"],
-        "server": "dns-resolver"
-      },
-      {"domain_suffix": ["server.gingkoo", "gingkoo.internal"], "server": "dns-gingkoo"},
-      {"rule_set": "FakeIpBypass", "server": "dns-direct"},
-      {"query_type": ["A", "AAAA"], "server": "dns-fakeip", "rewrite_ttl": 1},
-      {"clash_mode": "Direct", "server": "dns-direct"},
-      {"clash_mode": "Global", "server": "dns-proxy"},
-      {"rule_set": "GeoSites@CN", "server": "dns-direct"},
-      {"rule_set": "GeoSites@!CN", "server": "dns-proxy"},
-      {"action": "evaluate", "server": "dns-direct"},
-      {"match_response": true, "rule_set": "GeoIP@CN", "action": "respond"}
+      { "preferred_by": "dns-local", "server": "dns-local" },
+      { "domain_suffix": ["server.gingkoo", "gingkoo.internal"], "server": "dns-gingkoo" },
+      { "rule_set": "NoIPv6", "action": "predefined" },
+      { "rule_set": "FakeIpBypass", "server": "dns-direct" },
+      { "query_type": ["A", "AAAA"], "server": "dns-fakeip", "rewrite_ttl": 1 },
+      { "clash_mode": "Direct", "server": "dns-direct" },
+      { "clash_mode": "Global", "server": "dns-proxy" },
+      { "rule_set": "GeoSites@CN", "server": "dns-direct" },
+      { "rule_set": "GeoSites@!CN", "server": "dns-proxy" },
+      { "action": "evaluate", "server": "dns-direct" },
+      { "match_response": true, "rule_set": "GeoIP@CN", "action": "respond" }
     ],
     "final": "dns-proxy",
     "reverse_mapping": true,
@@ -30,44 +28,46 @@
   },
   "route": {
     "rules": [
-      {"network": "icmp", "outbound": "DIRECT"},
-      {"ip_is_private": true, "outbound": "DIRECT"},
-      {"port": 853, "action": "reject", "method": "drop"},
-      {"action": "sniff"},
-      {"protocol": "dns", "action": "hijack-dns"},
+      { "network": "icmp", "preferred_by": "BRIDGE", "outbound": "BRIDGE" },
+      { "network": "icmp", "outbound": "DIRECT" },
+      { "ip_is_private": true, "preferred_by": "BRIDGE", "outbound": "BRIDGE" },
+      { "ip_is_private": true, "outbound": "DIRECT" },
+      { "action": "sniff" },
+      { "protocol": "dns", "action": "hijack-dns" },
       {
         "type": "logical",
         "mode": "and",
         "rules": [
-          {"rule_set": "GeoSites@CN", "invert": true},
-          {"protocol": ["http", "tls", "quic"], "rule_set": "DoH"}
+          { "rule_set": ["GeoIP@CN", "GeoSites@CN"], "invert": true },
+          {
+            "type": "logical",
+            "mode": "or",
+            "rules": [
+              { "network": "tcp", "port": 853 },
+              { "protocol": ["http", "tls"], "rule_set": "DoH" }
+            ]
+          }
+        ],
+        "action": "reject"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          { "rule_set": ["GeoIP@CN", "GeoSites@CN"], "invert": true },
+          {
+            "type": "logical",
+            "mode": "or",
+            "rules": [
+              { "network": "udp", "port": 853 },
+              { "protocol": "quic", "rule_set": "DoH" }
+            ]
+          }
         ],
         "action": "reject",
         "method": "drop"
       },
-      {"protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT"}
-    ],
-    "rule_set": [
-      {
-        "type": "remote",
-        "tag": "GeoSites@!CN",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/geosites-not-cn.srs?ref=main&access_token=$TOKEN"
-      },
-      {
-        "type": "remote",
-        "tag": "DoH",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/doh.srs?ref=main&access_token=$TOKEN"
-      },
-      {
-        "type": "remote",
-        "tag": "Lan",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/lan.srs?ref=main&access_token=$TOKEN"
-      },
-      {
-        "type": "remote",
-        "tag": "FakeIpBypass",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/fakeip-bypass.srs?ref=main&access_token=$TOKEN"
-      }
+      { "protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT" }
     ],
     "default_domain_resolver": "dns-direct"
   }

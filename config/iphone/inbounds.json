@@ -1,11 +1,6 @@
 {
   "$schema": "https://sing-box.sagernet.org/schema.json",
   "inbounds": [
-    {
-      "type": "mixed",
-      "tag": "mixed-in",
-      "listen": "127.0.0.1",
-      "listen_port": 7890
-    }
+    { "type": "mixed", "tag": "mixed-in", "listen": "127.0.0.1", "listen_port": 7890 }
   ]
 }
