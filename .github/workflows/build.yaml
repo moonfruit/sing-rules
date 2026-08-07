@@ -141,14 +141,3 @@ jobs:
           draft: false
           prerelease: false
           make_latest: "true"
-
-      - name: Setup Node
-        if: env.BUILD_RULES == 1 && steps.commit_push.outcome == 'success'
-        uses: actions/setup-node@v7
-        with:
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Publish to npmjs
-        if: env.BUILD_RULES == 1 && steps.commit_push.outcome == 'success'
-        continue-on-error: true
-        run: ./npm-publish.sh  "${{ env.TAG }}"
