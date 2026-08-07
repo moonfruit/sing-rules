@@ -8,7 +8,8 @@
   2. 删除白名单以外的 urltest outbound 及其引用
      (白名单: 自动选择 / 省流节点 / 高级节点 / 自然选择 / 以 🎬 结尾)
   3. 剩余 urltest 中 interval < 3m 时移除该字段
-  4. 清理 outbounds 为空的 selector：信息型节点 (形如 '🌸 NanoCloud 🔴 (...)') 重定向到默认出口，
+  4. 把 '👻 透明代理' 等 selector 的默认出口提到首位
+  5. 清理 outbounds 为空的 selector：信息型节点 (形如 '🌸 NanoCloud 🔴 (...)') 重定向到默认出口，
      其余直接删除并级联清理
 """
 
@@ -31,6 +32,9 @@ INTERVAL_THRESHOLD_SECONDS = 180
 
 DEFAULT_OUTBOUND = "🔰 默认出口"
 INFO_SELECTOR_RE = re.compile(r"[🟢🟡🔴] \([^)]*\)$")
+
+# 这些 selector 在 iPhone / Apple TV 上默认走代理，把默认出口提到首位
+DEFAULT_FIRST_SELECTORS = ("👻 透明代理",)
 
 
 class Action(Enum):
@@ -137,6 +141,17 @@ def _trim_short_intervals(outbounds, threshold_seconds: float) -> None:
             ob.pop("interval", None)
 
 
+def _promote_default_outbound(outbounds) -> None:
+    """把 DEFAULT_FIRST_SELECTORS 中 selector 的默认出口移到 outbounds 首位。"""
+    for ob in outbounds:
+        if ob.get("tag") not in DEFAULT_FIRST_SELECTORS or ob.get("type") != "selector":
+            continue
+        tags = ob.get("outbounds")
+        if not isinstance(tags, list) or DEFAULT_OUTBOUND not in tags:
+            continue
+        ob["outbounds"] = [DEFAULT_OUTBOUND, *(t for t in tags if t != DEFAULT_OUTBOUND)]
+
+
 def _prune_empty_selectors(config: dict) -> None:
     """循环清理 outbounds 为空的 selector，信息型 selector 改为指向默认出口。"""
     while True:
@@ -173,6 +188,7 @@ def main():
         )
         remove_outbounds(config, tags_to_remove)
         _trim_short_intervals(config["outbounds"], INTERVAL_THRESHOLD_SECONDS)
+        _promote_default_outbound(config["outbounds"])
         _prune_empty_selectors(config)
 
     json.dump(config, sys.stdout, ensure_ascii=False, indent=2)
