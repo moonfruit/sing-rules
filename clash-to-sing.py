@@ -524,7 +524,7 @@ def proxies_to_outbound(
             "tag": "💻 MacbookPro",
             "server": "moons-macbook-m2.local",
             "server_port": 7899,
-            "domain_resolver": "dns-local",
+            "domain_resolver": {"server": "dns-local", "strategy": "ipv4_only"},
         }
     )
 
