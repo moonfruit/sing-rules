@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": [
+        "cloudflare-dns.com",
+        "dns.alidns.com",
+        "dns.google",
+        "doh.pub",
+        "dot.pub",
+        "one.one.one.one"
+      ]
+    }
+  ]
+}
