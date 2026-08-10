@@ -6,10 +6,13 @@
       { "tag": "dns-direct", "type": "h3", "server": "dns.alidns.com", "domain_resolver": "dns-resolver" },
       { "tag": "dns-proxy", "type": "h3", "server": "one.one.one.one", "detour": "🔰 默认出口" },
       { "tag": "dns-local", "type": "local" },
+      { "tag": "dns-home", "type": "udp", "server": "192.168.50.1", "server_port": 1053 },
       { "tag": "dns-gingkoo", "type": "udp", "server": "10.1.2.59" },
       { "tag": "dns-fakeip", "type": "fakeip", "inet4_range": "22.0.0.0/8" }
     ],
     "rules": [
+      { "rule_set": "Home", "server": "dns-home" },
+      { "rule_set": "Lan", "action": "predefined", "rcode": "NXDOMAIN" },
       { "domain_suffix": ["server.gingkoo", "gingkoo.internal"], "server": "dns-gingkoo" },
       { "rule_set": "NoIPv6", "action": "predefined" },
       { "rule_set": "FakeIpBypass", "server": "dns-direct" },

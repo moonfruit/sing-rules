@@ -4,6 +4,17 @@
     "rule_set": [
       {
         "type": "inline",
+        "tag": "Home",
+        "rules": [
+          {
+            "type": "logical",
+            "mode": "and",
+            "rules": [{ "domain_suffix": [".lan", ".home.arpa"] }, { "default_interface_address": ["192.168.50.0/24"] }]
+          }
+        ]
+      },
+      {
+        "type": "inline",
         "tag": "NoIPv6",
         "rules": [
           {
