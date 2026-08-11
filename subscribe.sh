@@ -11,7 +11,7 @@ if [[ -z $URL || -z $OUTPUT ]]; then
 fi
 
 if [[ $CLIENT == 'sing-box' ]]; then
-    AGENT="SFA/1.13.16 (sing-box 1.13.16)"
+    AGENT="SFA/1.13.18 (sing-box 1.13.18)"
 else
     AGENT="$CLIENT/*"
 fi
