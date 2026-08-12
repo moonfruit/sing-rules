@@ -31,7 +31,6 @@ def git(repo, *args, check=True, env=None):
         ["git", "-C", str(repo), *args],
         capture_output=True,
         text=True,
-        encoding="utf-8",
         check=check,
         env={**GIT_ENV, **(env or {})},
     )
@@ -48,7 +47,6 @@ def make_repo(base: Path, count: int, oldest_days: float, newest_days: float = 0
         ["git", "init", "--bare", "-b", "main", str(remote)],
         check=True,
         capture_output=True,
-        encoding="utf-8",
         env=GIT_ENV,
     )
     work = base / "work"
@@ -56,7 +54,6 @@ def make_repo(base: Path, count: int, oldest_days: float, newest_days: float = 0
         ["git", "clone", str(remote), str(work)],
         check=True,
         capture_output=True,
-        encoding="utf-8",
         env=GIT_ENV,
     )
 
@@ -75,22 +72,16 @@ def make_repo(base: Path, count: int, oldest_days: float, newest_days: float = 0
             f"c{i}",
             env={"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp},
         )
-    git(work, "push", "-q", "origin", "main", check=True)
+    git(work, "push", "-q", "origin", "main")
     return work, remote
 
 
 def run_script(repo, *args):
-    result = subprocess.run(
+    return subprocess.run(
         ["bash", str(SCRIPT), *args, str(repo)],
         capture_output=True,
+        text=True,
         env=GIT_ENV,
-    )
-    # Decode manually with surrogateescape to handle any encoding issues
-    return subprocess.CompletedProcess(
-        args=result.args,
-        returncode=result.returncode,
-        stdout=result.stdout.decode("utf-8", errors="surrogateescape"),
-        stderr=result.stderr.decode("utf-8", errors="surrogateescape"),
     )
 
 
@@ -142,7 +133,7 @@ class PreflightTest(unittest.TestCase):
 
     def test_missing_repo_argument_aborts(self):
         result = subprocess.run(
-            ["bash", str(SCRIPT)], capture_output=True, text=True, encoding="utf-8", env=GIT_ENV
+            ["bash", str(SCRIPT)], capture_output=True, text=True, env=GIT_ENV
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("用法", result.stderr)
