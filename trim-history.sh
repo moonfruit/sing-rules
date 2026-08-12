@@ -44,12 +44,10 @@ while (($# > 0)); do
         shift 2
         ;;
     --keep-days)
-        # shellcheck disable=SC2034
         KEEP_DAYS="${2:-}"
         shift 2
         ;;
     --dry-run)
-        # shellcheck disable=SC2034
         DRY_RUN=true
         shift
         ;;
@@ -103,21 +101,44 @@ fi
 oldest_keep=$(g rev-list --since="$KEEP_DAYS days ago" "$BRANCH" | tail -1)
 if [[ -z $oldest_keep ]]; then
     echo "最近 $KEEP_DAYS 天内无提交，跳过精简"
+    echo "警告: 提交数 ${count} 已达阈值 ${THRESHOLD}，但精简未执行——最近 ${KEEP_DAYS} 天窗口内没有任何提交。" >&2
+    echo "      rev-list --since 按提交者(committer)日期过滤；若历史曾被批量改写导致 committer 日期停滞在某一时刻，" >&2
+    echo "      窗口会持续判定为空、仓库无限增长，请检查提交的 committer 日期分布。" >&2
     exit 0
 fi
 
 if ! base=$(g rev-parse --verify --quiet "$oldest_keep^"); then
     echo "全部提交都在最近 $KEEP_DAYS 天内，无可裁剪，跳过精简"
+    echo "警告: 提交数 ${count} 已达阈值 ${THRESHOLD}，但精简未执行——全部提交都落在最近 ${KEEP_DAYS} 天窗口内，无可裁剪。" >&2
+    echo "      若这并非预期，请检查提交的 committer 日期是否被批量改写过（窗口按 committer 日期过滤）。" >&2
     exit 0
 fi
 
+# BEGIN merge-preflight
+# 窗口内含合并提交时，rebase 会把它们展平成普通提交，破坏分支结构；
+# 提前发现并跳过，避免落到 ⑥ 的提交数护栏才发现、还要靠日志排查原因。
+merge_count=$(g rev-list --merges --count "$base..$BRANCH")
+if ((merge_count > 0)); then
+    echo "警告: 提交数 ${count} 已达阈值 ${THRESHOLD}，但精简未执行——窗口 ${base}..${BRANCH} 内含 ${merge_count} 个合并提交。" >&2
+    echo "      git rebase 会展平合并提交，可能触发提交数护栏或悄悄丢失分支结构，需人工处理该窗口后再重试。" >&2
+    exit 0
+fi
+# END merge-preflight
+
 keep_count=$(g rev-list --count "$base..$BRANCH")
 old_head=$(g rev-parse "$BRANCH")
+reduction=$((count - keep_count - 1))
 
 echo "当前提交数: $count"
 echo "保留最近 $KEEP_DAYS 天的 $keep_count 个提交 + 1 个新根提交"
-echo "削减: $((count - keep_count - 1)) 个提交"
+echo "削减: ${reduction} 个提交"
 echo "基线提交: $(g log -1 --format='%h %ad %s' --date=short "$base")"
+
+if ((reduction <= 0)); then
+    echo "警告: 提交数 ${count} 已达阈值 ${THRESHOLD}，但窗口外已无可裁剪的提交（削减量为 ${reduction}），跳过精简。" >&2
+    echo "      这通常发生在刚精简完成后又被再次触发，属正常现象，无需处理。" >&2
+    exit 0
+fi
 
 if $DRY_RUN; then
     echo "(--dry-run) 未执行任何改动。"
@@ -153,14 +174,14 @@ fi
 new_head=$(g rev-parse "$tmp_branch")
 new_count=$(g rev-list --count "$tmp_branch")
 
-if ! g diff --quiet "$old_head" "$new_head"; then
+[[ $(g rev-parse "${old_head}^{tree}") == $(g rev-parse "${new_head}^{tree}") ]] || {
     rollback
     die "内容校验失败：新旧历史的工作树不一致，已回滚"
-fi
+}
 
 if ((new_count != keep_count + 1)); then
     rollback
-    die "提交数校验失败：期望 $((keep_count + 1)) 个，实际 $new_count 个，已回滚"
+    die "提交数校验失败：期望 $((keep_count + 1)) 个，实际 ${new_count} 个，已回滚到 ${old_head}；常见原因是窗口 ${base}..${BRANCH} 内含被 rebase 展平的合并提交，请检查该区间的提交结构"
 fi
 
 # ---- ⑦ 强制推送 ----
@@ -175,10 +196,11 @@ fi
 
 g branch -D "$tmp_branch" >/dev/null
 
+echo "精简完成: ${count} -> ${new_count} 个提交（${old_head:0:10} -> ${new_head:0:10}），已强制推送到 origin/${BRANCH}"
+
 # ---- ⑧ 本地瘦身 ----
 # 这会丢弃本地 reflog 中的旧历史。此时推送已成功且内容校验已通过，
-# 旧历史没有保留价值，回收磁盘才是目的。
-g reflog expire --expire=now --all
-g gc --prune=now --quiet
-
-echo "精简完成: $count -> $new_count 个提交，已强制推送到 origin/$BRANCH"
+# 旧历史没有保留价值，回收磁盘才是目的。推送已经完成，这两步失败不应
+# 倒推成「精简失败」，因此只报警、不影响脚本的退出码。
+g reflog expire --expire=now --all || echo "警告: reflog expire 失败，已忽略（推送已成功，不影响结果）" >&2
+g gc --prune=now --quiet || echo "警告: git gc 失败，已忽略（推送已成功，不影响结果）" >&2
