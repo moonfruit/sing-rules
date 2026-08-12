@@ -185,5 +185,87 @@ class BaselineTest(unittest.TestCase):
         self.assertEqual(head(work), before)
 
 
+class TrimTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self._tmp.name)
+        self.addCleanup(self._tmp.cleanup)
+        # 20 个提交跨 60 天，30 天窗口内约 10 个
+        self.work, self.remote = make_repo(self.base, count=20, oldest_days=60)
+        self.before_tree = tree_of(self.work)
+        self.expected_keep = len(
+            git(self.work, "rev-list", "--since=30 days ago", "main")
+            .stdout.strip()
+            .splitlines()
+        )
+
+    def trim(self):
+        result = run_script(self.work, "--threshold", "5", "--keep-days", "30")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        return result
+
+    def test_history_is_rebuilt_to_expected_length(self):
+        self.trim()
+        self.assertEqual(count_commits(self.work), self.expected_keep + 1)
+
+    def test_worktree_content_is_identical(self):
+        self.trim()
+        self.assertEqual(tree_of(self.work), self.before_tree)
+
+    def test_root_commit_is_orphan_with_fixed_message(self):
+        self.trim()
+        root = git(self.work, "rev-list", "--max-parents=0", "main").stdout.strip()
+        self.assertEqual(len(root.splitlines()), 1)
+        msg = git(self.work, "log", "-1", "--format=%s", root).stdout.strip()
+        self.assertEqual(msg, "Initial commit")
+
+    def test_remote_is_force_updated(self):
+        self.trim()
+        self.assertEqual(head(self.remote), head(self.work))
+        fresh = self.base / "fresh"
+        subprocess.run(
+            ["git", "clone", "-q", str(self.remote), str(fresh)],
+            check=True,
+            capture_output=True,
+            env=GIT_ENV,
+        )
+        self.assertEqual(count_commits(fresh), self.expected_keep + 1)
+        self.assertEqual(tree_of(fresh), self.before_tree)
+
+    def test_committer_dates_match_author_dates(self):
+        # 保证窗口语义在多轮精简后依然稳定
+        self.trim()
+        pairs = git(
+            self.work, "log", "--format=%aI %cI", "main"
+        ).stdout.strip().splitlines()
+        for line in pairs:
+            author, committer = line.split()
+            self.assertEqual(author, committer, f"日期不一致: {line}")
+
+    def test_original_author_dates_are_preserved(self):
+        before = git(
+            self.work, "log", "--format=%aI", "--since=30 days ago", "main"
+        ).stdout.strip().splitlines()
+        self.trim()
+        after = git(
+            self.work, "log", "--format=%aI", "main"
+        ).stdout.strip().splitlines()
+        # after 比 before 多一个新根提交
+        self.assertEqual(after[: len(before)], before)
+
+    def test_no_leftover_temp_branch(self):
+        self.trim()
+        branches = git(self.work, "branch", "--format=%(refname:short)").stdout.split()
+        self.assertEqual(branches, ["main"])
+
+    def test_works_without_configured_git_identity(self):
+        # 夹具从未写入 user.name/user.email，全局配置也被屏蔽
+        probe = git(self.work, "config", "--get", "user.name", check=False)
+        self.assertNotEqual(probe.returncode, 0, "夹具不应配置 user.name")
+        self.trim()
+        author = git(self.work, "log", "-1", "--format=%an", "main").stdout.strip()
+        self.assertEqual(author, "github-actions[bot]")
+
+
 if __name__ == "__main__":
     unittest.main()
