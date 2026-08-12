@@ -17,6 +17,7 @@ sing-box 规则集生成工具，基于 [Loyalsoldier/v2ray-rules-dat](https://g
 | `clash-download.sh <list>` | 批量下载 Clash 规则列表 |
 | `clash-merge.sh [--enable-process] <dir>` | 合并目录内 Clash 规则到 sing rule-set |
 | `commit-and-push.sh` | 提交并推送 rules/ 目录更改 |
+| `trim-history.sh [--threshold N] [--keep-days D] [--dry-run] <dir>` | 提交数超阈值时精简 git 历史并强制推送（默认 250 提交 / 保留 30 天） |
 | `npm-publish.sh` | 发布到 npm（`@dkmoonfruit/sing-rules`） |
 
 ## Python 脚本
