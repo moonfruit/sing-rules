@@ -145,5 +145,45 @@ class PreflightTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
 
 
+class BaselineTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self._tmp.name)
+        self.addCleanup(self._tmp.cleanup)
+
+    def test_dry_run_reports_plan_and_changes_nothing(self):
+        # 20 个提交跨 60 天，30 天窗口内约有一半
+        work, remote = make_repo(self.base, count=20, oldest_days=60)
+        before_head = head(work)
+        before_remote = head(remote)
+        result = run_script(work, "--threshold", "5", "--keep-days", "30", "--dry-run")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("当前提交数: 20", result.stdout)
+        self.assertIn("保留", result.stdout)
+        self.assertIn("削减", result.stdout)
+        # dry-run 不得改动本地或远端
+        self.assertEqual(head(work), before_head)
+        self.assertEqual(head(remote), before_remote)
+        self.assertEqual(count_commits(work), 20)
+
+    def test_all_commits_within_window_skips(self):
+        # 全部提交都在 10 天内，30 天窗口无可裁剪
+        work, _ = make_repo(self.base, count=20, oldest_days=10)
+        before = head(work)
+        result = run_script(work, "--threshold", "5", "--keep-days", "30")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("无可裁剪", result.stdout)
+        self.assertEqual(head(work), before)
+
+    def test_no_commits_within_window_skips(self):
+        # 全部提交都在 100~200 天前，30 天窗口内一个都没有
+        work, _ = make_repo(self.base, count=20, oldest_days=200, newest_days=100)
+        before = head(work)
+        result = run_script(work, "--threshold", "5", "--keep-days", "30")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("无提交", result.stdout)
+        self.assertEqual(head(work), before)
+
+
 if __name__ == "__main__":
     unittest.main()
