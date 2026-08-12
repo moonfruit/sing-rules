@@ -13,7 +13,6 @@
 #   --keep-days D   保留最近 D 天的提交，默认 30
 #   --dry-run       只打印将要执行的动作，不做任何改动
 
-# shellcheck disable=SC2034
 set -euo pipefail
 
 THRESHOLD=250
@@ -45,10 +44,12 @@ while (($# > 0)); do
         shift 2
         ;;
     --keep-days)
+        # shellcheck disable=SC2034
         KEEP_DAYS="${2:-}"
         shift 2
         ;;
     --dry-run)
+        # shellcheck disable=SC2034
         DRY_RUN=true
         shift
         ;;
@@ -83,15 +84,15 @@ g rev-parse --git-dir >/dev/null 2>&1 || die "不是 git 仓库: $REPO"
 [[ -z $(g status --porcelain) ]] || die "工作区不干净，跳过精简"
 
 current=$(g symbolic-ref --short HEAD 2>/dev/null || echo "")
-[[ $current == "$BRANCH" ]] || die "当前分支为 '$current', 只支持 $BRANCH"
+[[ $current == "$BRANCH" ]] || die "当前分支为 '$current'，只支持 $BRANCH"
 
 g fetch --quiet origin "$BRANCH" || die "fetch 失败"
 read -r ahead behind < <(g rev-list --left-right --count "$BRANCH...origin/$BRANCH")
-((ahead == 0 && behind == 0)) || die "与 origin/$BRANCH 不同步 (领先 $ahead, 落后 $behind)"
+((ahead == 0 && behind == 0)) || die "与 origin/$BRANCH 不同步（领先 ${ahead}，落后 ${behind}）"
 
 # ---- ② 阈值判断 ----
 count=$(g rev-list --count "$BRANCH")
 if ((count < THRESHOLD)); then
-    echo "提交数 $count 未达阈值 $THRESHOLD, 跳过精简"
+    echo "提交数 $count 未达阈值 ${THRESHOLD}，跳过精简"
     exit 0
 fi
