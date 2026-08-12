@@ -128,6 +128,7 @@ jobs:
       - name: Trim private history
         if: steps.commit_push_private.outcome == 'success'
         continue-on-error: true
+        timeout-minutes: 20
         run: ./trim-history.sh private
 
       - name: Commit and Push
