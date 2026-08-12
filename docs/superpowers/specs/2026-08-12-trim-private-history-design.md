@@ -117,6 +117,10 @@ private 特有的历史策略不应污染它。
 | 工作区有未提交改动 | 退出非 0，不做改动 |
 | 本地与 `origin/main` 不同步 | 退出非 0，不做改动 |
 
+保留窗口按**提交者（committer）日期**计算（`git rev-list --since`），而非作者日期；
+如果历史曾被人工批量改写（如手动 squash），committer 日期会停在改写那一刻，
+窗口的起点也会随之偏移，运维需要留意这一点来判断「窗口为空/无可裁剪」告警是否符合预期。
+
 ### 已识别的坑
 
 - **git identity**：`git commit-tree` 需要 `user.name` / `user.email`。
