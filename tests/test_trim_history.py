@@ -174,6 +174,9 @@ class BaselineTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("无可裁剪", result.stdout)
         self.assertEqual(head(work), before)
+        # fix #1: 已达阈值却跳过必须在 stderr 留下可诊断的告警
+        self.assertIn("已达阈值", result.stderr)
+        self.assertIn("committer", result.stderr)
 
     def test_no_commits_within_window_skips(self):
         # 全部提交都在 100~200 天前，30 天窗口内一个都没有
@@ -183,6 +186,32 @@ class BaselineTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("无提交", result.stdout)
         self.assertEqual(head(work), before)
+        # fix #1: 已达阈值却跳过必须在 stderr 留下可诊断的告警
+        self.assertIn("已达阈值", result.stderr)
+        self.assertIn("committer", result.stderr)
+
+    def test_merge_commit_in_window_warns_and_skips(self):
+        # fix #2: 窗口内含合并提交时，rebase 会展平它，预检需提前拦截并报警
+        work, remote = make_repo(self.base, count=20, oldest_days=60)
+        git(work, "checkout", "-q", "-b", "side", "main~2")
+        (work / "side.txt").write_text("side change\n")
+        git(work, "add", ".")
+        git(work, *FIXTURE_ID, "commit", "-m", "side change")
+        git(work, "checkout", "-q", "main")
+        git(work, *FIXTURE_ID, "merge", "--no-ff", "-m", "merge side", "side")
+        git(work, "push", "-q", "origin", "main")
+        before = head(work)
+        before_tree = tree_of(work)
+        before_remote = head(remote)
+
+        result = run_script(work, "--threshold", "5", "--keep-days", "30")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("合并提交", result.stderr)
+        self.assertIn("已达阈值", result.stderr)
+        self.assertEqual(head(work), before)
+        self.assertEqual(tree_of(work), before_tree)
+        self.assertEqual(head(remote), before_remote)
 
 
 class TrimTest(unittest.TestCase):
@@ -258,6 +287,21 @@ class TrimTest(unittest.TestCase):
         branches = git(self.work, "branch", "--format=%(refname:short)").stdout.split()
         self.assertEqual(branches, ["main"])
 
+    def test_rerun_after_trim_is_zero_reduction_and_skips(self):
+        # fix #4: 刚精简完成后立即再触发一次，count == keep_count + 1，
+        # 削减量为 0，不应该再跑一遍完整的 rebase + 强推
+        self.trim()
+        after_trim_head = head(self.work)
+        after_trim_tree = tree_of(self.work)
+
+        result = run_script(self.work, "--threshold", "5", "--keep-days", "30")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("削减: 0 个提交", result.stdout)
+        self.assertIn("已无可裁剪", result.stderr)
+        self.assertEqual(head(self.work), after_trim_head)
+        self.assertEqual(tree_of(self.work), after_trim_tree)
+
     def test_works_without_configured_git_identity(self):
         # 夹具从未写入 user.name/user.email，全局配置也被屏蔽
         probe = git(self.work, "config", "--get", "user.name", check=False)
@@ -271,6 +315,90 @@ class TrimTest(unittest.TestCase):
         # 但 committer 应为脚本自带身份，证明 rebase 也拿到了身份
         tip_committer = git(self.work, "log", "-1", "--format=%cn", "main").stdout.strip()
         self.assertEqual(tip_committer, "github-actions[bot]")
+
+
+def make_guard_bypass_script(base: Path) -> Path:
+    """复制 trim-history.sh，去掉 fix #2 新增的「窗口内含合并提交」预检
+    （`# BEGIN merge-preflight` / `# END merge-preflight` 标记之间的代码块）。
+
+    生产脚本里这段预检会在到达 ⑥ 的提交数护栏之前就拦截合并提交场景（见
+    BaselineTest.test_merge_commit_in_window_warns_and_skips），护栏本身因此
+    在正常路径上不可达。为了仍然对护栏 + 回滚这条代码本身留有回归覆盖，
+    这里用去掉预检的副本重现同样的场景，让它真正走到 ⑥，验证回滚不变。
+    """
+    src = SCRIPT.read_text()
+    start = src.index("# BEGIN merge-preflight")
+    end = src.index("# END merge-preflight") + len("# END merge-preflight\n")
+    patched = src[:start] + src[end:]
+    out = base / "trim-history-guard-bypass.sh"
+    out.write_text(patched)
+    out.chmod(0o755)
+    return out
+
+
+class RollbackTest(unittest.TestCase):
+    """fix #5：四个 die + rollback 调用点里，覆盖推送被拒绝、以及（通过预检
+    被绕过的副本）提交数护栏真正触发时，两者都能把工作区和远端恢复原状。
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self._tmp.name)
+        self.addCleanup(self._tmp.cleanup)
+
+    def test_push_rejected_rolls_back(self):
+        work, remote = make_repo(self.base, count=20, oldest_days=60)
+        before_head = head(work)
+        before_tree = tree_of(work)
+        before_remote_count = count_commits(remote)
+
+        hook = remote / "hooks" / "pre-receive"
+        hook.write_text("#!/bin/sh\nexit 1\n")
+        hook.chmod(0o755)
+
+        result = run_script(work, "--threshold", "5", "--keep-days", "30")
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(head(work), before_head)
+        self.assertEqual(tree_of(work), before_tree)
+        branches = git(work, "branch", "--format=%(refname:short)").stdout.split()
+        self.assertEqual(branches, ["main"])
+        self.assertEqual(git(work, "status", "--porcelain").stdout.strip(), "")
+        self.assertEqual(count_commits(remote), before_remote_count)
+
+    def test_count_guard_trip_rolls_back(self):
+        # fix #2 的预检使这个场景在生产脚本里根本走不到 ⑥ 的护栏（已由
+        # test_merge_commit_in_window_warns_and_skips 覆盖）；这里用去掉预检
+        # 的副本，验证护栏本身在真正触发时的回滚行为没有被破坏。
+        work, remote = make_repo(self.base, count=20, oldest_days=60)
+        git(work, "checkout", "-q", "-b", "side", "main~2")
+        (work / "side.txt").write_text("side change\n")
+        git(work, "add", ".")
+        git(work, *FIXTURE_ID, "commit", "-m", "side change")
+        git(work, "checkout", "-q", "main")
+        git(work, *FIXTURE_ID, "merge", "--no-ff", "-m", "merge side", "side")
+        git(work, "push", "-q", "origin", "main")
+
+        before_head = head(work)
+        before_tree = tree_of(work)
+        before_remote = head(remote)
+
+        script = make_guard_bypass_script(self.base)
+        result = subprocess.run(
+            ["bash", str(script), "--threshold", "5", "--keep-days", "30", str(work)],
+            capture_output=True,
+            text=True,
+            env=GIT_ENV,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("提交数校验失败", result.stderr)
+        self.assertEqual(head(work), before_head)
+        self.assertEqual(tree_of(work), before_tree)
+        branches = git(work, "branch", "--format=%(refname:short)").stdout.split()
+        self.assertEqual(branches, ["main", "side"])
+        self.assertEqual(git(work, "status", "--porcelain").stdout.strip(), "")
+        self.assertEqual(head(remote), before_remote)
 
 
 if __name__ == "__main__":
