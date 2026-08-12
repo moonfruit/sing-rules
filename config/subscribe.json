@@ -1,8 +1,7 @@
 {
   "ash": {
     "url_env": "ASH_URL",
-    "output": "dat/ash.b64",
-    "client": "shadowrocket",
+    "output": "dat/ash.json",
     "interval": 86400
   },
   "nanocloud": {
