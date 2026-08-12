@@ -112,7 +112,6 @@ if ! base=$(g rev-parse --verify --quiet "$oldest_keep^"); then
 fi
 
 keep_count=$(g rev-list --count "$base..$BRANCH")
-# shellcheck disable=SC2034
 old_head=$(g rev-parse "$BRANCH")
 
 echo "当前提交数: $count"
@@ -124,3 +123,62 @@ if $DRY_RUN; then
     echo "(--dry-run) 未执行任何改动。"
     exit 0
 fi
+
+# ---- ④ 创建孤儿根提交 ----
+# 用子 shell 隔离日期环境变量，避免泄漏到后续的 rebase
+base_date=$(g log -1 --format=%aI "$base")
+new_root=$(
+    export GIT_AUTHOR_DATE="$base_date" GIT_COMMITTER_DATE="$base_date"
+    g commit-tree "$base^{tree}" -m "Initial commit"
+)
+
+# ---- ⑤ 在临时分支上重放 ----
+tmp_branch="trim-history-tmp"
+g branch -f "$tmp_branch" "$BRANCH"
+
+rollback() {
+    g rebase --abort >/dev/null 2>&1 || true
+    g checkout -q "$BRANCH" >/dev/null 2>&1 || true
+    g reset --hard --quiet "$old_head"
+    g branch -D "$tmp_branch" >/dev/null 2>&1 || true
+}
+
+if ! g rebase --quiet --committer-date-is-author-date \
+    --onto "$new_root" "$base" "$tmp_branch"; then
+    rollback
+    die "重放失败，已回滚到 $old_head"
+fi
+
+# ---- ⑥ 护栏校验 ----
+new_head=$(g rev-parse "$tmp_branch")
+new_count=$(g rev-list --count "$tmp_branch")
+
+if ! g diff --quiet "$old_head" "$new_head"; then
+    rollback
+    die "内容校验失败：新旧历史的工作树不一致，已回滚"
+fi
+
+if ((new_count != keep_count + 1)); then
+    rollback
+    die "提交数校验失败：期望 $((keep_count + 1)) 个，实际 $new_count 个，已回滚"
+fi
+
+# ---- ⑦ 强制推送 ----
+g checkout -q "$BRANCH"
+g reset --hard --quiet "$new_head"
+
+if ! g push --force-with-lease origin "$BRANCH"; then
+    g reset --hard --quiet "$old_head"
+    g branch -D "$tmp_branch" >/dev/null
+    die "推送失败，已回滚到 $old_head"
+fi
+
+g branch -D "$tmp_branch" >/dev/null
+
+# ---- ⑧ 本地瘦身 ----
+# 这会丢弃本地 reflog 中的旧历史。此时推送已成功且内容校验已通过，
+# 旧历史没有保留价值，回收磁盘才是目的。
+g reflog expire --expire=now --all
+g gc --prune=now --quiet
+
+echo "精简完成: $count -> $new_count 个提交，已强制推送到 origin/$BRANCH"
