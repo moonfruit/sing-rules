@@ -120,9 +120,15 @@ jobs:
         run: ./build-sing-rules.sh
 
       - name: Commit and Push (private)
+        id: commit_push_private
         continue-on-error: true
         run: ../commit-and-push.sh "Update config"
         working-directory: private
+
+      - name: Trim private history
+        if: steps.commit_push_private.outcome == 'success'
+        continue-on-error: true
+        run: ./trim-history.sh private
 
       - name: Commit and Push
         id: commit_push

@@ -117,6 +117,8 @@ echo ">>> 提交 private"
         git add .
         git commit -m "Update config"
         git push
+        echo ">>> 检查 private 历史体积"
+        "$BIN/trim-history.sh" "$PRIVATE_DIR" || echo "  private: 历史精简跳过或失败（不影响构建）"
     else
         echo "  private: 无变更"
     fi
