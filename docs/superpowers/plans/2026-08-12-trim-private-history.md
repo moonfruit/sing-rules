@@ -548,12 +548,20 @@ class TrimTest(unittest.TestCase):
         self.assertEqual(branches, ["main"])
 
     def test_works_without_configured_git_identity(self):
-        # 夹具从未写入 user.name/user.email，全局配置也被屏蔽
+        # 夹具从未写入 user.name/user.email，全局配置也被屏蔽。
+        # 脚本自带身份要在两处落地：commit-tree 造的根提交（作者）
+        # 和 rebase 重放的提交（提交者）。rebase 保留原作者，
+        # 所以不能断言 tip 的作者。
         probe = git(self.work, "config", "--get", "user.name", check=False)
         self.assertNotEqual(probe.returncode, 0, "夹具不应配置 user.name")
         self.trim()
-        author = git(self.work, "log", "-1", "--format=%an", "main").stdout.strip()
-        self.assertEqual(author, "github-actions[bot]")
+        root = git(self.work, "rev-list", "--max-parents=0", "main").stdout.strip()
+        root_author = git(self.work, "log", "-1", "--format=%an", root).stdout.strip()
+        self.assertEqual(root_author, "github-actions[bot]")
+        tip_committer = git(
+            self.work, "log", "-1", "--format=%cn", "main"
+        ).stdout.strip()
+        self.assertEqual(tip_committer, "github-actions[bot]")
 ```
 
 - [ ] **Step 2: 运行测试确认失败**
