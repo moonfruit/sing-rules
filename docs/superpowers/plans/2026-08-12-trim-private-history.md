@@ -302,15 +302,17 @@ current=$(g symbolic-ref --short HEAD 2>/dev/null || echo "")
 
 g fetch --quiet origin "$BRANCH" || die "fetch 失败"
 read -r ahead behind < <(g rev-list --left-right --count "$BRANCH...origin/$BRANCH")
-((ahead == 0 && behind == 0)) || die "与 origin/$BRANCH 不同步（领先 $ahead，落后 $behind）"
+((ahead == 0 && behind == 0)) || die "与 origin/$BRANCH 不同步（领先 ${ahead}，落后 ${behind}）"
 
 # ---- ② 阈值判断 ----
 count=$(g rev-list --count "$BRANCH")
 if ((count < THRESHOLD)); then
-    echo "提交数 $count 未达阈值 $THRESHOLD，跳过精简"
+    echo "提交数 $count 未达阈值 ${THRESHOLD}，跳过精简"
     exit 0
 fi
 ```
+
+**注意花括号**：在 `set -u` 下，裸变量名后紧跟全角标点（`${ahead}，`）会让 bash 把标点的 UTF-8 首字节并入变量名，报 "unbound variable" 并终止。凡是变量后面直接跟全角标点、中间没有空格的位置，都必须写成 `${var}`。
 
 - [ ] **Step 4: 赋予可执行权限并运行 shellcheck**
 
