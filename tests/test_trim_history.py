@@ -263,8 +263,14 @@ class TrimTest(unittest.TestCase):
         probe = git(self.work, "config", "--get", "user.name", check=False)
         self.assertNotEqual(probe.returncode, 0, "夹具不应配置 user.name")
         self.trim()
-        author = git(self.work, "log", "-1", "--format=%an", "main").stdout.strip()
-        self.assertEqual(author, "github-actions[bot]")
+        # 根提交由 commit-tree 创建，author 应为脚本自带身份
+        root = git(self.work, "rev-list", "--max-parents=0", "main").stdout.strip()
+        root_author = git(self.work, "log", "-1", "--format=%an", root).stdout.strip()
+        self.assertEqual(root_author, "github-actions[bot]")
+        # tip 提交的 author 来自 rebase 保留的原始提交者（另有测试覆盖），
+        # 但 committer 应为脚本自带身份，证明 rebase 也拿到了身份
+        tip_committer = git(self.work, "log", "-1", "--format=%cn", "main").stdout.strip()
+        self.assertEqual(tip_committer, "github-actions[bot]")
 
 
 if __name__ == "__main__":
