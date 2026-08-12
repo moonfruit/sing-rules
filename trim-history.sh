@@ -96,3 +96,31 @@ if ((count < THRESHOLD)); then
     echo "提交数 $count 未达阈值 ${THRESHOLD}，跳过精简"
     exit 0
 fi
+
+# ---- ③ 定位基线 ----
+# 注意：git rev-list --since 过滤的是提交者日期（committer date），
+# 重放时用 --committer-date-is-author-date 保证两者一致，窗口语义才稳定。
+oldest_keep=$(g rev-list --since="$KEEP_DAYS days ago" "$BRANCH" | tail -1)
+if [[ -z $oldest_keep ]]; then
+    echo "最近 $KEEP_DAYS 天内无提交，跳过精简"
+    exit 0
+fi
+
+if ! base=$(g rev-parse --verify --quiet "$oldest_keep^"); then
+    echo "全部提交都在最近 $KEEP_DAYS 天内，无可裁剪，跳过精简"
+    exit 0
+fi
+
+keep_count=$(g rev-list --count "$base..$BRANCH")
+# shellcheck disable=SC2034
+old_head=$(g rev-parse "$BRANCH")
+
+echo "当前提交数: $count"
+echo "保留最近 $KEEP_DAYS 天的 $keep_count 个提交 + 1 个新根提交"
+echo "削减: $((count - keep_count - 1)) 个提交"
+echo "基线提交: $(g log -1 --format='%h %ad %s' --date=short "$base")"
+
+if $DRY_RUN; then
+    echo "(--dry-run) 未执行任何改动。"
+    exit 0
+fi
