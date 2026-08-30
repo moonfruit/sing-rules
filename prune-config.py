@@ -2,10 +2,12 @@
 """从标准输入读取 sing-box 配置 JSON，裁剪 rule_set / rules / outbounds 后写入标准输出。
 
 保留的 rule_set:
-  Direct, DoH, FakeIpBypass, GFW, GeoIP@CN, GeoSites@!CN, GeoSites@CN, NoIPv6, Private, Proxy
+  Direct, DoH, FakeIpBypass, GFW, GeoIP@CN, GeoSites@!CN, GeoSites@CN, Home, Lan,
+  NoIPv6, Private, Proxy
 
 处理流程:
-  1. 仅保留白名单中的 rule_set，记录被移除的 rule_set
+  1. 仅保留白名单中的 rule_set，记录被移除的 rule_set；
+     dns.rules 不参与裁剪，若其引用了被移除的 rule_set 则直接报错
   2. 扫描 route.rules：凡引用被移除 rule_set 的顶层规则一并删除，记录这些规则的 outbound
   3. 再扫描 route.rules：若规则的 outbound 落在记录集合中且该规则未引用保留的 rule_set，
      则同样删除（清理 AI/ChatGPT 这类依附出口的探测规则）
@@ -33,6 +35,8 @@ KEEP_RULE_SETS = {
     "GeoIP@CN",
     "GeoSites@!CN",
     "GeoSites@CN",
+    "Home",
+    "Lan",
     "NoIPv6",
     "Private",
     "Proxy",
@@ -46,6 +50,14 @@ def rule_set_tags(rule: dict) -> list[str]:
     if isinstance(rs, list):
         return [x for x in rs if isinstance(x, str)]
     return []
+
+
+def rule_set_tags_deep(rule: dict) -> list[str]:
+    tags = rule_set_tags(rule)
+    for nested in rule.get("rules", []) or []:
+        if isinstance(nested, dict):
+            tags.extend(rule_set_tags_deep(nested))
+    return tags
 
 
 def rule_refs_any(rule: dict, targets: set[str]) -> bool:
@@ -69,6 +81,23 @@ def main() -> None:
     route["rule_set"] = kept_sets
     removed_set_tags = set(removed_sets)
     kept_set_tags = set(KEEP_RULE_SETS)
+
+    # dns.rules 不做裁剪：一旦引用了被移除的 rule_set，生成的配置无法通过 sing-box check
+    dangling = sorted(
+        {
+            tag
+            for rule in (config.get("dns", {}) or {}).get("rules", []) or []
+            if isinstance(rule, dict)
+            for tag in rule_set_tags_deep(rule)
+            if tag in removed_set_tags
+        }
+    )
+    if dangling:
+        raise SystemExit(
+            "dns.rules 引用了被移除的 rule_set: "
+            + ", ".join(dangling)
+            + "，请将其加入 KEEP_RULE_SETS"
+        )
 
     # Pass 1: 标记引用被删 rule_set 的规则
     removed_outbounds: set[str] = set()
