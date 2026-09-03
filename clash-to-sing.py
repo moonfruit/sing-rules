@@ -675,7 +675,14 @@ def proxies_to_outbound(
     playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
 
     lazycat_tags = ["DIRECT", "🐱 LazyCat"]
-    mitm_tags = ["DIRECT", "🌀 Localhost", "💻 MacbookPro"]
+    mitm_tags = [
+        "DIRECT",
+        "🌀 Localhost",
+        "💻 MacbookPro",
+        "💻 MacbookPro Office",
+        "💻 MacbookPro Wi-Fi",
+        "💻 MacbookPro Wired",
+    ]
 
     outbounds.append(selector("🤖 AI", ["🤖 自然选择 AI", *ai_tags]))
     outbounds.append(selector("🤖 Claude", ["🤖 自然选择 Claude", *ai_tags]))
