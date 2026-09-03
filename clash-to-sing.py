@@ -670,7 +670,6 @@ def proxies_to_outbound(
 
     ai_tags = prioritize(proxy_tags, "🇺🇸 美国节点")
     playstation_tags = prioritize(proxy_tags, "🇭🇰 香港节点")
-    youtube_tags = prioritize(prioritize(proxy_tags, "🇲🇾 马来西亚节点"), "🇮🇳 印度节点")
 
     lazycat_tags = ["DIRECT", "🐱 LazyCat"]
     mitm_tags = ["DIRECT", "🌀 Localhost", "💻 MacbookPro"]
@@ -697,7 +696,7 @@ def proxies_to_outbound(
     outbounds.append(selector("🎥 Disney+", proxy_tags))
     outbounds.append(selector("🎥 Netflix", proxy_tags))
     outbounds.append(selector("🎥 TikTok", ai_tags))
-    outbounds.append(selector("🎥 YouTube", youtube_tags))
+    outbounds.append(selector("🎥 YouTube", proxy_tags))
 
     outbounds.append(selector("🐱 懒猫微服", lazycat_tags))
     outbounds.append(selector("🔍 调试出口", mitm_tags))
