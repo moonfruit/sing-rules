@@ -527,6 +527,9 @@ def proxies_to_outbound(
             "domain_resolver": {"server": "dns-local", "strategy": "ipv4_only"},
         }
     )
+    outbounds.append({"type": "http", "tag": "💻 MacbookPro Office", "server": "10.2.20.199", "server_port": 7899})
+    outbounds.append({"type": "http", "tag": "💻 MacbookPro Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
+    outbounds.append({"type": "http", "tag": "💻 MacbookPro Wired", "server": "192.168.50.80", "server_port": 7899})
 
     seen = set()
     providers = {}
