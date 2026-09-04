@@ -27,6 +27,7 @@ from common import (
 from common.io import open_path
 from common.object import as_hashable, copy_without_tag
 from common.outbound import safe_find_country
+from common.sort import sort_by_variant
 
 __FLAG_MAP = {
     "AR": "🇦🇷",
@@ -1019,6 +1020,7 @@ class ConfigFile:
     format: str = "clash"
     info: ConfigInfo = None
     emby: ConfigEmby = None
+    sort: str = None
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
@@ -1122,6 +1124,8 @@ def load_proxies(config: ConfigFile) -> list[Object]:
             }
         proxy["cost"] = config.cost
         proxy["format"] = config.format
+    if config.sort:
+        proxies = sort_by_variant(proxies, config.sort, key=lambda proxy: str(proxy["name"]))
     return proxies
 
 
