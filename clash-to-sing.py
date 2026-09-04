@@ -716,8 +716,8 @@ def proxies_to_outbound(
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
-    us_tags = groups["🇺🇸 美国节点"]
-    us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
+    us_tags = deprioritize(groups["🇺🇸 美国节点"], "⛰️ Gingkoo")
+    us_jp_tags = deprioritize([*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]], "⛰️ Gingkoo")
     outbounds.append(urltest("🤖 自然选择 AI", costs, us_jp_tags, url="https://gemini.google/"))
     outbounds.append(urltest("🤖 自然选择 Claude", costs, us_tags, url="https://api.anthropic.com/", interval="1m"))
     outbounds.append(urltest("🤖 自然选择 ChatGPT", costs, us_jp_tags, url="https://api.openai.com/", interval="1m"))
@@ -748,6 +748,12 @@ def prioritize(tags, prefix, *prepend):
     head = [x for x in tags if x.startswith(prefix)]
     tail = [x for x in tags if not x.startswith(prefix)]
     return [*prepend, *head, *tail]
+
+
+def deprioritize(tags, prefix, *append):
+    head = [x for x in tags if not x.startswith(prefix)]
+    tail = [x for x in tags if x.startswith(prefix)]
+    return [*head, *tail, *append]
 
 
 def emby_name(name):
