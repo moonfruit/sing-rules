@@ -38,6 +38,7 @@ sing-box 规则集生成工具，基于 [Loyalsoldier/v2ray-rules-dat](https://g
 - `io.py`：`open_path`（支持 `-` 标准输入/输出）
 - `object.py`：`as_hashable`、`copy_without_tag`、`simplify_dict`
 - `outbound.py`：`safe_find_country`（IP 归属地检测）
+- `sort.py`：`sort_by_variant`（按正则 base/variant 把节点的入口变种排在一起）
 - `yaml.py`：PyYAML 封装
 
 ## 目录结构
@@ -45,7 +46,7 @@ sing-box 规则集生成工具，基于 [Loyalsoldier/v2ray-rules-dat](https://g
 ```
 config/         # 订阅配置（config.json 定义数据源）
   iphone/       # iPhone 专用配置片段
-config/config.json # 订阅列表（ConfigFile 格式，含 name/cost/format/emby）
+config/config.json # 订阅列表（ConfigFile 格式，含 name/cost/format/sort/emby）
 dat/            # v2ray 原始 geo 数据（geoip.dat / geosite.dat）
 preflight/      # 预处理脚本及 saved-countries.json（节点国家缓存）
 rules/          # 输出目录：*.json（源码格式）+ *.srs（二进制格式）

@@ -10,6 +10,7 @@
     "cost": 1.0,
     "path": "dat/ash.json",
     "format": "sing-box",
+    "sort": "^(?P<base>.+?)(?: · (?P<variant>.+))?$",
     "emby": {
       "domain": ["ask.ash.yt", "tv.ash.yt"],
       "exclude": ["美国", "日本", "动态"],
