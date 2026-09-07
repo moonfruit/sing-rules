@@ -33,8 +33,9 @@ DOMAIN-SUFFIX,fotile.com
 DOMAIN-SUFFIX,671234.xyz
 DOMAIN-SUFFIX,alicdn.win
 DOMAIN-SUFFIX,demo-chat-airport.com
-DOMAIN-SUFFIX,edu-header-airport.com
 DOMAIN-SUFFIX,edg3.org
+DOMAIN-SUFFIX,edu-header-airport.com
+DOMAIN-SUFFIX,staticlane.org
 # Router
 DOMAIN,moonfruit.asuscomm.com
 # BitTorrent

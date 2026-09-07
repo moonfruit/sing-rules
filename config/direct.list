@@ -6,9 +6,6 @@ DOMAIN-SUFFIX,bigmodel.cn
 DOMAIN-REGEX,\bspeedtest\b
 # IoT
 DOMAIN-SUFFIX,miot-spec.com
-DOMAIN-SUFFIX,alicdn.win
-DOMAIN-SUFFIX,demo-chat-airport.com
-DOMAIN-SUFFIX,v2ray.in
 # BitTorrent
 DOMAIN,dht.libtorrent.org
 DOMAIN,dht.transmissionbt.com
