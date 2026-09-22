@@ -8,3 +8,5 @@ DOMAIN-SUFFIX,cline.bot
 DOMAIN-SUFFIX,opencode.ai
 # Google
 DOMAIN-SUFFIX,gemini.google.com
+# TypeSafe
+DOMAIN-SUFFIX,typesafe.ai
