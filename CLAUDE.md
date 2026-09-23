@@ -96,4 +96,7 @@ zoo/            # 额外规则资源
 - 成本标记：`cost < 1.5` 为省流节点（🛢️），`cost > 1` 为高级节点（👍）
 - 协议标记：hy2（🌪️）、ss（🚀）、trojan（🐴）、tuic（🦬）、vless（🦢）、vmess（🐙）
 - 国家检测：`preflight/saved-countries.json` 缓存节点归属地
+- 订阅自带 CA：sing-box 订阅顶层 `certificate.certificate` 下发的自签 CA（NanoCloud 的 `www.bing.com`），
+  由 `common/certificate.py` 按 SAN 匹配 `server_name` 下放到出站 `tls.certificate`；
+  不合并到全局（等于让机场能对该域名做中间人），也不给其它出站加（出站级 certificate 会替换系统信任根）
 - CDN：规则集通过 `fastly.jsdelivr.net` 分发（或 Gitee 私有）

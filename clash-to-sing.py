@@ -24,6 +24,7 @@ from common import (
     simplify_dict,
     yaml,
 )
+from common.certificate import attach_certificates
 from common.io import open_path
 from common.object import as_hashable, copy_without_tag
 from common.outbound import safe_find_country
@@ -1095,11 +1096,13 @@ def load_sing_box_proxies(path: Path) -> list[Object]:
         config = json.load(f)
     if "outbounds" not in config:
         return []
-    return [
-        {"name": outbound["tag"], "server": outbound["server"], "outbound": outbound}
-        for outbound in config["outbounds"]
-        if outbound["type"] not in ("direct", "selector", "urltest")
+    outbounds = [
+        outbound for outbound in config["outbounds"] if outbound["type"] not in ("direct", "selector", "urltest")
     ]
+    # 订阅顶层下发的自签 CA，只取 outbounds 会丢掉它
+    if pems := config.get("certificate", {}).get("certificate"):
+        attach_certificates(outbounds, [pems] if isinstance(pems, str) else pems)
+    return [{"name": outbound["tag"], "server": outbound["server"], "outbound": outbound} for outbound in outbounds]
 
 
 def load_proxies(config: ConfigFile) -> list[Object]:
