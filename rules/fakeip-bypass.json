@@ -3,7 +3,6 @@
   "rules": [
     {
       "domain": [
-        "004430.xyz",
         "1.tracker.eu.org",
         "1337.abcvg.info",
         "671234.xyz",
@@ -108,6 +107,7 @@
         "tracker.dler.com",
         "tracker.dler.org",
         "tracker.ducks.party",
+        "tracker.farted.net",
         "tracker.foreverpirates.co",
         "tracker.gmi.gd",
         "tracker.ilibr.org",
@@ -128,7 +128,6 @@
         "tracker.skynetcloud.site",
         "tracker.skyts.net",
         "tracker.torrent.eu.org",
-        "tracker.tryhackx.org",
         "tracker.waaa.moe",
         "tracker.wildkat.net",
         "tracker.willy.pro",
