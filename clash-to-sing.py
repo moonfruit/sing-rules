@@ -842,8 +842,8 @@ def build_local_rule_sets(local: bool, gitee_token: str | None):
     if not local:
         return []
     return [
-        rule_set(local, gitee_token, "AI:Direct", "rules/ai-direct.srs"),
-        rule_set(local, gitee_token, "AI:Process", "rules/ai-proc.srs"),
+        rule_set(gitee_token, "AI:Direct", "rules/ai-direct.srs"),
+        rule_set(gitee_token, "AI:Process", "rules/ai-proc.srs"),
     ]
 
 
@@ -853,7 +853,7 @@ __CDN = "fastly.jsdelivr.net"
 # __CDN = "cdn.jsdmirror.cn"
 
 
-def rule_set(local: bool, gitee_token: str | None, tag: str, url: str):
+def rule_set(gitee_token: str | None, tag: str, url: str):
     # noinspection HttpUrlsUsage
     if url.startswith("http://") or url.startswith("https://"):
         url_to_use = url
@@ -867,17 +867,13 @@ def rule_set(local: bool, gitee_token: str | None, tag: str, url: str):
     else:
         format_to_use = "binary"
 
-    if local:
-        options = {}
-    else:
-        options = {"download_detour": "DIRECT"}
-
+    # 不写 download_detour：sing-box 1.14 起弃用、1.15 run 时 FATAL。下载走使用方的
+    # default_http_client（路由器 sing-router 与 iPhone 配置都是 http-direct）。
     return {
         "type": "remote",
         "tag": tag,
         "format": format_to_use,
         "url": url_to_use,
-        **options,
     }
 
 
@@ -947,35 +943,35 @@ def to_sing(
                 {"inbound": ["direct-in", "redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
             ],
             "rule_set": [
-                rule_set(local, gitee_token, "AI", "rules/ai.srs"),
-                rule_set(local, gitee_token, "Anthropic", "rules/anthropic.srs"),
-                rule_set(local, gitee_token, "Apple", "rules/apple.srs"),
-                rule_set(local, gitee_token, "Block", "rules/block.srs"),
-                rule_set(local, gitee_token, "Development", "rules/dev.srs"),
-                rule_set(local, gitee_token, "Development@CN", "rules/dev-cn.srs"),
-                rule_set(local, gitee_token, "Direct", "rules/direct.srs"),
-                rule_set(local, gitee_token, "Disney+", "rules/disney-plus.srs"),
-                rule_set(local, gitee_token, "GFW", "rules/gfw.srs"),
-                rule_set(local, gitee_token, "Games", "rules/games.srs"),
-                rule_set(local, gitee_token, "Games@CN", "rules/games-cn.srs"),
-                rule_set(local, gitee_token, "GeoIP@CN", "rules/geoip-cn.srs"),
-                rule_set(local, gitee_token, "GeoSites@CN", "rules/geosites-cn.srs"),
-                rule_set(local, gitee_token, "Microsoft", "rules/microsoft.srs"),
-                rule_set(local, gitee_token, "Netflix", "rules/netflix.srs"),
-                rule_set(local, gitee_token, "Nintendo", "rules/nintendo.srs"),
-                rule_set(local, gitee_token, "Nintendo@CN", "rules/nintendo-cn.srs"),
-                rule_set(local, gitee_token, "OpenAI", "rules/openai.srs"),
-                rule_set(local, gitee_token, "PlayStation", "rules/playstation.srs"),
-                rule_set(local, gitee_token, "PlayStation@CN", "rules/playstation-cn.srs"),
-                rule_set(local, gitee_token, "Private", "rules/private.srs"),
-                rule_set(local, gitee_token, "Proxy", "rules/proxy.srs"),
-                rule_set(local, gitee_token, "Sources", "rules/sources.srs"),
-                rule_set(local, gitee_token, "Steam", "rules/steam.srs"),
-                rule_set(local, gitee_token, "Steam@CN", "rules/steam-cn.srs"),
-                rule_set(local, gitee_token, "TikTok", "rules/tiktok.srs"),
-                rule_set(local, gitee_token, "Xbox", "rules/xbox.srs"),
-                rule_set(local, gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
-                rule_set(local, gitee_token, "YouTube", "rules/youtube.srs"),
+                rule_set(gitee_token, "AI", "rules/ai.srs"),
+                rule_set(gitee_token, "Anthropic", "rules/anthropic.srs"),
+                rule_set(gitee_token, "Apple", "rules/apple.srs"),
+                rule_set(gitee_token, "Block", "rules/block.srs"),
+                rule_set(gitee_token, "Development", "rules/dev.srs"),
+                rule_set(gitee_token, "Development@CN", "rules/dev-cn.srs"),
+                rule_set(gitee_token, "Direct", "rules/direct.srs"),
+                rule_set(gitee_token, "Disney+", "rules/disney-plus.srs"),
+                rule_set(gitee_token, "GFW", "rules/gfw.srs"),
+                rule_set(gitee_token, "Games", "rules/games.srs"),
+                rule_set(gitee_token, "Games@CN", "rules/games-cn.srs"),
+                rule_set(gitee_token, "GeoIP@CN", "rules/geoip-cn.srs"),
+                rule_set(gitee_token, "GeoSites@CN", "rules/geosites-cn.srs"),
+                rule_set(gitee_token, "Microsoft", "rules/microsoft.srs"),
+                rule_set(gitee_token, "Netflix", "rules/netflix.srs"),
+                rule_set(gitee_token, "Nintendo", "rules/nintendo.srs"),
+                rule_set(gitee_token, "Nintendo@CN", "rules/nintendo-cn.srs"),
+                rule_set(gitee_token, "OpenAI", "rules/openai.srs"),
+                rule_set(gitee_token, "PlayStation", "rules/playstation.srs"),
+                rule_set(gitee_token, "PlayStation@CN", "rules/playstation-cn.srs"),
+                rule_set(gitee_token, "Private", "rules/private.srs"),
+                rule_set(gitee_token, "Proxy", "rules/proxy.srs"),
+                rule_set(gitee_token, "Sources", "rules/sources.srs"),
+                rule_set(gitee_token, "Steam", "rules/steam.srs"),
+                rule_set(gitee_token, "Steam@CN", "rules/steam-cn.srs"),
+                rule_set(gitee_token, "TikTok", "rules/tiktok.srs"),
+                rule_set(gitee_token, "Xbox", "rules/xbox.srs"),
+                rule_set(gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
+                rule_set(gitee_token, "YouTube", "rules/youtube.srs"),
                 # *build_local_rule_sets(local, gitee_token),
             ],
             "final": "🐟 漏网之鱼",

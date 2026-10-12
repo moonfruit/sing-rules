@@ -73,7 +73,6 @@ def filter_rule_sets(rule_sets) -> list[Any]:
     for rs in rule_sets:
         if rs.get("tag") == "Block":
             continue
-        rs.pop("download_detour", None)
         filtered.append(rs)
     return filtered
 
