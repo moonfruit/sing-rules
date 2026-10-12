@@ -4,7 +4,7 @@
     "clash_api": {
       "external_controller": "0.0.0.0:9999",
       "external_ui": "ui",
-      "external_ui_download_url": "https://github.com/Zephyruso/zashboard/archive/gh-pages-cdn-fonts.zip",
+      "external_ui_download_url": "https://github.com/moonfruit/zashboard/releases/latest/download/dist.zip",
       "external_ui_download_detour": "🔰 默认出口",
       "secret": "QAZ@wsx3EDC",
       "access_control_allow_origin": [

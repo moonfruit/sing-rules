@@ -20,7 +20,7 @@
       {
         "type": "remote",
         "tag": "Lan",
-        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/lan.srs?ref=main&access_token=***REMOVED***"
+        "url": "https://gitee.com/api/v5/repos/moonfruit/private/raw/rules/lan.srs?ref=main&access_token=$TOKEN"
       }
     ]
   }

@@ -3,7 +3,7 @@
 
 保留的 rule_set:
   Direct, DoH, FakeIpBypass, GFW, GeoIP@CN, GeoSites@!CN, GeoSites@CN, Home, Lan,
-  NoIPv6, Private, Proxy
+  Private, Proxy
 
 处理流程:
   1. 仅保留白名单中的 rule_set，记录被移除的 rule_set；
@@ -37,7 +37,6 @@ KEEP_RULE_SETS = {
     "GeoSites@CN",
     "Home",
     "Lan",
-    "NoIPv6",
     "Private",
     "Proxy",
 }

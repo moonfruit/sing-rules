@@ -12,17 +12,6 @@
             "rules": [{ "domain_suffix": [".lan", ".home.arpa"] }, { "default_interface_address": ["192.168.50.0/24"] }]
           }
         ]
-      },
-      {
-        "type": "inline",
-        "tag": "NoIPv6",
-        "rules": [
-          {
-            "type": "logical",
-            "mode": "and",
-            "rules": [{ "query_type": "AAAA" }, { "default_interface_address": ["2000::/3"], "invert": true }]
-          }
-        ]
       }
     ]
   }

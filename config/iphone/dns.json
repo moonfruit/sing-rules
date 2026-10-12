@@ -14,7 +14,12 @@
       { "rule_set": "Home", "server": "dns-home" },
       { "rule_set": "Lan", "action": "predefined", "rcode": "NXDOMAIN" },
       { "domain_suffix": [".server.gingkoo", ".gingkoo.internal"], "server": "dns-gingkoo" },
-      { "rule_set": "NoIPv6", "action": "predefined" },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [{ "ip_version": 6 }, { "default_interface_address": ["2000::/3"], "invert": true }],
+        "action": "predefined"
+      },
       { "rule_set": "FakeIpBypass", "server": "dns-direct" },
       { "query_type": ["A", "AAAA"], "server": "dns-fakeip", "rewrite_ttl": 1 },
       { "clash_mode": "Direct", "server": "dns-direct" },
@@ -25,13 +30,22 @@
       { "match_response": true, "rule_set": "GeoIP@CN", "action": "respond" }
     ],
     "final": "dns-proxy",
+    "optimistic": true,
     "reverse_mapping": true,
-    "strategy": "prefer_ipv6"
+    "strategy": "prefer_ipv6",
+    "timeout": "5s"
   },
   "route": {
     "rules": [
       { "network": "icmp", "outbound": "DIRECT" },
       { "ip_is_private": true, "outbound": "DIRECT" },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [{ "ip_version": 6 }, { "default_interface_address": ["2000::/3"], "invert": true }],
+        "action": "reject",
+        "no_drop": true
+      },
       { "action": "sniff" },
       { "protocol": "dns", "action": "hijack-dns" },
       {
@@ -43,29 +57,12 @@
             "type": "logical",
             "mode": "or",
             "rules": [
-              { "network": "tcp", "port": 853 },
-              { "protocol": ["http", "tls"], "rule_set": "DoH" }
+              { "port": 853 },
+              { "protocol": ["http", "tls", "quic"], "rule_set": "DoH" }
             ]
           }
         ],
         "action": "reject"
-      },
-      {
-        "type": "logical",
-        "mode": "and",
-        "rules": [
-          { "rule_set": ["GeoIP@CN", "GeoSites@CN"], "invert": true },
-          {
-            "type": "logical",
-            "mode": "or",
-            "rules": [
-              { "network": "udp", "port": 853 },
-              { "protocol": "quic", "rule_set": "DoH" }
-            ]
-          }
-        ],
-        "action": "reject",
-        "method": "drop"
       },
       { "protocol": ["bittorrent", "ntp", "stun"], "outbound": "DIRECT" }
     ],
