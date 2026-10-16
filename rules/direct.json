@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "004430.xyz",
         "0123456789nonexistent.com",
         "0d.kebhana.mx",
         "1.tracker.eu.org",
@@ -307,9 +308,7 @@
         "torrentzilla.org",
         "tplogin.cn",
         "tr.abiir.top",
-        "tr.abir.ga",
         "tr.bangumi.moe",
-        "tr.btube3.com",
         "tr.burnabyhighstar.com",
         "tr.fuckbitcoin.xyz",
         "tr.highstar.shop",

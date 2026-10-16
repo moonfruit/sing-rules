@@ -6,6 +6,7 @@
         "account.sony.com",
         "playstation.com",
         "playstation.net",
+        "playstationnetwork.com",
         "prod-ps5.wws-gs3.com",
         "sonyentertainmentnetwork.com"
       ],
@@ -14,6 +15,7 @@
         ".playstation",
         ".playstation.com",
         ".playstation.net",
+        ".playstationnetwork.com",
         ".sonyentertainmentnetwork.com"
       ]
     }
