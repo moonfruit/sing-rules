@@ -3,7 +3,6 @@
   "rules": [
     {
       "domain": [
-        "asobostudio.com",
         "beth.games",
         "bethesda.net",
         "bethesdagamestudios.com",
@@ -11,8 +10,6 @@
         "callersbane.com",
         "doom.com",
         "elderscrolls.com",
-        "flightsimulator.azureedge.net",
-        "flightsimulator.com",
         "forza.net",
         "forzamotorsport.net",
         "forzaracingchampionship.com",
@@ -50,7 +47,6 @@
         "xbx.lv"
       ],
       "domain_suffix": [
-        ".asobostudio.com",
         ".beth.games",
         ".bethesda.net",
         ".bethesdagamestudios.com",
@@ -58,7 +54,6 @@
         ".callersbane.com",
         ".doom.com",
         ".elderscrolls.com",
-        ".flightsimulator.com",
         ".forza.net",
         ".forzamotorsport.net",
         ".forzaracingchampionship.com",
