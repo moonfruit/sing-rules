@@ -1,8 +1,0 @@
-PROCESS-NAME,AltServer
-PROCESS-NAME,ChatGPT
-PROCESS-NAME,ChatGPTHelper
-PROCESS-NAME,Claude
-PROCESS-NAME,Claude Helper
-PROCESS-NAME,Claude Helper (GPU)
-PROCESS-NAME,Claude Helper (Renderer)
-PROCESS-PATH-REGEX,/Applications/(ChatGPT|Claude)\.app/.*

@@ -827,8 +827,8 @@ def build_local_rules(local: bool):
     if not local:
         return []
     return [
-        {"rule_set": "AI:Direct", "outbound": "DIRECT"},
-        {"rule_set": "AI:Process", "outbound": "🤖 人工智能"},
+        {"rule_set": "ChatGPT:Process", "outbound": "🤖 ChatGPT"},
+        {"rule_set": "Claude:Process", "outbound": "🤖 Claude"},
     ]
 
 
@@ -843,8 +843,8 @@ def build_local_rule_sets(local: bool, gitee_token: str | None):
     if not local:
         return []
     return [
-        rule_set(gitee_token, "AI:Direct", "rules/ai-direct.srs"),
-        rule_set(gitee_token, "AI:Process", "rules/ai-proc.srs"),
+        rule_set(gitee_token, "ChatGPT:Process", "rules/chatgpt-proc.srs"),
+        rule_set(gitee_token, "Claude:Process", "rules/claude-proc.srs"),
     ]
 
 
@@ -909,7 +909,6 @@ def to_sing(
                 *build_proxies_rules(domains, ips),
                 {"rule_set": "Private", "outbound": "🎯 全球直连"},
                 {"rule_set": "Block", "outbound": "🛑 全球拦截"},
-                # *build_local_rules(local),
                 {"rule_set": "Anthropic", "outbound": "🤖 Claude"},
                 {"rule_set": "OpenAI", "outbound": "🤖 ChatGPT"},
                 {"rule_set": "AI", "outbound": "🤖 AI"},
@@ -940,6 +939,7 @@ def to_sing(
                 {"rule_set": "Microsoft", "outbound": "Ⓜ️ Microsoft"},
                 {"rule_set": "GFW", "outbound": "🔰 默认出口"},
                 {"rule_set": ["Direct", "GeoIP@CN", "GeoSites@CN"], "outbound": "🎯 全球直连"},
+                *build_local_rules(local),
                 {"rule_set": "Proxy", "outbound": "🔰 默认出口"},
                 {"inbound": ["direct-in", "redirect-in", "tproxy-in", "tun-in"], "outbound": "👻 透明代理"},
             ],
@@ -973,7 +973,7 @@ def to_sing(
                 rule_set(gitee_token, "Xbox", "rules/xbox.srs"),
                 rule_set(gitee_token, "Xbox@CN", "rules/xbox-cn.srs"),
                 rule_set(gitee_token, "YouTube", "rules/youtube.srs"),
-                # *build_local_rule_sets(local, gitee_token),
+                *build_local_rule_sets(local, gitee_token),
             ],
             "final": "🐟 漏网之鱼",
         },

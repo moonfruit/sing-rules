@@ -1,0 +1,5 @@
+PROCESS-NAME,ChatGPT
+PROCESS-NAME,ChatGPT for Chrome
+PROCESS-NAME,Codex (Service)
+PROCESS-NAME,Codex (Renderer)
+PROCESS-PATH-REGEX,^/Applications/ChatGPT\.app/.*
