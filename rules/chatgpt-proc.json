@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "process_name": [
+        "ChatGPT",
+        "ChatGPT for Chrome",
+        "Codex (Renderer)",
+        "Codex (Service)"
+      ]
+    },
+    {
+      "process_path_regex": "^/Applications/ChatGPT\\.app/.*"
+    }
+  ]
+}

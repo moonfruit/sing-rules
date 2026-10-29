@@ -3,9 +3,6 @@
   "rules": [
     {
       "process_name": [
-        "AltServer",
-        "ChatGPT",
-        "ChatGPTHelper",
         "Claude",
         "Claude Helper",
         "Claude Helper (GPU)",
@@ -13,7 +10,7 @@
       ]
     },
     {
-      "process_path_regex": "/Applications/(ChatGPT|Claude)\\.app/.*"
+      "process_path_regex": "^/Applications/Claude\\.app/"
     }
   ]
 }
