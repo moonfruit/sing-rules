@@ -7,7 +7,7 @@
   },
   {
     "name": "👻 Ash",
-    "natural_selection": ["Claude", "ChatGPT"],
+    "natural_selection": ["AI", "Claude", "ChatGPT"],
     "cost": 1.0,
     "path": "dat/ash.json",
     "format": "sing-box",

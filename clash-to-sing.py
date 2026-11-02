@@ -538,7 +538,7 @@ def proxies_to_outbound(
     providers = {}
     provider_info_dict = {}
     embies = {}
-    natural_selection: dict[str, set[str]] = {"Claude": set(), "ChatGPT": set()}
+    natural_selection: dict[str, set[str]] = {"AI": set(), "Claude": set(), "ChatGPT": set()}
 
     for proxy in proxies:
         server: str = proxy["server"]
@@ -727,7 +727,8 @@ def proxies_to_outbound(
     us_tags = groups["🇺🇸 美国节点"]
     us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
     ai_costs = {**costs, "⛰️ Gingkoo": inf}
-    outbounds.append(urltest("🤖 自然选择 AI", ai_costs, us_jp_tags, url="https://gemini.google/"))
+    ai_nodes = [tag for tag in us_jp_tags if tag in natural_selection["AI"]]
+    outbounds.append(urltest("🤖 自然选择 AI", ai_costs, ai_nodes, url="https://gemini.google/"))
     claude_nodes = [tag for tag in us_tags if tag in natural_selection["Claude"]]
     chatgpt_nodes = [tag for tag in us_jp_tags if tag in natural_selection["ChatGPT"]]
     outbounds.append(urltest("🤖 自然选择 Claude", ai_costs, claude_nodes, url="https://api.anthropic.com/", interval="1m"))
