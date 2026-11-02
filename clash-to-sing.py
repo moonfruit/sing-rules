@@ -538,6 +538,7 @@ def proxies_to_outbound(
     providers = {}
     provider_info_dict = {}
     embies = {}
+    natural_selection: dict[str, set[str]] = {"Claude": set(), "ChatGPT": set()}
 
     for proxy in proxies:
         server: str = proxy["server"]
@@ -575,6 +576,9 @@ def proxies_to_outbound(
         tag: str = outbound["tag"]
         costs[tag] = cost
         all_nodes.append(tag)
+        for service in proxy.get("natural_selection", ()):
+            if service in natural_selection:
+                natural_selection[service].add(tag)
 
         if is_cheap(cost):
             cheap_nodes.append(tag)
@@ -724,8 +728,10 @@ def proxies_to_outbound(
     us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
     ai_costs = {**costs, "⛰️ Gingkoo": inf}
     outbounds.append(urltest("🤖 自然选择 AI", ai_costs, us_jp_tags, url="https://gemini.google/"))
-    outbounds.append(urltest("🤖 自然选择 Claude", ai_costs, us_tags, url="https://api.anthropic.com/", interval="1m"))
-    outbounds.append(urltest("🤖 自然选择 ChatGPT", ai_costs, us_jp_tags, url="https://api.openai.com/", interval="1m"))
+    claude_nodes = [tag for tag in us_tags if tag in natural_selection["Claude"]]
+    chatgpt_nodes = [tag for tag in us_jp_tags if tag in natural_selection["ChatGPT"]]
+    outbounds.append(urltest("🤖 自然选择 Claude", ai_costs, claude_nodes, url="https://api.anthropic.com/", interval="1m"))
+    outbounds.append(urltest("🤖 自然选择 ChatGPT", ai_costs, chatgpt_nodes, url="https://api.openai.com/", interval="1m"))
 
     emitted_providers: set[str] = set()
     for tag, nodes in providers.items():
@@ -1019,6 +1025,7 @@ class ConfigFile:
     info: ConfigInfo = None
     emby: ConfigEmby = None
     sort: str = None
+    natural_selection: tuple[str, ...] = ()
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
@@ -1116,6 +1123,7 @@ def load_proxies(config: ConfigFile) -> list[Object]:
         case _:
             raise ValueError(f"Unknown format: {config.format}")
     for proxy in proxies:
+        proxy["natural_selection"] = config.natural_selection
         if config.name:
             proxy["provider"] = {
                 "name": config.name,
