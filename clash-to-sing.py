@@ -3,10 +3,11 @@ import base64
 import ipaddress
 import json
 import re
+from collections.abc import Callable
 from datetime import datetime
 from math import inf
 from pathlib import Path
-from typing import Annotated, Any, Callable
+from typing import Annotated, Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 import typer
@@ -150,6 +151,8 @@ def proxy_to_outbound(
         case _:
             raise ValueError(f"Unknown proxy format: {proxy['format']}")
     patch_outbound(outbound, local)
+    if resolver := proxy.get("domain_resolver"):
+        outbound["domain_resolver"] = resolver
 
     seen_key = as_hashable(copy_without_tag(outbound))
     dup = seen_key in seen
@@ -521,15 +524,13 @@ def proxies_to_outbound(
 
     outbounds.append({"type": "http", "tag": "🐱 LazyCat", "server": "127.0.0.1", "server_port": 31085})
     outbounds.append({"type": "http", "tag": "🌀 Localhost", "server": "127.0.0.1", "server_port": 7899})
-    outbounds.append(
-        {
-            "type": "http",
-            "tag": "💻 MacbookPro",
-            "server": "moons-macbook-m2.local",
-            "server_port": 7899,
-            "domain_resolver": {"server": "dns-local", "strategy": "ipv4_only"},
-        }
-    )
+    outbounds.append({
+        "type": "http",
+        "tag": "💻 MacbookPro",
+        "server": "moons-macbook-m2.local",
+        "server_port": 7899,
+        "domain_resolver": {"server": "dns-local", "strategy": "ipv4_only"},
+    })
     outbounds.append({"type": "http", "tag": "💻 MacbookPro Office", "server": "10.2.20.199", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "💻 MacbookPro Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
     outbounds.append({"type": "http", "tag": "💻 MacbookPro Wired", "server": "192.168.50.80", "server_port": 7899})
@@ -538,7 +539,7 @@ def proxies_to_outbound(
     providers = {}
     provider_info_dict = {}
     embies = {}
-    natural_selection: dict[str, set[str]] = {"AI": set(), "Claude": set(), "ChatGPT": set()}
+    natural: dict[str, set[str]] = {"AI": set(), "Claude": set(), "ChatGPT": set()}
 
     for proxy in proxies:
         server: str = proxy["server"]
@@ -576,9 +577,9 @@ def proxies_to_outbound(
         tag: str = outbound["tag"]
         costs[tag] = cost
         all_nodes.append(tag)
-        for service in proxy.get("natural_selection", ()):
-            if service in natural_selection:
-                natural_selection[service].add(tag)
+        for service in proxy.get("natural", ()):
+            if service in natural:
+                natural[service].add(tag)
 
         if is_cheap(cost):
             cheap_nodes.append(tag)
@@ -727,12 +728,16 @@ def proxies_to_outbound(
     us_tags = groups["🇺🇸 美国节点"]
     us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
     ai_costs = {**costs, "⛰️ Gingkoo": inf}
-    ai_nodes = [tag for tag in us_jp_tags if tag in natural_selection["AI"]]
+    ai_nodes = [tag for tag in us_jp_tags if tag in natural["AI"]]
     outbounds.append(urltest("🤖 自然选择 AI", ai_costs, ai_nodes, url="https://gemini.google/"))
-    claude_nodes = [tag for tag in us_tags if tag in natural_selection["Claude"]]
-    chatgpt_nodes = [tag for tag in us_jp_tags if tag in natural_selection["ChatGPT"]]
-    outbounds.append(urltest("🤖 自然选择 Claude", ai_costs, claude_nodes, url="https://api.anthropic.com/", interval="1m"))
-    outbounds.append(urltest("🤖 自然选择 ChatGPT", ai_costs, chatgpt_nodes, url="https://api.openai.com/", interval="1m"))
+    claude_nodes = [tag for tag in us_tags if tag in natural["Claude"]]
+    chatgpt_nodes = [tag for tag in us_jp_tags if tag in natural["ChatGPT"]]
+    outbounds.append(
+        urltest("🤖 自然选择 Claude", ai_costs, claude_nodes, url="https://api.anthropic.com/", interval="1m")
+    )
+    outbounds.append(
+        urltest("🤖 自然选择 ChatGPT", ai_costs, chatgpt_nodes, url="https://api.openai.com/", interval="1m")
+    )
 
     emitted_providers: set[str] = set()
     for tag, nodes in providers.items():
@@ -1026,7 +1031,8 @@ class ConfigFile:
     info: ConfigInfo = None
     emby: ConfigEmby = None
     sort: str = None
-    natural_selection: tuple[str, ...] = ()
+    natural: tuple[str, ...] = ()
+    domain_resolver: str = None
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
@@ -1082,17 +1088,15 @@ def load_shadowrocket_proxies(path: Path) -> list[SimpleObject]:
             url = line
             name = "Line#{}".format(index)
         parsed = urlparse(url)
-        proxies.append(
-            {
-                "url": line,
-                "name": name,
-                "type": parsed.scheme,
-                "server": parsed.hostname,
-                "port": parsed.port,
-                "query": simplify_dict(parse_qs(parsed.query)),
-                "struct": parsed,
-            }
-        )
+        proxies.append({
+            "url": line,
+            "name": name,
+            "type": parsed.scheme,
+            "server": parsed.hostname,
+            "port": parsed.port,
+            "query": simplify_dict(parse_qs(parsed.query)),
+            "struct": parsed,
+        })
     return proxies
 
 
@@ -1124,7 +1128,8 @@ def load_proxies(config: ConfigFile) -> list[Object]:
         case _:
             raise ValueError(f"Unknown format: {config.format}")
     for proxy in proxies:
-        proxy["natural_selection"] = config.natural_selection
+        proxy["natural"] = config.natural
+        proxy["domain_resolver"] = config.domain_resolver
         if config.name:
             proxy["provider"] = {
                 "name": config.name,

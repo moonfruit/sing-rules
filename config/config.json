@@ -7,11 +7,12 @@
   },
   {
     "name": "👻 Ash",
-    "natural_selection": ["AI", "Claude", "ChatGPT"],
     "cost": 1.0,
     "path": "dat/ash.json",
     "format": "sing-box",
+    "domain_resolver": "dns-ash",
     "sort": "^(?P<base>.+?)(?: · (?P<variant>.+))?$",
+    "natural": ["AI", "Claude", "ChatGPT"],
     "emby": {
       "domain": ["ask.ash.yt", "tv.ash.yt"],
       "exclude": ["美国", "日本", "动态"],
