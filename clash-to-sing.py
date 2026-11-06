@@ -540,6 +540,10 @@ def proxies_to_outbound(
     provider_info_dict = {}
     embies = {}
     natural: dict[str, set[str]] = {"AI": set(), "Claude": set(), "ChatGPT": set()}
+    if local:
+        natural["AI"].add("⛰️ Gingkoo")
+        natural["Claude"].add("⛰️ Gingkoo")
+        natural["ChatGPT"].add("⛰️ Gingkoo")
 
     for proxy in proxies:
         server: str = proxy["server"]

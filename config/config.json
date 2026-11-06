@@ -8,8 +8,8 @@
   {
     "name": "👻 Ash",
     "cost": 1.0,
-    "path": "dat/ash.json",
-    "format": "sing-box",
+    "path": "dat/ash.b64",
+    "format": "shadowrocket",
     "domain_resolver": "dns-ash",
     "sort": "^(?P<base>.+?)(?: · (?P<variant>.+))?$",
     "natural": ["AI", "Claude", "ChatGPT"],
