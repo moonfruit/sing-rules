@@ -62,13 +62,15 @@ jobs:
       - name: Preflight
         run: |
           set -o pipefail
+          files=$(jq -er '.[] | .output | sub("^dat/"; "") | ., (. + ".info")' config/subscribe.json)
+          mapfile -t config_files <<< "$files"
           # Manual re-run (attempt > 1) or workflow_dispatch: always succeed
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.run_attempt }}" -gt 1 ]; then
-            ./preflight.sh ash.b64 ash.b64.info nanocloud.json nanocloud.json.info || true
+            ./preflight.sh "${config_files[@]}" || true
             echo "BUILD_RULES=1" | tee -a "$GITHUB_ENV"
             echo "BUILD_CONFIG=1" | tee -a "$GITHUB_ENV"
           else
-            ./preflight.sh ash.b64 ash.b64.info nanocloud.json nanocloud.json.info | tee -a "$GITHUB_ENV"
+            ./preflight.sh "${config_files[@]}" | tee -a "$GITHUB_ENV"
           fi
 
       - name: Checkout geo
