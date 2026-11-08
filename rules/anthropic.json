@@ -21,6 +21,8 @@
         "claudepages.dev",
         "claudestudio.com",
         "claudeusercontent.com",
+        "http-intake.logs.us5.datadoghq.com",
+        "o1158394.ingest.us.sentry.io",
         "servd-anthropic-website.b-cdn.net"
       ],
       "domain_suffix": [
