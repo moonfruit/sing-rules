@@ -3,6 +3,7 @@ DOMAIN-SUFFIX,cryptocompare.com
 DOMAIN-SUFFIX,infura.io
 DOMAIN-SUFFIX,metamask.io
 # Proxy
+DOMAIN-SUFFIX,ash.do
 DOMAIN-SUFFIX,dustinwin.top
 DOMAIN-SUFFIX,gost.run
 DOMAIN-SUFFIX,openvpn.net
