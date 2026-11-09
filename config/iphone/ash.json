@@ -1,0 +1,7 @@
+{
+  "$schema": "https://sing-box.sagernet.org/schema.json",
+  "dns": {
+    "servers": [{ "tag": "dns-ash", "type": "https", "server": "dns.ashsub.com", "domain_resolver": "dns-resolver" }],
+    "rules": [{ "domain_suffix": [".silverleafglow.com", ".staticlane.org"], "server": "dns-ash" }]
+  }
+}
