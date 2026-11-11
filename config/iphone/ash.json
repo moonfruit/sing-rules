@@ -5,7 +5,7 @@
       {
         "tag": "dns-ash",
         "type": "https",
-        "server": "dns.ashsub.com",
+        "server": "yichuan.hongtizi.com",
         "domain_resolver": "dns-resolver"
       }
     ],
