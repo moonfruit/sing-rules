@@ -13,7 +13,8 @@ from common.exit_report import new_database, load_database
 
 @contextmanager
 def local_proxy():
-    state = {'mode': 'rule', 'selected': 'A', 'seen': [], 'fail': None}
+    state = {'mode': 'rule', 'selected': 'A', 'seen': [], 'fail': None,
+             'disconnects': 0, 'plain': False}
     proxies = {
         'GLOBAL': {'type': 'Selector', 'all': ['A', 'B', 'DIRECT'], 'now': 'A'},
         'G': {'type': 'Selector', 'all': ['Nested', 'A', 'DIRECT']},
@@ -41,7 +42,21 @@ def local_proxy():
                 self.reply({'mode': state['mode']})
             elif self.path == 'http://echo.test/ip':
                 state['seen'].append((state['mode'], state['selected']))
-                self.reply({'ip': '8.8.8.8' if state['selected'] == 'A' else '1.1.1.1'})
+                if state['disconnects']:
+                    state['disconnects'] -= 1
+                    self.close_connection = True
+                    return
+                if state['plain']:
+                    body = b'8.8.8.8\n'
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                else:
+                    self.reply({'ip': '8.8.8.8' if state['selected'] == 'A' else '1.1.1.1'})
+            elif self.path == 'http://echo.test/blocked':
+                state['seen'].append((state['mode'], state['selected']))
+                self.reply({}, 403)
             else:
                 self.reply({}, 404)
 
@@ -70,6 +85,36 @@ def local_proxy():
 
 
 class ExitProbeTest(unittest.TestCase):
+    def test_transient_disconnect_retries_with_new_connection_and_accepts_plain_ip(self):
+        with local_proxy() as (url, state, _):
+            state.update(disconnects=1, plain=True)
+            self.assertEqual('8.8.8.8', probe.probe_ip(url, 'http://echo.test/ip'))
+            self.assertEqual(2, len(state['seen']))
+
+    def test_network_retry_is_bounded_and_403_is_not_retried(self):
+        with local_proxy() as (url, state, _):
+            state['disconnects'] = 3
+            with self.assertRaises(RuntimeError):
+                probe.probe_ip(url, 'http://echo.test/ip')
+            self.assertEqual(2, len(state['seen']))
+            state['seen'].clear()
+            with self.assertRaisesRegex(RuntimeError, '403'):
+                probe.probe_ip(url, 'http://echo.test/blocked')
+            self.assertEqual(1, len(state['seen']))
+
+    def test_one_blocked_echo_does_not_mark_nodes_failed_if_another_returns_ips(self):
+        with local_proxy() as (url, state, _), tempfile.TemporaryDirectory() as directory:
+            db = new_database()
+            with probe.Controller(url) as controller:
+                failures = probe.collect(controller, url, ['Nest'], db, Path(directory) / 'db.json',
+                                         ['http://echo.test/blocked', 'http://echo.test/ip'])
+            self.assertEqual(0, failures)
+            self.assertEqual({'A', 'B'}, set(db['nodes']))
+            self.assertTrue(all(node['current'] for node in db['nodes'].values()))
+            self.assertTrue(all(node['last_attempts']['http://echo.test/blocked']['status'] == 'error'
+                                for node in db['nodes'].values()))
+            self.assertEqual(('rule', 'A'), (state['mode'], state['selected']))
+
     def test_group_keywords_match_all_containing_groups_and_deduplicate_nodes(self):
         proxies = {
             'ABC': {'type': 'Selector', 'all': ['A']},

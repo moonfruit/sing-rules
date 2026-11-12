@@ -9,7 +9,7 @@ import requests
 from common.exit_report import merge_observation, now, save_database
 
 
-DEFAULT_ECHO_URLS = ['https://api.ipify.org?format=json', 'https://api.myip.com']
+DEFAULT_ECHO_URLS = ['https://api.ipify.org?format=json', 'https://checkip.amazonaws.com/']
 GROUP_TYPES = {'selector', 'urltest', 'fallback', 'loadbalance'}
 EXCLUDED_TYPES = {'direct', 'reject', 'block', 'dns', 'pass', 'compatible'}
 
@@ -90,24 +90,30 @@ class Controller:
 def probe_ip(proxy_url, echo_url, timeout=15):
     validate_url(proxy_url)
     validate_url(echo_url)
-    try:
-        # 单次请求独立连接，避免连接复用跨过节点切换。
-        with requests.Session() as session:
-            response = session.get(echo_url, proxies={'http': proxy_url, 'https': proxy_url},
-                                   timeout=timeout, headers={'Connection': 'close'}, allow_redirects=False)
-            if response.status_code != 200:
-                raise RuntimeError(f'出口服务返回 HTTP {response.status_code}')
-            try:
-                data = response.json()
-                value = data.get('ip') if isinstance(data, dict) else None
-            except ValueError:
-                value = response.text.strip()
-            address = ipaddress.ip_address(value)
-            if not address.is_global:
-                raise ValueError('非公网地址')
-            return str(address)
-    except (requests.RequestException, ValueError, TypeError) as exc:
-        raise RuntimeError(f'出口探测失败 ({type(exc).__name__})') from None
+    for attempt in range(2):
+        try:
+            # 每次尝试独立连接，避免旧连接跨过节点切换，也允许瞬时断线恢复。
+            with requests.Session() as session:
+                response = session.get(echo_url, proxies={'http': proxy_url, 'https': proxy_url},
+                                       timeout=timeout, headers={'Connection': 'close'}, allow_redirects=False)
+                if response.status_code != 200:
+                    raise RuntimeError(f'出口服务返回 HTTP {response.status_code}')
+                try:
+                    data = response.json()
+                    value = data.get('ip') if isinstance(data, dict) else None
+                except ValueError:
+                    # IP 回显是 ASCII，不能让无 Content-Type 的短文本被误猜成 UTF-16。
+                    value = response.content.decode('ascii').strip()
+                address = ipaddress.ip_address(value)
+                if not address.is_global:
+                    raise ValueError('非公网地址')
+                return str(address)
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            if attempt == 0:
+                continue
+            raise RuntimeError(f'出口探测失败 ({type(exc).__name__}，已尝试 2 次)') from None
+        except (requests.RequestException, ValueError, TypeError) as exc:
+            raise RuntimeError(f'出口探测失败 ({type(exc).__name__})') from None
 
 
 def collect(controller, proxy_url, groups, db, path, echo_urls=None, selector='GLOBAL', timeout=15):
@@ -132,12 +138,15 @@ def collect(controller, proxy_url, groups, db, path, echo_urls=None, selector='G
     if selector != 'GLOBAL':
         raise ValueError('目前仅支持 GLOBAL 控制出口，以确保 global 模式路由到所选节点')
     failures = 0
+    service_failures = 0
+    observed_ips = set()
     try:
         controller.request('PATCH', '/configs', json={'mode': 'global'})
         if controller.request('GET', '/configs').get('mode', '').lower() != 'global':
             raise RuntimeError('控制 API 未切换到 global 模式')
         for index, (name, memberships) in enumerate(nodes.items(), 1):
             print(f'[{index}/{len(nodes)}] {name}', file=sys.stderr)
+            node_ips = set()
             switch_error = None
             try:
                 controller.request('PUT', endpoint, json={'name': name})
@@ -153,10 +162,16 @@ def collect(controller, proxy_url, groups, db, path, echo_urls=None, selector='G
                     except (RuntimeError, TimeoutError) as exc:
                         error = str(exc)
                 if error:
-                    failures += 1
+                    service_failures += 1
                     print(f'  {url}: {error}', file=sys.stderr)
+                if ip:
+                    node_ips.add(ip)
                 merge_observation(db, name, memberships, url, ip, now(), error)
                 save_database(path, db)
+            if node_ips:
+                observed_ips.update(node_ips)
+            else:
+                failures += 1
     finally:
         errors = []
         # 两项独立恢复，即使其中一项失败，也继续尝试另一项。
@@ -172,4 +187,6 @@ def collect(controller, proxy_url, groups, db, path, echo_urls=None, selector='G
                 errors.append(f'{key}: {exc}')
         if errors:
             raise RuntimeError('恢复代理状态失败，请检查本地代理：' + '; '.join(errors))
+    print(f'本次采集: {len(nodes)} 个节点，成功 {len(nodes) - failures}，未获取 IP {failures}；'
+          f'出口 IP 去重后 {len(observed_ips)} 个，服务请求失败 {service_failures} 次', file=sys.stderr)
     return failures
