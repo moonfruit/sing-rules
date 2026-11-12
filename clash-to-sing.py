@@ -540,10 +540,6 @@ def proxies_to_outbound(
     provider_info_dict = {}
     embies = {}
     natural: dict[str, set[str]] = {"AI": set(), "Claude": set(), "ChatGPT": set()}
-    if local:
-        natural["AI"].add("⛰️ Gingkoo")
-        natural["Claude"].add("⛰️ Gingkoo")
-        natural["ChatGPT"].add("⛰️ Gingkoo")
 
     for proxy in proxies:
         server: str = proxy["server"]
@@ -619,8 +615,6 @@ def proxies_to_outbound(
 
     if expansive_nodes and expansive_nodes != all_nodes:
         expansive_tag = ["👍 高级节点"]
-        if local:
-            expansive_nodes[0:0] = ["⛰️ Gingkoo"]
     else:
         expansive_tag = []
 
@@ -628,7 +622,6 @@ def proxies_to_outbound(
     if local:
         auto_nodes = ["⛰️ Gingkoo", *auto_nodes]
         all_nodes[0:0] = ["⛰️ Gingkoo", "🧅 Tor Browser"]
-        add_to_group(groups, __GROUP_MAP["US"], "⛰️ Gingkoo", prepend=True, cost=-1)
 
     outbounds.append(
         selector("🔰 默认出口", [*cheap_tag, *expansive_tag, "♻️ 自动选择", "🚀 手动切换", *group_tags, "DIRECT"])
