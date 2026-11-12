@@ -20,18 +20,41 @@ Claude 仍仅使用美国节点，AI 和 ChatGPT 仍仅使用美国和日本节�
 # 1. 从本地 Clash API 展开指定 selector/urltest 组，依次采集节点出口。
 venv/bin/python probe-exits.py collect \
   --group '🤖 AI' --group '🤖 ChatGPT' \
-  --database reports/exits.json
+  --database data/exits.sops.json
 
 # 2. 独立查询出口 IP 信息，默认仅补齐缺失的来源；此处由外部包装命令选择 7898 入口。
-proxy global venv/bin/python probe-exits.py enrich --database reports/exits.json
+proxy global venv/bin/python probe-exits.py enrich
 
 # 需要更新旧 IP 信息时显式刷新；失败保留上次成功结果。
-proxy global venv/bin/python probe-exits.py enrich --database reports/exits.json --refresh
+proxy global venv/bin/python probe-exits.py enrich --refresh
 
 # 3. 导出按节点、探测服务排列的 CSV，重复行表示同一节点的不同服务观测。
 venv/bin/python probe-exits.py export \
-  --database reports/exits.json --output reports/exits.csv
+  --output reports/exits.csv
 ```
+
+默认数据库是仓库内的 `data/exits.sops.json`。脚本直接读写 SOPS binary 密文，
+节点名称、IP 等 JSON 键名也整体隐藏，解密后的数据只在内存中流转，不生成临时明文。
+需安装 `sops` 并配置仓库现有 age 接收者对应的解密密钥；`.sops.yaml` 复用 `config/secrets.env` 的接收者。
+SOPS 失败会报错，不会回退到明文或覆盖旧库；内容未变化时保持原密文，避免无意义的 Git 差异。
+显式指定普通 `.json` 路径时仍支持旧明文格式，`.sops.json` 路径则强制使用整体加密格式。
+
+日常更新先拉取最新密文，然后运行 `collect`/`enrich`，最后提交 `data/exits.sops.json` 的变更。
+两阶段均在锁内增量合并并原子保存，未探测到的节点和旧历史继续保留。
+不要直接解决密文文本冲突：多机器并发修改时应先解密双方数据并按节点、观测时间合并，再重新加密。
+本次迁移后原 `reports/exits.json` 保留为本地明文备份，不再是默认库。
+
+数据库读写由 `common.exit_report` 统一管理，不依赖网络或代理。
+未来 `clash-to-sing.py` 等消费者可只读导入，无需自行执行 SOPS，也不会触发探测或更新：
+
+```python
+from common.exit_report import load_database
+
+database = load_database()  # 默认读取 data/exits.sops.json，也可以显式指定路径
+node = database['nodes'].get(node_name)
+```
+
+目前未把数据库过滤逻辑接入配置生成器；解密失败会抛出异常，由调用者决定如何处理。
 
 采集默认使用 `http://127.0.0.1:9999` 的 Clash API、`http://127.0.0.1:7898` 的 HTTP/mixed 代理。
 使用 `--api`、`--proxy` 修改地址；代理入口必须属于该 API 控制的同一个 sing-box 实例。
@@ -97,7 +120,7 @@ provider_limits: 各来源的冷却截止时间（Unix 时间戳）及原因
 失败不覆盖上次成功出口或来源数据；`last_attempts`/`error` 可用于识别本次失败及过期结果。
 节点换 IP 后，汇总只取各服务当前 IP 的数据，不把旧 IP 的属性移植给新 IP。
 每次完成一次观测或一批 IP 查询即原子落盘，同一数据库写入互斥；损坏或不支持的数据库版本会报错，不会重建覆盖。
-结果会包含节点名称和公网出口地址，默认 `reports/` 在 `.gitignore` 中忽略。
+只有整体加密的 `data/exits.sops.json` 入库；明文备份和 CSV 放在被 `.gitignore` 忽略的 `reports/`。
 
 汇总字段的 `value` 是来源一致时的值，`sources` 保存各来源意见，分歧时 `conflict=true`、`value=null`。
 没有数据是未知，不是 false；CSV 使用 `unknown`、`conflict` 表示，保留探测错误和查询错误。

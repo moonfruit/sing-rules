@@ -5,10 +5,37 @@ import fcntl
 import ipaddress
 import json
 import os
+import subprocess
 import tempfile
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_DATABASE = PROJECT_ROOT / 'data' / 'exits.sops.json'
+SOPS_CONFIG = PROJECT_ROOT / '.sops.yaml'
+
+
+def _sops(operation, path, content=None):
+    """整库作为 binary 加密；明文只通过管道和内存传递。"""
+    command = ['sops', '--config', str(SOPS_CONFIG), operation,
+               '--input-type', 'binary', '--output-type', 'binary']
+    if operation == 'encrypt':
+        command.extend(['--filename-override', str(path.resolve())])
+    else:
+        command.append(str(path))
+    try:
+        result = subprocess.run(command, input=content, capture_output=True, timeout=60)
+    except FileNotFoundError:
+        raise RuntimeError('读写加密数据库需要安装 sops') from None
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f'SOPS {operation} 超时，数据库未被覆盖') from None
+    if result.returncode:
+        # stderr 可能包含身份路径等敏感信息，不写入日志或数据库。
+        raise RuntimeError(f'SOPS {operation} 失败（退出码 {result.returncode}），'
+                           '请检查 .sops.yaml 和 age 密钥；数据库未被覆盖')
+    return result.stdout
 
 
 def now():
@@ -35,12 +62,19 @@ def database_lock(path):
             fcntl.flock(handle, fcntl.LOCK_UN)
 
 
-def load_database(path):
+def load_database(path=DEFAULT_DATABASE):
+    """读取节点库；未来配置生成器可直接调用，不需要代理或网络依赖。"""
     path = Path(path)
     if not path.exists():
         return new_database()
     try:
-        db = json.loads(path.read_text())
+        if path.name.endswith('.sops.json'):
+            envelope = json.loads(path.read_bytes())
+            if not isinstance(envelope, dict) or set(envelope) != {'data', 'sops'}:
+                raise ValueError('加密数据库必须是 SOPS binary 格式，不能保存明文或暴露 JSON 键名')
+            db = json.loads(_sops('decrypt', path))
+        else:
+            db = json.loads(path.read_text())
         if not isinstance(db, dict) or db.get('schema_version') != 1:
             raise ValueError('不支持的数据库版本')
         if not isinstance(db['nodes'], dict) or not isinstance(db['ip_cache'], dict):
@@ -67,13 +101,18 @@ def save_database(path, db):
     path.parent.mkdir(parents=True, exist_ok=True)
     for node in db['nodes'].values():
         node['summary'] = summarize(db, node)
+    # 同时验证旧库可读；内容不变时不重新生成随机密文，避免无意义 Git 差异。
+    if path.exists() and load_database(path) == db:
+        return
+    content = (json.dumps(db, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+    if path.name.endswith('.sops.json'):
+        content = _sops('encrypt', path, content)
     temporary = None
     try:
-        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=path.parent,
+        with tempfile.NamedTemporaryFile(mode='wb', dir=path.parent,
                                          prefix='.' + path.name + '.', delete=False) as handle:
             temporary = handle.name
-            json.dump(db, handle, ensure_ascii=False, indent=2)
-            handle.write('\n')
+            handle.write(content)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary, path)

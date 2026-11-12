@@ -15,5 +15,7 @@ __pycache__
 /package.json
 /private
 /reports
+/data/*
+!/data/*.sops.json
 /venv
 /zoo

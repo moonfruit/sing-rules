@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from common.exit_probe import Controller, collect
-from common.exit_report import database_lock, export_csv, load_database
+from common.exit_report import DEFAULT_DATABASE, database_lock, export_csv, load_database
 from common.ip_info import LookupClient, enrich
 
 
@@ -18,7 +18,8 @@ def parser():
     for command, help_text in [('collect', '通过本地 API 采集组内节点出口 IP'),
                                ('enrich', '独立查询 IP 数据库并增量合并'), ('export', '按节点导出 CSV')]:
         sub = commands.add_parser(command, help=help_text, description=help_text)
-        sub.add_argument('--database', type=Path, default=Path('reports/exits.json'), help='增量数据库路径')
+        sub.add_argument('--database', type=Path, default=DEFAULT_DATABASE,
+                         help='增量数据库路径，默认 data/exits.sops.json；.sops.json 自动整体加解密')
         if command == 'collect':
             sub.add_argument('--group', action='append', required=True,
                              help='组名包含的关键词（区分大小写），匹配所有 selector/urltest 组，可重复')

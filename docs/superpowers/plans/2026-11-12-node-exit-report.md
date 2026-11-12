@@ -100,3 +100,13 @@
 - 后续修订：不再设置 trust_env=False，遵循 requests 默认环境配置。
 - 后续修订：按用户要求移除 enrich 的内部代理参数及 LookupClient 的代理配置，完全由外部 proxy 包装命令或环境变量决定查询代理。
 - 后续修订：enrich 自动使用两来源批量接口；新增 101 IP 分批、乱序映射和单项失败测试，完整测试 84 项通过。经现有 7898 入口对 8.8.8.8/1.1.1.1 做真实批量查询，两来源均成功；未修改用户数据库或 GLOBAL。默认 proxy 的 7890 入口仍出现 TLS EOF，使用 proxy global 可选择已验证可用的 7898 入口。
+
+## SOPS 数据库扩展（用户已授权）
+
+- 默认路径改为 `data/exits.sops.json`，`.sops.yaml` 复用原有 age 接收者；使用 binary store 整体加密，隐藏节点名/IP 等 JSON 键。
+- `common.exit_report.load_database(path=DEFAULT_DATABASE)` 为共享只读入口，未来配置生成器可直接导入；当前不修改 `clash-to-sing.py` 的筛选行为。
+- `save_database` 在内存序列化后通过管道交给 SOPS，临时文件仅写密文；验证旧库可读，内容相同不重加密，成功后原子替换。失败不回退明文、不覆盖旧库。
+- `.sops.json` 后缀强制整体加密，显式普通 `.json` 仍兼容本地明文。`data/` 仅允许 SOPS JSON 入库，明文备份、CSV、锁文件保持忽略。
+- 本次迁移原明文库，验证完整加解密往返一致，原 `reports/exits.json` 保留为本地备份；迁移过程不发出 IP 查询、不切换 GLOBAL。
+- 新测试使用临时 age 密钥调用真实 SOPS，覆盖隐私、无变化保存、增量保留、错误密钥、篡改密文、加密失败和 CLI 全流程。
+- 验证：完整测试 91 项通过；独立只读审查无阻断问题；真实库 55 个节点、18 个 IP 缓存迁移前后一致；跨工作目录读取默认库成功，无变化保存保持密文不变。
