@@ -409,13 +409,13 @@ def selector(tag: str, nodes: list[str]) -> Object:
 # __TEST_URL = "https://www.apple.com/library/test/success.html"
 
 
-def urltest(tag: str, costs: dict[str, float], nodes: list[str], *, url: str = None, interval: str = None) -> Object:
+def urltest(tag: str, costs: dict[str, float], nodes: list[str], *, url: str = None, tolerance: int = None) -> Object:
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
     outbound = {"type": "urltest", "tag": tag, "outbounds": nodes}
     if url:
         outbound["url"] = url
-    if interval:
-        outbound["interval"] = interval
+    if tolerance is not None:
+        outbound["tolerance"] = tolerance
     return outbound
 
 
@@ -726,14 +726,14 @@ def proxies_to_outbound(
     us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
     ai_costs = {**costs, "⛰️ Gingkoo": inf}
     ai_nodes = [tag for tag in us_jp_tags if tag in natural["AI"]]
-    outbounds.append(urltest("🤖 自然选择 AI", ai_costs, ai_nodes, url="https://gemini.google/"))
+    outbounds.append(urltest("🤖 自然选择 AI", ai_costs, ai_nodes, url="https://gemini.google/", tolerance=100))
     claude_nodes = [tag for tag in us_tags if tag in natural["Claude"]]
     chatgpt_nodes = [tag for tag in us_jp_tags if tag in natural["ChatGPT"]]
     outbounds.append(
-        urltest("🤖 自然选择 Claude", ai_costs, claude_nodes, url="https://api.anthropic.com/", interval="1m")
+        urltest("🤖 自然选择 Claude", ai_costs, claude_nodes, url="https://api.anthropic.com/", tolerance=100)
     )
     outbounds.append(
-        urltest("🤖 自然选择 ChatGPT", ai_costs, chatgpt_nodes, url="https://api.openai.com/", interval="1m")
+        urltest("🤖 自然选择 ChatGPT", ai_costs, chatgpt_nodes, url="https://api.openai.com/", tolerance=100)
     )
 
     emitted_providers: set[str] = set()

@@ -7,6 +7,9 @@ Based on [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-ru
 `"natural_selection": ["AI", "Claude", "ChatGPT"]`。
 Claude 仍仅使用美国节点，AI 和 ChatGPT 仍仅使用美国和日本节点；手动选择不受此字段影响。
 
+生成的所有 urltest 组均不设置 `interval`，使用内核默认周期；
+AI、Claude、ChatGPT 三个自然选择组设置 `tolerance: 100`，其它组维持默认容差。
+
 ## 节点出口情况表
 
 `probe-exits.py` 将出口采集和 IP 信息查询分开执行，不启动独立 sing-box。
