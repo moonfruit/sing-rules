@@ -12,7 +12,11 @@
     "format": "shadowrocket",
     "domain_resolver": "dns-ash",
     "sort": "^(?P<base>.+?)(?: · (?P<variant>.+))?$",
-    "natural": ["AI", "Claude", "ChatGPT"],
+    "natural": [
+      "AI",
+      {"name": "Claude", "filter": {"include": ["Max"]}},
+      "ChatGPT"
+    ],
     "emby": {
       "domain": ["ask.ash.yt", "tv.ash.yt"],
       "exclude": ["美国", "日本", "动态"],

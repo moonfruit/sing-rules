@@ -2,10 +2,25 @@
 
 Based on [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat)
 
-订阅配置 `config/config.json` 中的 `natural_selection` 声明该订阅参与的自然选择分组，
-可选值为 `AI`、`Claude`、`ChatGPT`，省略时不参与这三个分组。目前仅 Ash 配置了
-`"natural_selection": ["AI", "Claude", "ChatGPT"]`。
+订阅配置 `config/config.json` 中的 `natural` 声明该订阅参与的自然选择分组，
+可选值为 `AI`、`Claude`、`ChatGPT`，省略时不参与这三个分组。目前仅 Ash 参与这三个组，
+其中 Claude 组额外要求原始节点名称包含 `Max`。
 Claude 仍仅使用美国节点，AI 和 ChatGPT 仍仅使用美国和日本节点；手动选择不受此字段影响。
+
+每个分组也可以写成对象，通过 `filter` 对该订阅在对应组中的节点额外过滤；字符串与对象可以混用：
+
+```json
+"natural": [
+  "AI",
+  {"name": "Claude", "filter": {"include": ["美国"], "exclude": ["动态"]}},
+  {"name": "ChatGPT", "filter": {"exclude": ["动态"]}}
+]
+```
+
+`include` / `exclude` 均为字符串数组，按订阅原始节点名做区分大小写的子串匹配（不是正则）。
+`include` 非空时须命中至少一项，`exclude` 命中任意一项即排除，二者同时配置时均生效。
+省略或空数组表示不限制；省略 `filter` 等同于原字符串写法。过滤仍受上述国家范围约束，
+仅影响对应自然选择组，不会删除订阅节点或影响其它分组。
 
 生成的所有 urltest 组均不设置 `interval`，使用内核默认周期；
 AI、Claude、ChatGPT 三个自然选择组设置 `tolerance: 100`，其它组维持默认容差。

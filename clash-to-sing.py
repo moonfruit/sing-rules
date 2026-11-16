@@ -11,7 +11,7 @@ from typing import Annotated, Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 import typer
-from attrs import define
+from attrs import define, field
 from cattrs import structure
 
 from common import (
@@ -1020,6 +1020,23 @@ class ConfigInfo:
 
 
 @define
+class ConfigNaturalFilter:
+    include: tuple[str, ...] = ()
+    exclude: tuple[str, ...] = ()
+
+    def matches(self, name: str) -> bool:
+        return (not self.include or any(value in name for value in self.include)) and not any(
+            value in name for value in self.exclude
+        )
+
+
+@define
+class ConfigNatural:
+    name: str
+    filter: ConfigNaturalFilter = field(factory=ConfigNaturalFilter)
+
+
+@define
 class ConfigFile:
     path: Path
     name: str = None
@@ -1028,13 +1045,18 @@ class ConfigFile:
     info: ConfigInfo = None
     emby: ConfigEmby = None
     sort: str = None
-    natural: tuple[str, ...] = ()
+    natural: tuple[ConfigNatural, ...] = ()
     domain_resolver: str = None
 
 
 def load_config_files(path: Path) -> list[ConfigFile]:
     with open_path(path) as f:
         configs = json.load(f)
+    for config in configs:
+        if "natural" in config:
+            config["natural"] = [
+                {"name": entry} if isinstance(entry, str) else entry for entry in config["natural"]
+            ]
     result = structure(configs, list[ConfigFile])
     for config in result:
         if config.info is None:
@@ -1125,7 +1147,9 @@ def load_proxies(config: ConfigFile) -> list[Object]:
         case _:
             raise ValueError(f"Unknown format: {config.format}")
     for proxy in proxies:
-        proxy["natural"] = config.natural
+        proxy["natural"] = tuple(
+            entry.name for entry in config.natural if entry.filter.matches(proxy["name"])
+        )
         proxy["domain_resolver"] = config.domain_resolver
         if config.name:
             proxy["provider"] = {
