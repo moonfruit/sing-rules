@@ -534,9 +534,9 @@ def proxies_to_outbound(
         "server_port": 7899,
         "domain_resolver": {"server": "dns-local", "strategy": "ipv4_only"},
     })
-    outbounds.append({"type": "http", "tag": "💻 MacbookPro Office", "server": "10.2.20.199", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "💻 MacbookPro Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
-    outbounds.append({"type": "http", "tag": "💻 MacbookPro Wired", "server": "192.168.50.80", "server_port": 7899})
+    # outbounds.append({"type": "http", "tag": "💻 MacbookPro Office", "server": "10.2.20.38", "server_port": 7899})
+    # outbounds.append({"type": "http", "tag": "💻 MacbookPro Wi-Fi", "server": "192.168.50.78", "server_port": 7899})
+    # outbounds.append({"type": "http", "tag": "💻 MacbookPro Wired", "server": "192.168.50.80", "server_port": 7899})
 
     seen = set()
     providers = {}
@@ -1057,9 +1057,7 @@ def load_config_files(path: Path) -> list[ConfigFile]:
         configs = json.load(f)
     for config in configs:
         if "natural" in config:
-            config["natural"] = [
-                {"name": entry} if isinstance(entry, str) else entry for entry in config["natural"]
-            ]
+            config["natural"] = [{"name": entry} if isinstance(entry, str) else entry for entry in config["natural"]]
     result = structure(configs, list[ConfigFile])
     for config in result:
         if config.info is None:
@@ -1150,9 +1148,7 @@ def load_proxies(config: ConfigFile) -> list[Object]:
         case _:
             raise ValueError(f"Unknown format: {config.format}")
     for proxy in proxies:
-        proxy["natural"] = tuple(
-            entry.name for entry in config.natural if entry.filter.matches(proxy["name"])
-        )
+        proxy["natural"] = tuple(entry.name for entry in config.natural if entry.filter.matches(proxy["name"]))
         proxy["domain_resolver"] = config.domain_resolver
         if config.name:
             proxy["provider"] = {
