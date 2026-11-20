@@ -13,11 +13,12 @@ cd "$BIN"
     sing-box format -c /dev/stdin |
     ./fix-format.py >private/config.json
 
-TEMP="${RUNNER_TEMP:-/tmp}/config"
-mkdir -p "$TEMP"
+TEMP=$(mktemp -d "${RUNNER_TEMP:-/tmp}/sing-config.XXXXXXXX")
+trap 'rm -rf "$TEMP"' EXIT
 cp config/iphone/* "$TEMP"
 sed -i'' "s|\$TOKEN|$TOKEN|g" "$TEMP"/*
-cat private/config.json | ./copy-config.py >"$TEMP/zoo.json"
-sing-box merge -C "$TEMP" private/config-iphone.json
+cp private/config.json "$TEMP/zoo.json"
+sing-box merge -C "$TEMP" "$TEMP/merged.tmp"
+./copy-config.py <"$TEMP/merged.tmp" >private/config-iphone.json
 
 cat private/config-iphone.json | ./prune-config.py >private/config-appletv.json

@@ -25,6 +25,9 @@ Claude 仍仅使用美国节点，AI 和 ChatGPT 仍仅使用美国和日本节�
 测速组只有一个节点时，生成同名的 `selector`，直接使用该节点。
 多节点组使用 `urltest` 和内核默认测速周期。AI、Claude、ChatGPT 的多节点自然选择组设置 `tolerance: 100`。
 
+iOS 的测速组白名单只作用于 `urltest`，单节点 `selector` 可以保留。地区测速组保留美国、香港和新加坡。
+自然选择 AI 与自然选择 ChatGPT 的成员集合相同时，移动端统一引用 ChatGPT 组。tvOS 在此基础上继续裁剪不可达的出站。
+
 ## 节点出口情况表
 
 `probe-exits.py` 将出口采集和 IP 信息查询分开执行，不启动独立 sing-box。

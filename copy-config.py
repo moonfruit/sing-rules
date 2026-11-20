@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """
-生成 config.json 的副本，但移除 route.rules[] 数组中的前三个元素，
-以及 Block 相关的规则和 rule_set 引用，并移除 outbounds 中的 "全球拦截"。
+生成移动端配置，移除 Block 相关的规则和 rule_set 引用，以及 outbounds 中的 "全球拦截"。
 
 同时裁剪 outbound：
-  1. 删除以 '👍' / '🛢️' 结尾的 outbound 及其引用
-  2. 删除白名单以外的测速分组及其引用（含单节点 selector）
-     (白名单: 自动选择 / 省流节点 / 高级节点 / 自然选择 / 以 🎬 结尾)
+  1. 删除以 '👍' / '🛢️' 结尾的 urltest 及其引用
+  2. 仅按白名单裁剪 urltest 及其引用
+     (白名单: 自动选择 / 自然选择 / 美国节点 / 香港节点 / 新加坡节点 / 以 🎬 结尾)
+     自然选择 AI 与自然选择 ChatGPT 的节点相同时，统一使用 ChatGPT 组
   3. 剩余 urltest 中 interval < 3m 时移除该字段
   4. 把 '👻 透明代理' 等 selector 的默认出口提到首位
   5. 清理 outbounds 为空的 selector：信息型节点 (形如 '🌸 NanoCloud 🔴 (...)') 重定向到默认出口，
@@ -19,13 +19,13 @@ import sys
 from enum import Enum
 from typing import Any
 
-from common.config import generated_node_group_tags, remove_outbounds
+from common.config import outbound_refs, remove_outbounds, root_outbound_refs
 
 BLOCK_OUTBOUND = "全球拦截"
 
 PRUNE_SUFFIXES = ("👍", "🛢️")
 
-URLTEST_KEEP_KEYWORDS = ("自动选择", "省流节点", "高级节点", "自然选择", "美国节点", "香港节点", "印度节点")
+URLTEST_KEEP_KEYWORDS = ("自动选择", "自然选择", "美国节点", "香港节点", "新加坡节点")
 URLTEST_KEEP_SUFFIX = "🎬"
 
 INTERVAL_THRESHOLD_SECONDS = 180
@@ -81,18 +81,46 @@ def _block_outbound_tags(outbounds) -> set[str]:
     return {ob["tag"] for ob in outbounds if isinstance(ob.get("tag"), str) and BLOCK_OUTBOUND in ob["tag"]}
 
 
-def _suffix_outbound_tags(outbounds) -> set[str]:
-    return {ob["tag"] for ob in outbounds if isinstance(ob.get("tag"), str) and ob["tag"].endswith(PRUNE_SUFFIXES)}
-
-
 def _is_kept_urltest(tag: str) -> bool:
+    if tag.endswith(PRUNE_SUFFIXES):
+        return False
     if tag.endswith(URLTEST_KEEP_SUFFIX):
         return True
     return any(kw in tag for kw in URLTEST_KEEP_KEYWORDS)
 
 
-def _node_group_tags_to_remove(outbounds) -> set[str]:
-    return {tag for tag in generated_node_group_tags(outbounds) if not _is_kept_urltest(tag)}
+def _urltest_tags_to_remove(outbounds) -> set[str]:
+    return {
+        ob["tag"]
+        for ob in outbounds
+        if ob.get("type") == "urltest" and isinstance(ob.get("tag"), str) and not _is_kept_urltest(ob["tag"])
+    }
+
+
+def _merge_natural_ai_group(config: dict) -> None:
+    ai = "🤖 自然选择 AI"
+    chatgpt = "🤖 自然选择 ChatGPT"
+    groups = {
+        ob["tag"]: ob.get("outbounds", [])
+        for ob in config["outbounds"]
+        if ob.get("tag") in (ai, chatgpt) and ob.get("type") in ("selector", "urltest")
+    }
+    if ai not in groups or chatgpt not in groups or set(groups[ai]) != set(groups[chatgpt]):
+        return
+
+    fields = list(root_outbound_refs(config))
+    for ob in config["outbounds"]:
+        fields.extend(outbound_refs(ob))
+    for options, key in fields:
+        value = options.get(key)
+        if value == ai:
+            options[key] = chatgpt
+        elif isinstance(value, list) and ai in value:
+            first = next(i for i, tag in enumerate(value) if tag in (ai, chatgpt))
+            rest = [tag for tag in value[first + 1:] if tag not in (ai, chatgpt)]
+            options[key] = [*value[:first], chatgpt, *rest]
+
+    remove_outbounds(config, {ai})
 
 
 _DURATION_RE = re.compile(r"(\d+(?:\.\d+)?)\s*([a-zµμ]+)")
@@ -178,10 +206,9 @@ def main():
 
     outbounds = config.get("outbounds")
     if isinstance(outbounds, list):
-        tags_to_remove = (
-            _block_outbound_tags(outbounds) | _suffix_outbound_tags(outbounds) | _node_group_tags_to_remove(outbounds)
-        )
+        tags_to_remove = _block_outbound_tags(outbounds) | _urltest_tags_to_remove(outbounds)
         remove_outbounds(config, tags_to_remove)
+        _merge_natural_ai_group(config)
         _trim_short_intervals(config["outbounds"], INTERVAL_THRESHOLD_SECONDS)
         _promote_default_outbound(config["outbounds"])
         _prune_empty_selectors(config)

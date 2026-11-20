@@ -13,8 +13,7 @@
      则同样删除（清理 AI/ChatGPT 这类依附出口的探测规则）
   4. 基于最终剩余规则重新统计引用，从 outbounds 中删除不再被引用的目标出口；
      同时清理其他 selector/urltest 的 outbounds 引用
-  5. 计算所有 outbound 的可达集合（route.rules.outbound / route.final /
-     dns.servers[].detour 作为根，沿 selector/urltest 的 outbounds 字段做闭包），
+  5. 计算所有 outbound 的可达集合（配置中直接引用的出口作为根，沿分组成员和 detour 继续查找），
      删除不可达的 outbound，并清理残留引用
 """
 
@@ -23,7 +22,7 @@ from __future__ import annotations
 import json
 import sys
 
-from common.config import remove_outbounds
+from common.config import outbound_refs, referenced_tags, remove_outbounds, root_outbound_refs
 
 KEEP_OUTBOUND_KEYWORDS = ("NanoCloud", "Ash")
 
@@ -126,39 +125,10 @@ def main() -> None:
     after_pass2 = [r for r, rm in zip(rules, removed_flags) if not rm]
     route["rules"] = after_pass2
 
-    # 基于最终剩余规则，决定哪些 outbound 可以真正删除
-    still_referenced: set[str] = set()
-
-    def collect_refs(items: list) -> None:
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            target = item.get("outbound")
-            if isinstance(target, str):
-                still_referenced.add(target)
-            if isinstance(item.get("rules"), list):
-                collect_refs(item["rules"])
-
-    collect_refs(after_pass2)
-    outbounds_to_remove = removed_outbounds - still_referenced
+    roots = set(referenced_tags(root_outbound_refs(config)))
+    outbounds_to_remove = removed_outbounds - roots
 
     remove_outbounds(config, outbounds_to_remove)
-
-    # Pass 3: 基于规则/route.final/dns detour 做可达性分析，剔除孤立 outbound
-    roots: set[str] = set()
-    for r in after_pass2:
-        if isinstance(r, dict):
-            ob = r.get("outbound")
-            if isinstance(ob, str):
-                roots.add(ob)
-    final_ob = route.get("final")
-    if isinstance(final_ob, str):
-        roots.add(final_ob)
-    for srv in (config.get("dns", {}) or {}).get("servers", []) or []:
-        if isinstance(srv, dict):
-            detour = srv.get("detour")
-            if isinstance(detour, str):
-                roots.add(detour)
 
     by_tag = {
         o["tag"]: o
@@ -175,7 +145,7 @@ def main() -> None:
         node = by_tag.get(tag)
         if not node:
             continue
-        for child in node.get("outbounds", []) or []:
+        for child in referenced_tags(outbound_refs(node)):
             if isinstance(child, str) and child not in reachable and child in by_tag:
                 stack.append(child)
 
@@ -201,10 +171,10 @@ def main() -> None:
         ", ".join(sorted(orphan_outbounds)) or "(none)",
         file=sys.stderr,
     )
-    kept_but_shared = removed_outbounds & still_referenced
+    kept_but_shared = removed_outbounds & roots
     if kept_but_shared:
         print(
-            "Kept (still referenced by kept rules):",
+            "Kept (still referenced by configuration):",
             ", ".join(sorted(kept_but_shared)),
             file=sys.stderr,
         )
