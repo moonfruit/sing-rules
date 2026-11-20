@@ -22,8 +22,8 @@ Claude 仍仅使用美国节点，AI 和 ChatGPT 仍仅使用美国和日本节�
 省略或空数组表示不限制；省略 `filter` 等同于原字符串写法。过滤仍受上述国家范围约束，
 仅影响对应自然选择组，不会删除订阅节点或影响其它分组。
 
-生成的所有 urltest 组均不设置 `interval`，使用内核默认周期；
-AI、Claude、ChatGPT 三个自然选择组设置 `tolerance: 100`，其它组维持默认容差。
+测速组只有一个节点时，生成同名的 `selector`，直接使用该节点。
+多节点组使用 `urltest` 和内核默认测速周期。AI、Claude、ChatGPT 的多节点自然选择组设置 `tolerance: 100`。
 
 ## 节点出口情况表
 

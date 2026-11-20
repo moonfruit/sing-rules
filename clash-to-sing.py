@@ -410,6 +410,8 @@ def selector(tag: str, nodes: list[str]) -> Object:
 
 
 def urltest(tag: str, costs: dict[str, float], nodes: list[str], *, url: str = None, tolerance: int = None) -> Object:
+    if len(nodes) == 1:
+        return selector(tag, nodes)
     nodes = sorted(nodes, key=lambda node: costs.get(node, 1))
     outbound = {"type": "urltest", "tag": tag, "outbounds": nodes}
     if url:
@@ -474,6 +476,7 @@ def clean_keys(d: dict[str, Any]) -> dict[str, Any]:
     for key, value in d.items():
         if not value:
             keys_to_remove.append(key)
+            continue
         for icon in (" 🛢️", " 👍", " 🌪️", " 🚀", " 🐴", " 🦬", " 🪶", " 🎯"):
             if key.endswith(icon):
                 break
@@ -722,8 +725,8 @@ def proxies_to_outbound(
     outbounds.append(selector("👻 透明代理", ["DIRECT", "🔰 默认出口", "REJECT"]))
     outbounds.append(selector("🐟 漏网之鱼", ["🔰 默认出口", "DIRECT", "REJECT"]))
 
-    us_tags = groups["🇺🇸 美国节点"]
-    us_jp_tags = [*groups["🇺🇸 美国节点"], *groups["🇯🇵 日本节点"]]
+    us_tags = groups.get("🇺🇸 美国节点", [])
+    us_jp_tags = [*us_tags, *groups.get("🇯🇵 日本节点", [])]
     ai_costs = {**costs, "⛰️ Gingkoo": inf}
     ai_nodes = [tag for tag in us_jp_tags if tag in natural["AI"]]
     outbounds.append(urltest("🤖 自然选择 AI", ai_costs, ai_nodes, url="https://gemini.google/", tolerance=100))

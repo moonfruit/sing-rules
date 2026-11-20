@@ -5,7 +5,7 @@
 
 同时裁剪 outbound：
   1. 删除以 '👍' / '🛢️' 结尾的 outbound 及其引用
-  2. 删除白名单以外的 urltest outbound 及其引用
+  2. 删除白名单以外的测速分组及其引用（含单节点 selector）
      (白名单: 自动选择 / 省流节点 / 高级节点 / 自然选择 / 以 🎬 结尾)
   3. 剩余 urltest 中 interval < 3m 时移除该字段
   4. 把 '👻 透明代理' 等 selector 的默认出口提到首位
@@ -19,7 +19,7 @@ import sys
 from enum import Enum
 from typing import Any
 
-from common.config import remove_outbounds
+from common.config import generated_node_group_tags, remove_outbounds
 
 BLOCK_OUTBOUND = "全球拦截"
 
@@ -91,12 +91,8 @@ def _is_kept_urltest(tag: str) -> bool:
     return any(kw in tag for kw in URLTEST_KEEP_KEYWORDS)
 
 
-def _urltest_tags_to_remove(outbounds) -> set[str]:
-    return {
-        ob["tag"]
-        for ob in outbounds
-        if ob.get("type") == "urltest" and isinstance(ob.get("tag"), str) and not _is_kept_urltest(ob["tag"])
-    }
+def _node_group_tags_to_remove(outbounds) -> set[str]:
+    return {tag for tag in generated_node_group_tags(outbounds) if not _is_kept_urltest(tag)}
 
 
 _DURATION_RE = re.compile(r"(\d+(?:\.\d+)?)\s*([a-zµμ]+)")
@@ -183,7 +179,7 @@ def main():
     outbounds = config.get("outbounds")
     if isinstance(outbounds, list):
         tags_to_remove = (
-            _block_outbound_tags(outbounds) | _suffix_outbound_tags(outbounds) | _urltest_tags_to_remove(outbounds)
+            _block_outbound_tags(outbounds) | _suffix_outbound_tags(outbounds) | _node_group_tags_to_remove(outbounds)
         )
         remove_outbounds(config, tags_to_remove)
         _trim_short_intervals(config["outbounds"], INTERVAL_THRESHOLD_SECONDS)

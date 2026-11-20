@@ -6,14 +6,15 @@
     python3 split-outbounds.py <config.json>
 
 输出：
-    groups.json  —— urltest 类型中符合条件的分组（tag -> outbounds 列表）
-    proxies.json —— 非 selector 类型中符合条件的代理节点（tag -> 完整 item）
+    providers.json —— 按国家和分组拆分的代理节点，支持单节点 selector。
 """
 
 import json
 from pathlib import Path
 
 import typer
+
+from common.config import generated_node_group_tags
 
 URLTEST_EXCLUDE = ("自动选择", "美国节点", "欧洲节点")
 PROXY_EXCLUDE = ("LazyCat",)
@@ -35,6 +36,7 @@ def main(input_file: Path = typer.Argument(..., exists=True, help="sing-box conf
         config = json.load(f)
 
     outbounds = config.get("outbounds", [])
+    node_group_tags = generated_node_group_tags(outbounds)
     groups: dict = {}
     tag_to_country: dict[str, str] = {}
     proxies: dict = {}
@@ -43,7 +45,7 @@ def main(input_file: Path = typer.Argument(..., exists=True, help="sing-box conf
         tag = item.get("tag", "")
         item_type = item.get("type", "")
 
-        if item_type == "urltest":
+        if tag in node_group_tags:
             if tag.endswith("节点") and "欧洲节点" not in tag:
                 for t in item.get("outbounds", []):
                     tag_to_country[t] = tag
