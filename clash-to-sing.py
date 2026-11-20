@@ -688,9 +688,9 @@ def proxies_to_outbound(
         "DIRECT",
         "🌀 Localhost",
         "💻 MacbookPro",
-        "💻 MacbookPro Office",
-        "💻 MacbookPro Wi-Fi",
-        "💻 MacbookPro Wired",
+        # "💻 MacbookPro Office",
+        # "💻 MacbookPro Wi-Fi",
+        # "💻 MacbookPro Wired",
     ]
 
     outbounds.append(selector("🤖 AI", ["🤖 自然选择 AI", *ai_tags]))
