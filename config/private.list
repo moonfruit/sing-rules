@@ -11,3 +11,4 @@ DOMAIN-SUFFIX,server.gingkoo
 DOMAIN-SUFFIX,staticlane.org
 DOMAIN-SUFFIX,v2ray.in
 DOMAIN-SUFFIX,xipcloud.org
+IP-CIDR6,fc03:1136:3800::/40

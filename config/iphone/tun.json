@@ -6,6 +6,10 @@
       "tag": "tun-in",
       "address": ["11.0.0.1/30", "fdfe:dcba:9876::1/126"],
       "loopback_address": "10.7.0.1",
+      "route_exclude_address": [
+        "6.6.6.6/32",
+        "2000::6666/128"
+      ],
       "auto_route": true,
       "strict_route": true,
       "platform": {
