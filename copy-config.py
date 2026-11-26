@@ -5,7 +5,7 @@
 同时裁剪 outbound：
   1. 删除以 '👍' / '🛢️' 结尾的 urltest 及其引用
   2. 仅按白名单裁剪 urltest 及其引用
-     (白名单: 自动选择 / 自然选择 / 美国节点 / 香港节点 / 新加坡节点 / 以 🎬 结尾)
+     (白名单: 自动选择 / 自然选择 / 美国节点 / 香港节点 / 以 🎬 结尾)
      自然选择 AI 与自然选择 ChatGPT 的节点相同时，统一使用 ChatGPT 组
   3. 剩余 urltest 中 interval < 3m 时移除该字段
   4. 把 '👻 透明代理' 等 selector 的默认出口提到首位
@@ -25,7 +25,7 @@ BLOCK_OUTBOUND = "全球拦截"
 
 PRUNE_SUFFIXES = ("👍", "🛢️")
 
-URLTEST_KEEP_KEYWORDS = ("自动选择", "自然选择", "美国节点", "香港节点", "新加坡节点")
+URLTEST_KEEP_KEYWORDS = ("自动选择", "自然选择", "美国节点", "香港节点")
 URLTEST_KEEP_SUFFIX = "🎬"
 
 INTERVAL_THRESHOLD_SECONDS = 180
@@ -117,7 +117,7 @@ def _merge_natural_ai_group(config: dict) -> None:
             options[key] = chatgpt
         elif isinstance(value, list) and ai in value:
             first = next(i for i, tag in enumerate(value) if tag in (ai, chatgpt))
-            rest = [tag for tag in value[first + 1:] if tag not in (ai, chatgpt)]
+            rest = [tag for tag in value[first + 1 :] if tag not in (ai, chatgpt)]
             options[key] = [*value[:first], chatgpt, *rest]
 
     remove_outbounds(config, {ai})

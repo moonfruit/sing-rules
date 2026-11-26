@@ -28,5 +28,7 @@ DOMAIN-SUFFIX,brickset.com
 DOMAIN-SUFFIX,nist.gov
 # iStat Menus
 DOMAIN-SUFFIX,istatmenus.app
+# PushCat
+DOMAIN-SUFFIX,apps.pushcat.eu.org
 # Other
 DOMAIN-SUFFIX,huangguoai.com
